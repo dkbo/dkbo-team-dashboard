@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "dkbo_version": "0.17.0",
+  "generated_at": "2026-09-25T18:22",
+  "kinds_down": [
+    {
+      "kind": "agy",
+      "until": "2026-09-30T20:49",
+      "until_epoch": 1790772542,
+      "exact": true,
+      "recorded_at": "2026-09-25T00:24",
+      "from_task": "2026-09-25-beacon",
+      "agent": "beacon-reviewer-p3",
+      "reason": "⚠ Individual quota reached. Please"
+    },
+    {
+      "kind": "codex",
+      "until": "2026-10-11T19:32",
+      "until_epoch": 1791718351,
+      "exact": true,
+      "recorded_at": "2026-09-25T00:22",
+      "from_task": "2026-09-25-beacon",
+      "agent": "beacon-reviewer-p2",
+      "reason": "■ You’ve hit your usage limit. Upgrade to Plus to continue using Codex"
+    }
+  ],
+  "tasks": [
+    {
+      "dir": "2026-09-25-cobalt",
+      "short": "cobalt",
+      "display": "示範任務 cobalt",
+      "date": "2026-09-25",
+      "status": "done",
+      "index_note": "merged 9d3c976",
+      "branch": "dk/cobalt",
+      "worktree": "/projects/collect/.worktrees/cobalt",
+      "task_tab": "wD:t5",
+      "repo_names": [
+        "main"
+      ],
+      "current_wave": null,
+      "waves_planned": 3,
+      "waves_closed": 3,
+      "created_at": "2026-09-25T09:27",
+      "gate1_at": "2026-09-25T09:38",
+      "closed_at": "2026-09-25T13:46",
+      "close_result": "merged 9d3c976",
+      "updated_at": "2026-09-25T13:46",
+      "panes_open": 0,
+      "counts": {
+        "rulings": 12,
+        "autonomous_rulings": 9,
+        "minors": 6,
+        "undelivered": 4,
+        "escalations": 2
+      }
+    },
+    {
+      "dir": "2026-09-25-atlas",
+      "short": "atlas",
+      "display": "示範任務 atlas",
+      "date": "2026-09-25",
+      "status": "running",
+      "index_note": "示範備註",
+      "branch": "dk/atlas",
+      "worktree": "/projects/collect/.worktrees/atlas",
+      "task_tab": "wD:t6",
+      "repo_names": [
+        "main"
+      ],
+      "current_wave": 3,
+      "waves_planned": 3,
+      "waves_closed": 2,
+      "created_at": "2026-09-25T14:19",
+      "gate1_at": "2026-09-25T14:42",
+      "closed_at": null,
+      "close_result": null,
+      "updated_at": "2026-09-25T18:05",
+      "panes_open": 4,
+      "counts": {
+        "rulings": 16,
+        "autonomous_rulings": 10,
+        "minors": 18,
+        "undelivered": 2,
+        "escalations": 4
+      }
+    },
+    {
+      "dir": "2026-09-25-beacon",
+      "short": "beacon",
+      "display": "示範任務 beacon",
+      "date": "2026-09-25",
+      "status": "done",
+      "index_note": "merged 9c10795",
+      "branch": "dk/beacon",
+      "worktree": "/projects/collect/.worktrees/beacon",
+      "task_tab": "wD:t4",
+      "repo_names": [
+        "main"
+      ],
+      "current_wave": null,
+      "waves_planned": 3,
+      "waves_closed": 3,
+      "created_at": "2026-09-25T00:19",
+      "gate1_at": "2026-09-25T00:27",
+      "closed_at": "2026-09-25T08:16",
+      "close_result": "merged 9c10795",
+      "updated_at": "2026-09-25T08:16",
+      "panes_open": 0,
+      "counts": {
+        "rulings": 23,
+        "autonomous_rulings": 15,
+        "minors": 24,
+        "undelivered": 0,
+        "escalations": 0
+      }
+    }
+  ]
+}

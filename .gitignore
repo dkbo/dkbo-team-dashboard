@@ -1,0 +1,13 @@
+.dkbo/
+.worktrees/
+.claude/
+.agents/
+CLAUDE.md
+AGENTS.md
+node_modules/
+dist/
+test-results/
+playwright-report/
+*.tsbuildinfo
+# 本機設定（列的是你自己的專案路徑）；範本見 dashboard.config.example.json
+dashboard.config.json

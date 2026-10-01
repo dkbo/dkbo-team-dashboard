@@ -1,0 +1,327 @@
+{
+  "schema_version": 1,
+  "dkbo_version": null,
+  "generated_at": "2026-09-25T12:00",
+  "kinds_down": [
+    {
+      "kind": "codex",
+      "until": "2026-10-11T19:32",
+      "until_epoch": 1791718349,
+      "exact": false,
+      "recorded_at": "",
+      "from_task": "2026-09-24-edge",
+      "agent": "edge-reviewer",
+      "reason": "hit limit",
+      "future_field": 1
+    }
+  ],
+  "future_top_level": 1,
+  "task": {
+    "dir": "2026-09-21-edge",
+    "short": "edge",
+    "display": "邊界任務",
+    "date": "2026-09-21",
+    "status": "running",
+    "index_note": "—",
+    "branch": "dk/edge",
+    "worktree": "/tmp/edge/.worktrees/edge",
+    "task_tab": "wX:t1",
+    "repo_names": [],
+    "current_wave": 2,
+    "waves_planned": 3,
+    "waves_closed": 1,
+    "created_at": "2026-09-21T09:00",
+    "gate1_at": "2026-09-21T09:30",
+    "closed_at": null,
+    "close_result": null,
+    "updated_at": "2026-09-21T11:00",
+    "panes_open": 3,
+    "counts": {
+      "rulings": 2,
+      "autonomous_rulings": 1,
+      "minors": 1,
+      "undelivered": 1,
+      "escalations": 2
+    },
+    "future_task_field": [
+      1,
+      2
+    ],
+    "repos": [
+      {
+        "name": "main",
+        "path": "/tmp/edge",
+        "worktree": null,
+        "base": null
+      }
+    ],
+    "brief": {
+      "goal": null,
+      "acceptance": [
+        {
+          "text": "AC1 做完",
+          "checked": true
+        },
+        {
+          "text": "AC2 還沒",
+          "checked": false
+        }
+      ],
+      "owners": [
+        {
+          "member": "dev",
+          "writable": [
+            "src/**"
+          ],
+          "readonly": [],
+          "exclusive": []
+        }
+      ],
+      "waves": [
+        {
+          "wave": 1,
+          "type": "實作",
+          "member": "dev",
+          "what": "做事",
+          "tier": "M",
+          "done": "綠",
+          "review": "skip: 文件波"
+        },
+        {
+          "wave": 2,
+          "type": "實作",
+          "member": "dev",
+          "what": null,
+          "tier": null,
+          "done": null,
+          "review": null
+        },
+        {
+          "wave": null,
+          "type": null,
+          "member": null,
+          "what": null,
+          "tier": null,
+          "done": null,
+          "review": null
+        }
+      ]
+    },
+    "waves": [
+      {
+        "wave": 1,
+        "opened_at": "2026-09-21T09:40",
+        "dev_done_at": "2026-09-21T10:10",
+        "review_spawned_at": null,
+        "review_verdict_at": null,
+        "review_verdict": "skipped: 文件波",
+        "closed_at": "2026-09-21T10:20",
+        "tests": "ok (pnpm -r test)",
+        "tests_ok": true,
+        "commits": [
+          {
+            "repo": null,
+            "sha": "abc1234"
+          }
+        ]
+      },
+      {
+        "wave": 2,
+        "opened_at": "2026-09-21T10:30",
+        "dev_done_at": null,
+        "review_spawned_at": null,
+        "review_verdict_at": null,
+        "review_verdict": null,
+        "closed_at": null,
+        "tests": null,
+        "tests_ok": null,
+        "commits": []
+      },
+      {
+        "wave": 3,
+        "opened_at": null,
+        "dev_done_at": null,
+        "review_spawned_at": null,
+        "review_verdict_at": null,
+        "review_verdict": null,
+        "closed_at": null,
+        "tests": null,
+        "tests_ok": null,
+        "commits": []
+      }
+    ],
+    "members": [
+      {
+        "name": "dev",
+        "status": "working",
+        "wave": 2,
+        "current": "寫程式",
+        "touched": [
+          "src/a.ts"
+        ],
+        "todo": [
+          "測試"
+        ],
+        "blocked_by": null,
+        "notes": "第一行\n第二行",
+        "has_report": true
+      },
+      {
+        "name": "qa",
+        "status": "blocked",
+        "wave": 2,
+        "current": null,
+        "touched": [],
+        "todo": [],
+        "blocked_by": "等 dev",
+        "notes": null,
+        "has_report": false
+      },
+      {
+        "name": "writer",
+        "status": null,
+        "wave": null,
+        "current": null,
+        "touched": [],
+        "todo": [],
+        "blocked_by": null,
+        "notes": null,
+        "has_report": false
+      }
+    ],
+    "panes": [
+      {
+        "agent": "edge-dev",
+        "pane": "wX:p1",
+        "since_epoch": 1790000000,
+        "group": "dev",
+        "tab": "1",
+        "slot": "1"
+      },
+      {
+        "agent": "edge-qa",
+        "pane": "wX:p2",
+        "since_epoch": null,
+        "group": null,
+        "tab": null,
+        "slot": null
+      },
+      {
+        "agent": "edge-legacy",
+        "pane": null,
+        "since_epoch": null,
+        "group": null,
+        "tab": null,
+        "slot": null
+      }
+    ],
+    "rulings": [
+      {
+        "ts": "2026-09-21T10:15",
+        "text": "[自主] 允許 X",
+        "autonomous": true
+      },
+      {
+        "ts": "2026-09-21T10:16",
+        "text": "採 A",
+        "autonomous": false
+      }
+    ],
+    "events": [
+      {
+        "ts": "2026-09-21T09:00",
+        "kind": "task-new",
+        "text": "task-new edge"
+      },
+      {
+        "ts": "2026-09-21T09:30",
+        "kind": "gate1",
+        "text": "gate1 approved"
+      },
+      {
+        "ts": "2026-09-21T09:40",
+        "kind": "wave-open",
+        "text": "wave-open 1 base abc"
+      },
+      {
+        "ts": "2026-09-21T10:10",
+        "kind": "dev-done",
+        "text": "dev-done wave 1"
+      },
+      {
+        "ts": "2026-09-21T10:11",
+        "kind": "review",
+        "text": "review 1 skipped: 文件波"
+      },
+      {
+        "ts": "2026-09-21T10:15",
+        "kind": "ruling",
+        "text": "ruling: [自主] 允許 X"
+      },
+      {
+        "ts": "2026-09-21T10:16",
+        "kind": "ruling",
+        "text": "ruling: 採 A"
+      },
+      {
+        "ts": "2026-09-21T10:17",
+        "kind": "minor",
+        "text": "minor: 命名"
+      },
+      {
+        "ts": "2026-09-21T10:18",
+        "kind": "commit",
+        "text": "commit abc1234 wave 1"
+      },
+      {
+        "ts": "2026-09-21T10:20",
+        "kind": "wave-close",
+        "text": "wave-close 1 tests ok (pnpm -r test) 1 agents closed"
+      },
+      {
+        "ts": "2026-09-21T10:30",
+        "kind": "wave-open",
+        "text": "wave-open 2"
+      },
+      {
+        "ts": "2026-09-21T11:00",
+        "kind": "future-kind",
+        "text": "future-kind something new"
+      }
+    ],
+    "messages": [
+      {
+        "ts": "2026-09-21T10:05",
+        "from": "edge-dev",
+        "to": "leader-edge",
+        "type": "ESCALATE",
+        "text": "要動別人的檔"
+      },
+      {
+        "ts": "2026-09-21T10:06",
+        "from": "leader-edge",
+        "to": null,
+        "type": "ACK",
+        "text": ""
+      },
+      {
+        "ts": "2026-09-21T10:07",
+        "from": "edge-dev",
+        "to": "edge-qa",
+        "type": "UNDELIVERED",
+        "text": "[DONE] 完成"
+      },
+      {
+        "ts": "2026-09-21T10:50",
+        "from": "edge-qa",
+        "to": "leader-edge",
+        "type": "ESCALATE",
+        "text": "卡住"
+      }
+    ],
+    "skipped_lines": {
+      "process": 3,
+      "messages": 2
+    }
+  }
+}

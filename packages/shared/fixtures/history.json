@@ -1,0 +1,1444 @@
+{
+  "tasks": [
+    {
+      "project": "collect",
+      "dir": "2026-09-25-cobalt",
+      "display": "示範任務 cobalt",
+      "status": "done",
+      "closedAt": "2026-09-25T13:46",
+      "totalMin": 259,
+      "waves": 3,
+      "rulings": 12,
+      "autonomousRulings": 9,
+      "minors": 6,
+      "reReviews": 0,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": 17,
+          "reviewMin": 5
+        },
+        {
+          "wave": 2,
+          "devMin": 7,
+          "reviewMin": 1
+        },
+        {
+          "wave": 3,
+          "devMin": null,
+          "reviewMin": 0
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "teamflow",
+      "dir": "2026-09-25-status",
+      "display": "示範任務 status",
+      "status": "done",
+      "closedAt": "2026-09-25T13:45",
+      "totalMin": 275,
+      "waves": 1,
+      "rulings": 10,
+      "autonomousRulings": 2,
+      "minors": 3,
+      "reReviews": 1,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": 52,
+          "reviewMin": 31
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "collect",
+      "dir": "2026-09-25-beacon",
+      "display": "示範任務 beacon",
+      "status": "done",
+      "closedAt": "2026-09-25T08:16",
+      "totalMin": 477,
+      "waves": 3,
+      "rulings": 23,
+      "autonomousRulings": 15,
+      "minors": 24,
+      "reReviews": 1,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": 13,
+          "reviewMin": 4
+        },
+        {
+          "wave": 2,
+          "devMin": 35,
+          "reviewMin": 27
+        },
+        {
+          "wave": 3,
+          "devMin": 24,
+          "reviewMin": 9
+        }
+      ],
+      "dispatch": [
+        {
+          "agent": "beacon-reviewer-p1",
+          "member": "reviewer-p1",
+          "role": "reviewer",
+          "kind": "claude",
+          "tier": "L",
+          "model": "opus",
+          "effort": "high",
+          "at": 1790266860000,
+          "notes": [
+            "isolated",
+            "override-kind"
+          ]
+        },
+        {
+          "agent": "beacon-reviewer-p2",
+          "member": "reviewer-p2",
+          "role": "reviewer",
+          "kind": "codex",
+          "tier": "L",
+          "model": "gpt-5.5",
+          "effort": "high",
+          "at": 1790266860000,
+          "notes": [
+            "isolated",
+            "override-kind",
+            "prompt-failed"
+          ]
+        },
+        {
+          "agent": "beacon-reviewer-p3",
+          "member": "reviewer-p3",
+          "role": "reviewer",
+          "kind": "agy",
+          "tier": "L",
+          "model": null,
+          "effort": null,
+          "at": 1790266860000,
+          "notes": [
+            "isolated",
+            "override-kind"
+          ]
+        },
+        {
+          "agent": "beacon-assets",
+          "member": "assets",
+          "role": "assets",
+          "kind": "claude",
+          "tier": "L",
+          "model": null,
+          "effort": null,
+          "at": 1790267340000,
+          "notes": []
+        },
+        {
+          "agent": "beacon-react",
+          "member": "react",
+          "role": "react",
+          "kind": "claude",
+          "tier": "M",
+          "model": null,
+          "effort": null,
+          "at": 1790267340000,
+          "notes": []
+        },
+        {
+          "agent": "beacon-reviewer-a",
+          "member": "reviewer-a",
+          "role": "reviewer",
+          "kind": "claude",
+          "tier": "L",
+          "model": "opus",
+          "effort": "high",
+          "at": 1790268120000,
+          "notes": [
+            "isolated",
+            "override-kind"
+          ]
+        },
+        {
+          "agent": "beacon-native",
+          "member": "native",
+          "role": "native",
+          "kind": "claude",
+          "tier": "M",
+          "model": null,
+          "effort": null,
+          "at": 1790268420000,
+          "notes": []
+        },
+        {
+          "agent": "beacon-react",
+          "member": "react",
+          "role": "react",
+          "kind": "claude",
+          "tier": "M",
+          "model": null,
+          "effort": null,
+          "at": 1790268420000,
+          "notes": []
+        },
+        {
+          "agent": "beacon-qa",
+          "member": "qa",
+          "role": "qa",
+          "kind": "claude",
+          "tier": "M",
+          "model": null,
+          "effort": null,
+          "at": 1790268420000,
+          "notes": []
+        },
+        {
+          "agent": "beacon-reviewer-a",
+          "member": "reviewer-a",
+          "role": "reviewer",
+          "kind": "claude",
+          "tier": "L",
+          "model": "opus",
+          "effort": "high",
+          "at": 1790269020000,
+          "notes": [
+            "isolated",
+            "override-kind"
+          ]
+        },
+        {
+          "agent": "beacon-native",
+          "member": "native",
+          "role": "native",
+          "kind": "claude",
+          "tier": "L",
+          "model": null,
+          "effort": null,
+          "at": 1790270640000,
+          "notes": []
+        },
+        {
+          "agent": "beacon-qa",
+          "member": "qa",
+          "role": "qa",
+          "kind": "claude",
+          "tier": "M",
+          "model": null,
+          "effort": null,
+          "at": 1790270640000,
+          "notes": []
+        },
+        {
+          "agent": "beacon-reviewer-a",
+          "member": "reviewer-a",
+          "role": "reviewer",
+          "kind": "claude",
+          "tier": "L",
+          "model": "opus",
+          "effort": "high",
+          "at": 1790271600000,
+          "notes": [
+            "isolated",
+            "override-kind"
+          ]
+        },
+        {
+          "agent": "beacon-reviewer-a",
+          "member": "reviewer-a",
+          "role": "reviewer",
+          "kind": "claude",
+          "tier": "L",
+          "model": "opus",
+          "effort": "high",
+          "at": 1790272800000,
+          "notes": [
+            "isolated",
+            "override-kind"
+          ]
+        }
+      ],
+      "repairWaves": 0
+    },
+    {
+      "project": "teamflow",
+      "dir": "2026-09-24-rest",
+      "display": "示範任務 rest",
+      "status": "done",
+      "closedAt": "2026-09-24T20:14",
+      "totalMin": 148,
+      "waves": 1,
+      "rulings": 16,
+      "autonomousRulings": 6,
+      "minors": 4,
+      "reReviews": 1,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": 46,
+          "reviewMin": 16
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "teamflow",
+      "dir": "2026-09-24-bklog",
+      "display": "示範任務 bklog",
+      "status": "done",
+      "closedAt": "2026-09-24T16:42",
+      "totalMin": 516,
+      "waves": 2,
+      "rulings": 17,
+      "autonomousRulings": 8,
+      "minors": 13,
+      "reReviews": 1,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": 33,
+          "reviewMin": 22
+        },
+        {
+          "wave": 2,
+          "devMin": 15,
+          "reviewMin": 6
+        }
+      ],
+      "dispatch": [
+        {
+          "agent": "bklog-reviewer-p1",
+          "member": "reviewer-p1",
+          "role": "reviewer",
+          "kind": "claude",
+          "tier": "L",
+          "model": "opus",
+          "effort": "high",
+          "at": 1790208540000,
+          "notes": [
+            "isolated",
+            "override-kind"
+          ]
+        },
+        {
+          "agent": "bklog-backend-watch",
+          "member": "backend-watch",
+          "role": "backend",
+          "kind": "claude",
+          "tier": "M",
+          "model": "opus",
+          "effort": "medium",
+          "at": 1790231520000,
+          "notes": []
+        },
+        {
+          "agent": "bklog-backend-msg",
+          "member": "backend-msg",
+          "role": "backend",
+          "kind": "claude",
+          "tier": "M",
+          "model": "opus",
+          "effort": "medium",
+          "at": 1790231520000,
+          "notes": []
+        },
+        {
+          "agent": "bklog-backend-brief",
+          "member": "backend-brief",
+          "role": "backend",
+          "kind": "claude",
+          "tier": "M",
+          "model": "opus",
+          "effort": "medium",
+          "at": 1790231520000,
+          "notes": []
+        },
+        {
+          "agent": "bklog-backend-docs",
+          "member": "backend-docs",
+          "role": "backend",
+          "kind": "claude",
+          "tier": "M",
+          "model": "opus",
+          "effort": "medium",
+          "at": 1790231520000,
+          "notes": []
+        },
+        {
+          "agent": "bklog-frontend-shell",
+          "member": "frontend-shell",
+          "role": "frontend",
+          "kind": "claude",
+          "tier": "M",
+          "model": "sonnet",
+          "effort": "medium",
+          "at": 1790231520000,
+          "notes": []
+        },
+        {
+          "agent": "bklog-backend",
+          "member": "backend",
+          "role": "backend",
+          "kind": "claude",
+          "tier": "L",
+          "model": "opus",
+          "effort": "high",
+          "at": 1790231520000,
+          "notes": []
+        },
+        {
+          "agent": "bklog-reviewer-a",
+          "member": "reviewer-a",
+          "role": "reviewer",
+          "kind": "claude",
+          "tier": "L",
+          "model": "opus",
+          "effort": "high",
+          "at": 1790233500000,
+          "notes": [
+            "isolated",
+            "override-kind"
+          ]
+        },
+        {
+          "agent": "bklog-backend-msg",
+          "member": "backend-msg",
+          "role": "backend",
+          "kind": "claude",
+          "tier": "M",
+          "model": "opus",
+          "effort": "medium",
+          "at": 1790235120000,
+          "notes": []
+        },
+        {
+          "agent": "bklog-backend-brief",
+          "member": "backend-brief",
+          "role": "backend",
+          "kind": "claude",
+          "tier": "M",
+          "model": "opus",
+          "effort": "medium",
+          "at": 1790235120000,
+          "notes": []
+        },
+        {
+          "agent": "bklog-backend-docs",
+          "member": "backend-docs",
+          "role": "backend",
+          "kind": "claude",
+          "tier": "M",
+          "model": "opus",
+          "effort": "medium",
+          "at": 1790235120000,
+          "notes": []
+        },
+        {
+          "agent": "bklog-reviewer-a",
+          "member": "reviewer-a",
+          "role": "reviewer",
+          "kind": "claude",
+          "tier": "L",
+          "model": "opus",
+          "effort": "high",
+          "at": 1790236020000,
+          "notes": [
+            "isolated",
+            "override-kind"
+          ]
+        }
+      ],
+      "repairWaves": 1
+    },
+    {
+      "project": "teamflow",
+      "dir": "2026-09-24-testtrust",
+      "display": "示範任務 testtrust",
+      "status": "done",
+      "closedAt": "2026-09-24T14:22",
+      "totalMin": 453,
+      "waves": 2,
+      "rulings": 12,
+      "autonomousRulings": 4,
+      "minors": 7,
+      "reReviews": 0,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": 64,
+          "reviewMin": 6
+        },
+        {
+          "wave": 2,
+          "devMin": 7,
+          "reviewMin": 3
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "sport-demo",
+      "dir": "2026-09-23-swq",
+      "display": "示範任務 swq",
+      "status": "abandoned",
+      "closedAt": "2026-09-23T23:13",
+      "totalMin": 103,
+      "waves": 1,
+      "rulings": 15,
+      "autonomousRulings": 10,
+      "minors": 9,
+      "reReviews": 1,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": 75,
+          "reviewMin": 61
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "sport-demo",
+      "dir": "2026-09-23-swp",
+      "display": "示範任務 swp",
+      "status": "done",
+      "closedAt": "2026-09-23T20:19",
+      "totalMin": 211,
+      "waves": 4,
+      "rulings": 14,
+      "autonomousRulings": 0,
+      "minors": 12,
+      "reReviews": 0,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": 19,
+          "reviewMin": 6
+        },
+        {
+          "wave": 2,
+          "devMin": 12,
+          "reviewMin": 6
+        },
+        {
+          "wave": 3,
+          "devMin": 4,
+          "reviewMin": 3
+        },
+        {
+          "wave": 4,
+          "devMin": 3,
+          "reviewMin": 1
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "teamflow",
+      "dir": "2026-09-23-ops",
+      "display": "示範任務 ops",
+      "status": "done",
+      "closedAt": "2026-09-23T11:44",
+      "totalMin": 234,
+      "waves": 4,
+      "rulings": 19,
+      "autonomousRulings": 0,
+      "minors": 17,
+      "reReviews": 2,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": 28,
+          "reviewMin": 12
+        },
+        {
+          "wave": 2,
+          "devMin": 9,
+          "reviewMin": 13
+        },
+        {
+          "wave": 3,
+          "devMin": 11,
+          "reviewMin": 6
+        },
+        {
+          "wave": 4,
+          "devMin": 31,
+          "reviewMin": 7
+        }
+      ],
+      "dispatch": [
+        {
+          "agent": "ops-reviewer-p1",
+          "member": "reviewer-p1",
+          "role": "reviewer",
+          "kind": "claude",
+          "tier": "L",
+          "model": "opus",
+          "effort": "high",
+          "at": 1790121240000,
+          "notes": [
+            "isolated",
+            "override-kind"
+          ]
+        },
+        {
+          "agent": "ops-backend-kinds",
+          "member": "backend-kinds",
+          "role": "backend",
+          "kind": "claude",
+          "tier": "M",
+          "model": "opus",
+          "effort": "medium",
+          "at": 1790124360000,
+          "notes": []
+        },
+        {
+          "agent": "ops-backend-flow",
+          "member": "backend-flow",
+          "role": "backend",
+          "kind": "claude",
+          "tier": "M",
+          "model": "opus",
+          "effort": "medium",
+          "at": 1790124360000,
+          "notes": []
+        },
+        {
+          "agent": "ops-backend-docs",
+          "member": "backend-docs",
+          "role": "backend",
+          "kind": "claude",
+          "tier": "S",
+          "model": "opus",
+          "effort": "low",
+          "at": 1790124360000,
+          "notes": []
+        },
+        {
+          "agent": "ops-backend",
+          "member": "backend",
+          "role": "backend",
+          "kind": "codex",
+          "tier": "M",
+          "model": "gpt-5.5",
+          "effort": "medium",
+          "at": 1790124360000,
+          "notes": [
+            "override-kind"
+          ]
+        },
+        {
+          "agent": "ops-reviewer-a",
+          "member": "reviewer-a",
+          "role": "reviewer",
+          "kind": "claude",
+          "tier": "M",
+          "model": "opus",
+          "effort": "medium",
+          "at": 1790126160000,
+          "notes": [
+            "isolated",
+            "override-kind"
+          ]
+        },
+        {
+          "agent": "ops-reviewer-a",
+          "member": "reviewer-a",
+          "role": "reviewer",
+          "kind": "claude",
+          "tier": "L",
+          "model": "opus",
+          "effort": "high",
+          "at": 1790127060000,
+          "notes": [
+            "isolated",
+            "override-kind"
+          ]
+        },
+        {
+          "agent": "ops-backend-kinds",
+          "member": "backend-kinds",
+          "role": "backend",
+          "kind": "claude",
+          "tier": "S",
+          "model": "opus",
+          "effort": "low",
+          "at": 1790128080000,
+          "notes": []
+        },
+        {
+          "agent": "ops-backend-flow",
+          "member": "backend-flow",
+          "role": "backend",
+          "kind": "claude",
+          "tier": "S",
+          "model": "opus",
+          "effort": "low",
+          "at": 1790128080000,
+          "notes": []
+        },
+        {
+          "agent": "ops-backend",
+          "member": "backend",
+          "role": "backend",
+          "kind": "claude",
+          "tier": "L",
+          "model": "opus",
+          "effort": "high",
+          "at": 1790128080000,
+          "notes": [
+            "resume",
+            "handoff"
+          ]
+        },
+        {
+          "agent": "ops-backend-docs",
+          "member": "backend-docs",
+          "role": "backend",
+          "kind": "claude",
+          "tier": "S",
+          "model": "opus",
+          "effort": "low",
+          "at": 1790128080000,
+          "notes": []
+        },
+        {
+          "agent": "ops-reviewer-a",
+          "member": "reviewer-a",
+          "role": "reviewer",
+          "kind": "claude",
+          "tier": "M",
+          "model": "opus",
+          "effort": "medium",
+          "at": 1790128680000,
+          "notes": [
+            "isolated",
+            "override-kind"
+          ]
+        },
+        {
+          "agent": "ops-reviewer-a",
+          "member": "reviewer-a",
+          "role": "reviewer",
+          "kind": "claude",
+          "tier": "L",
+          "model": "opus",
+          "effort": "high",
+          "at": 1790129580000,
+          "notes": [
+            "isolated",
+            "override-kind"
+          ]
+        },
+        {
+          "agent": "ops-backend-kinds",
+          "member": "backend-kinds",
+          "role": "backend",
+          "kind": "claude",
+          "tier": "S",
+          "model": "opus",
+          "effort": "low",
+          "at": 1790130120000,
+          "notes": []
+        },
+        {
+          "agent": "ops-backend-flow",
+          "member": "backend-flow",
+          "role": "backend",
+          "kind": "claude",
+          "tier": "S",
+          "model": "opus",
+          "effort": "low",
+          "at": 1790130120000,
+          "notes": []
+        },
+        {
+          "agent": "ops-backend-docs",
+          "member": "backend-docs",
+          "role": "backend",
+          "kind": "claude",
+          "tier": "S",
+          "model": "opus",
+          "effort": "low",
+          "at": 1790130180000,
+          "notes": []
+        },
+        {
+          "agent": "ops-reviewer-a",
+          "member": "reviewer-a",
+          "role": "reviewer",
+          "kind": "claude",
+          "tier": "M",
+          "model": "opus",
+          "effort": "medium",
+          "at": 1790130780000,
+          "notes": [
+            "isolated",
+            "override-kind"
+          ]
+        },
+        {
+          "agent": "ops-reviewer-a",
+          "member": "reviewer-a",
+          "role": "reviewer",
+          "kind": "claude",
+          "tier": "L",
+          "model": "opus",
+          "effort": "high",
+          "at": 1790131500000,
+          "notes": [
+            "isolated",
+            "override-kind"
+          ]
+        },
+        {
+          "agent": "ops-backend-kinds",
+          "member": "backend-kinds",
+          "role": "backend",
+          "kind": "claude",
+          "tier": "S",
+          "model": "opus",
+          "effort": "low",
+          "at": 1790131860000,
+          "notes": []
+        },
+        {
+          "agent": "ops-backend-docs",
+          "member": "backend-docs",
+          "role": "backend",
+          "kind": "claude",
+          "tier": "S",
+          "model": "opus",
+          "effort": "low",
+          "at": 1790131860000,
+          "notes": []
+        },
+        {
+          "agent": "ops-reviewer-a",
+          "member": "reviewer-a",
+          "role": "reviewer",
+          "kind": "claude",
+          "tier": "M",
+          "model": "opus",
+          "effort": "medium",
+          "at": 1790133720000,
+          "notes": [
+            "isolated",
+            "override-kind"
+          ]
+        }
+      ],
+      "repairWaves": 3
+    },
+    {
+      "project": "teamflow",
+      "dir": "2026-09-22-tasktab",
+      "display": "示範任務 tasktab",
+      "status": "done",
+      "closedAt": "2026-09-23T00:38",
+      "totalMin": 204,
+      "waves": 4,
+      "rulings": 22,
+      "autonomousRulings": 0,
+      "minors": 0,
+      "reReviews": 0,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": 22,
+          "reviewMin": 10
+        },
+        {
+          "wave": 2,
+          "devMin": 8,
+          "reviewMin": 6
+        },
+        {
+          "wave": 3,
+          "devMin": 9,
+          "reviewMin": 7
+        },
+        {
+          "wave": 4,
+          "devMin": 4,
+          "reviewMin": 2
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "sport-demo",
+      "dir": "2026-09-22-swo",
+      "display": "示範任務 swo",
+      "status": "done",
+      "closedAt": "2026-09-22T22:59",
+      "totalMin": 171,
+      "waves": 2,
+      "rulings": 29,
+      "autonomousRulings": 0,
+      "minors": 10,
+      "reReviews": 2,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": 23,
+          "reviewMin": 23
+        },
+        {
+          "wave": 2,
+          "devMin": 2,
+          "reviewMin": 33
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "sport-demo",
+      "dir": "2026-09-20-swn",
+      "display": "示範任務 swn",
+      "status": "abandoned",
+      "closedAt": "2026-09-20T16:50",
+      "totalMin": 3,
+      "waves": 0,
+      "rulings": 1,
+      "autonomousRulings": 0,
+      "minors": 0,
+      "reReviews": 0,
+      "perWave": [],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "teamflow",
+      "dir": "2026-09-20-multirepo",
+      "display": "示範任務 multirepo",
+      "status": "done",
+      "closedAt": "2026-09-20T14:11",
+      "totalMin": 335,
+      "waves": 5,
+      "rulings": 20,
+      "autonomousRulings": 0,
+      "minors": 3,
+      "reReviews": 1,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": 40,
+          "reviewMin": 21
+        },
+        {
+          "wave": 2,
+          "devMin": 26,
+          "reviewMin": 7
+        },
+        {
+          "wave": 3,
+          "devMin": 27,
+          "reviewMin": 9
+        },
+        {
+          "wave": 4,
+          "devMin": 14,
+          "reviewMin": 10
+        },
+        {
+          "wave": 5,
+          "devMin": 11,
+          "reviewMin": 6
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "teamflow",
+      "dir": "2026-09-19-watchtime",
+      "display": "示範任務 watchtime",
+      "status": "done",
+      "closedAt": "2026-09-19T23:59",
+      "totalMin": 123,
+      "waves": 2,
+      "rulings": 7,
+      "autonomousRulings": 0,
+      "minors": 10,
+      "reReviews": 0,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": 33,
+          "reviewMin": 7
+        },
+        {
+          "wave": 2,
+          "devMin": 7,
+          "reviewMin": 6
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "sport-demo",
+      "dir": "2026-09-19-swl",
+      "display": "示範任務 swl",
+      "status": "done",
+      "closedAt": "2026-09-19T23:15",
+      "totalMin": 152,
+      "waves": 3,
+      "rulings": 19,
+      "autonomousRulings": 0,
+      "minors": 7,
+      "reReviews": 1,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": null,
+          "reviewMin": 0
+        },
+        {
+          "wave": 2,
+          "devMin": 16,
+          "reviewMin": 10
+        },
+        {
+          "wave": 3,
+          "devMin": 1,
+          "reviewMin": 39
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "teamflow",
+      "dir": "2026-09-19-highfix",
+      "display": "示範任務 highfix",
+      "status": "done",
+      "closedAt": "2026-09-19T21:45",
+      "totalMin": 66,
+      "waves": 2,
+      "rulings": 6,
+      "autonomousRulings": 0,
+      "minors": 4,
+      "reReviews": 0,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": 19,
+          "reviewMin": 7
+        },
+        {
+          "wave": 2,
+          "devMin": 1,
+          "reviewMin": 3
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "teamflow",
+      "dir": "2026-09-19-flowgap",
+      "display": "示範任務 flowgap",
+      "status": "done",
+      "closedAt": "2026-09-19T19:11",
+      "totalMin": 279,
+      "waves": 4,
+      "rulings": 12,
+      "autonomousRulings": 0,
+      "minors": 2,
+      "reReviews": 2,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": 22,
+          "reviewMin": 125
+        },
+        {
+          "wave": 2,
+          "devMin": 1,
+          "reviewMin": 4
+        },
+        {
+          "wave": 3,
+          "devMin": 0,
+          "reviewMin": 5
+        },
+        {
+          "wave": 4,
+          "devMin": 0,
+          "reviewMin": 6
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "sport-demo",
+      "dir": "2026-09-19-swk",
+      "display": "示範任務 swk",
+      "status": "done",
+      "closedAt": "2026-09-19T13:13",
+      "totalMin": 150,
+      "waves": 3,
+      "rulings": 13,
+      "autonomousRulings": 0,
+      "minors": 0,
+      "reReviews": 0,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": null,
+          "reviewMin": 0
+        },
+        {
+          "wave": 2,
+          "devMin": null,
+          "reviewMin": 7
+        },
+        {
+          "wave": 3,
+          "devMin": null,
+          "reviewMin": 6
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "sport-demo",
+      "dir": "2026-09-19-swj",
+      "display": "示範任務 swj",
+      "status": "done",
+      "closedAt": "2026-09-19T10:27",
+      "totalMin": 202,
+      "waves": 3,
+      "rulings": 14,
+      "autonomousRulings": 0,
+      "minors": 0,
+      "reReviews": 0,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": null,
+          "reviewMin": 21
+        },
+        {
+          "wave": 2,
+          "devMin": null,
+          "reviewMin": 17
+        },
+        {
+          "wave": 3,
+          "devMin": null,
+          "reviewMin": 19
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "sport-demo",
+      "dir": "2026-09-19-swm",
+      "display": "示範任務 swm",
+      "status": "done",
+      "closedAt": "2026-09-19T07:00",
+      "totalMin": 314,
+      "waves": 2,
+      "rulings": 5,
+      "autonomousRulings": 0,
+      "minors": 0,
+      "reReviews": 0,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": null,
+          "reviewMin": 5
+        },
+        {
+          "wave": 2,
+          "devMin": null,
+          "reviewMin": 7
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "sport-demo",
+      "dir": "2026-09-16-swg",
+      "display": "示範任務 swg",
+      "status": "abandoned",
+      "closedAt": "2026-09-19T01:45",
+      "totalMin": 3377,
+      "waves": 0,
+      "rulings": 0,
+      "autonomousRulings": 0,
+      "minors": 0,
+      "reReviews": 0,
+      "perWave": [],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "sport-demo",
+      "dir": "2026-09-16-swf",
+      "display": "示範任務 swf",
+      "status": "done",
+      "closedAt": "2026-09-16T23:39",
+      "totalMin": 43,
+      "waves": 1,
+      "rulings": 1,
+      "autonomousRulings": 0,
+      "minors": 0,
+      "reReviews": 0,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": null,
+          "reviewMin": 20
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "sport-demo",
+      "dir": "2026-09-16-swe",
+      "display": "示範任務 swe",
+      "status": "done",
+      "closedAt": "2026-09-16T22:46",
+      "totalMin": 81,
+      "waves": 1,
+      "rulings": 5,
+      "autonomousRulings": 0,
+      "minors": 0,
+      "reReviews": 0,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": null,
+          "reviewMin": 40
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "sport-demo",
+      "dir": "2026-09-16-swd",
+      "display": "示範任務 swd",
+      "status": "done",
+      "closedAt": "2026-09-16T21:18",
+      "totalMin": 35,
+      "waves": 1,
+      "rulings": 1,
+      "autonomousRulings": 0,
+      "minors": 0,
+      "reReviews": 0,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": null,
+          "reviewMin": 23
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "sport-demo",
+      "dir": "2026-09-16-swh",
+      "display": "示範任務 swh",
+      "status": "done",
+      "closedAt": "2026-09-16T20:08",
+      "totalMin": 73,
+      "waves": 1,
+      "rulings": 4,
+      "autonomousRulings": 0,
+      "minors": 0,
+      "reReviews": 1,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": null,
+          "reviewMin": 26
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "sport-demo",
+      "dir": "2026-09-15-swc",
+      "display": "示範任務 swc",
+      "status": "done",
+      "closedAt": "2026-09-16T16:53",
+      "totalMin": 1309,
+      "waves": 14,
+      "rulings": 39,
+      "autonomousRulings": 0,
+      "minors": 0,
+      "reReviews": 5,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": null,
+          "reviewMin": 16
+        },
+        {
+          "wave": 2,
+          "devMin": null,
+          "reviewMin": 23
+        },
+        {
+          "wave": 3,
+          "devMin": null,
+          "reviewMin": 11
+        },
+        {
+          "wave": 4,
+          "devMin": null,
+          "reviewMin": 15
+        },
+        {
+          "wave": 5,
+          "devMin": null,
+          "reviewMin": 48
+        },
+        {
+          "wave": 6,
+          "devMin": null,
+          "reviewMin": 18
+        },
+        {
+          "wave": 7,
+          "devMin": null,
+          "reviewMin": 51
+        },
+        {
+          "wave": 8,
+          "devMin": null,
+          "reviewMin": 17
+        },
+        {
+          "wave": 9,
+          "devMin": null,
+          "reviewMin": 21
+        },
+        {
+          "wave": 10,
+          "devMin": null,
+          "reviewMin": 36
+        },
+        {
+          "wave": 11,
+          "devMin": null,
+          "reviewMin": 13
+        },
+        {
+          "wave": 12,
+          "devMin": null,
+          "reviewMin": 24
+        },
+        {
+          "wave": 13,
+          "devMin": null,
+          "reviewMin": 14
+        },
+        {
+          "wave": 14,
+          "devMin": null,
+          "reviewMin": 11
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "sport-demo",
+      "dir": "2026-09-13-swb",
+      "display": "示範任務 swb",
+      "status": "done",
+      "closedAt": "2026-09-14T14:17",
+      "totalMin": 884,
+      "waves": 2,
+      "rulings": 3,
+      "autonomousRulings": 0,
+      "minors": 0,
+      "reReviews": 0,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": null,
+          "reviewMin": 21
+        },
+        {
+          "wave": 2,
+          "devMin": null,
+          "reviewMin": 216
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "sport-demo",
+      "dir": "2026-09-12-swa",
+      "display": "示範任務 swa",
+      "status": "done",
+      "closedAt": "2026-09-12T23:46",
+      "totalMin": 137,
+      "waves": 3,
+      "rulings": 11,
+      "autonomousRulings": 0,
+      "minors": 0,
+      "reReviews": 3,
+      "perWave": [
+        {
+          "wave": 1,
+          "devMin": null,
+          "reviewMin": 40
+        },
+        {
+          "wave": 2,
+          "devMin": null,
+          "reviewMin": 0
+        },
+        {
+          "wave": 3,
+          "devMin": null,
+          "reviewMin": 12
+        }
+      ],
+      "dispatch": [],
+      "repairWaves": 0
+    },
+    {
+      "project": "sport-demo",
+      "dir": "2026-09-18-swi",
+      "display": "示範任務 swi",
+      "status": "abandoned",
+      "closedAt": null,
+      "totalMin": null,
+      "waves": 0,
+      "rulings": 1,
+      "autonomousRulings": 0,
+      "minors": 0,
+      "reReviews": 0,
+      "perWave": [],
+      "dispatch": [],
+      "repairWaves": 0
+    }
+  ]
+}

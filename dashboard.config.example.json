@@ -1,0 +1,7 @@
+{
+  "projects": [
+    { "name": "my-project", "path": "/path/to/my-project" },
+    { "name": "dkbo-team-dashboard", "path": "/path/to/dkbo-team-dashboard" }
+  ],
+  "pollMs": 5000
+}

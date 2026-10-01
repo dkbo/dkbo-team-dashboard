@@ -1,0 +1,3822 @@
+{
+  "generatedAt": 1790332813119,
+  "projects": [
+    {
+      "name": "teamflow",
+      "path": "/projects/teamflow",
+      "dkboVersion": "0.17.0",
+      "mode": "native",
+      "error": null,
+      "stale": false,
+      "fetchedAt": 1790332812720,
+      "list": {
+        "schema_version": 1,
+        "dkbo_version": "0.17.0",
+        "generated_at": "2026-09-25T18:40",
+        "kinds_down": [
+          {
+            "kind": "agy",
+            "until": "2026-09-30T20:49",
+            "until_epoch": 1790772549,
+            "exact": true,
+            "recorded_at": "2026-09-24T06:55",
+            "from_task": "2026-09-24-testtrust",
+            "agent": "testtrust-reviewer-p3",
+            "reason": "⚠ Individual quota reached. Please upgrade your subscription to increase your limits."
+          },
+          {
+            "kind": "codex",
+            "until": "2026-10-11T19:32",
+            "until_epoch": 1791718349,
+            "exact": true,
+            "recorded_at": "2026-09-24T06:52",
+            "from_task": "2026-09-24-testtrust",
+            "agent": "testtrust-reviewer-p2",
+            "reason": "■ You’ve hit your usage limit. Upgrade to Plus to continue using Codex"
+          }
+        ],
+        "tasks": [
+          {
+            "dir": "2026-09-19-briefrev",
+            "short": "briefrev",
+            "display": null,
+            "date": "2026-09-19",
+            "status": "unknown",
+            "index_note": null,
+            "branch": null,
+            "worktree": null,
+            "task_tab": null,
+            "repo_names": [],
+            "current_wave": null,
+            "waves_planned": 0,
+            "waves_closed": 0,
+            "created_at": null,
+            "gate1_at": null,
+            "closed_at": null,
+            "close_result": null,
+            "updated_at": null,
+            "panes_open": 0,
+            "counts": {
+              "rulings": 0,
+              "autonomous_rulings": 0,
+              "minors": 0,
+              "undelivered": 0,
+              "escalations": 0
+            }
+          },
+          {
+            "dir": "2026-09-19-flowgap",
+            "short": "flowgap",
+            "display": "示範任務 flowgap",
+            "date": "2026-09-19",
+            "status": "done",
+            "index_note": "merged 675a0e2",
+            "branch": "dk/flowgap",
+            "worktree": "/projects/teamflow/.worktrees/flowgap",
+            "task_tab": null,
+            "repo_names": [],
+            "current_wave": null,
+            "waves_planned": 4,
+            "waves_closed": 4,
+            "created_at": "2026-09-19T14:32",
+            "gate1_at": "2026-09-19T14:47",
+            "closed_at": "2026-09-19T19:11",
+            "close_result": "merged 675a0e2",
+            "updated_at": "2026-09-19T19:11",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 12,
+              "autonomous_rulings": 0,
+              "minors": 2,
+              "undelivered": 2,
+              "escalations": 0
+            }
+          },
+          {
+            "dir": "2026-09-19-highfix",
+            "short": "highfix",
+            "display": "示範任務 highfix",
+            "date": "2026-09-19",
+            "status": "done",
+            "index_note": "merged 24ea0a7",
+            "branch": "dk/highfix",
+            "worktree": "/projects/teamflow/.worktrees/highfix",
+            "task_tab": null,
+            "repo_names": [],
+            "current_wave": null,
+            "waves_planned": 2,
+            "waves_closed": 2,
+            "created_at": "2026-09-19T20:39",
+            "gate1_at": "2026-09-19T20:45",
+            "closed_at": "2026-09-19T21:45",
+            "close_result": "merged 24ea0a7",
+            "updated_at": "2026-09-19T21:45",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 6,
+              "autonomous_rulings": 0,
+              "minors": 4,
+              "undelivered": 1,
+              "escalations": 0
+            }
+          },
+          {
+            "dir": "2026-09-19-watchtime",
+            "short": "watchtime",
+            "display": "示範任務 watchtime",
+            "date": "2026-09-19",
+            "status": "done",
+            "index_note": "merged 4cf5e82",
+            "branch": "dk/watchtime",
+            "worktree": "/projects/teamflow/.worktrees/watchtime",
+            "task_tab": null,
+            "repo_names": [],
+            "current_wave": null,
+            "waves_planned": 2,
+            "waves_closed": 2,
+            "created_at": "2026-09-19T21:56",
+            "gate1_at": "2026-09-19T22:42",
+            "closed_at": "2026-09-19T23:59",
+            "close_result": "merged 4cf5e82",
+            "updated_at": "2026-09-19T23:59",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 7,
+              "autonomous_rulings": 0,
+              "minors": 10,
+              "undelivered": 0,
+              "escalations": 0
+            }
+          },
+          {
+            "dir": "2026-09-20-multirepo",
+            "short": "multirepo",
+            "display": "示範任務 multirepo",
+            "date": "2026-09-20",
+            "status": "done",
+            "index_note": "merged b99690e",
+            "branch": "dk/multirepo",
+            "worktree": "/projects/teamflow/.worktrees/multirepo",
+            "task_tab": null,
+            "repo_names": [],
+            "current_wave": null,
+            "waves_planned": 5,
+            "waves_closed": 5,
+            "created_at": "2026-09-20T08:36",
+            "gate1_at": "2026-09-20T08:57",
+            "closed_at": "2026-09-20T14:11",
+            "close_result": "merged b99690e",
+            "updated_at": "2026-09-20T14:11",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 20,
+              "autonomous_rulings": 0,
+              "minors": 3,
+              "undelivered": 2,
+              "escalations": 3
+            }
+          },
+          {
+            "dir": "2026-09-22-tasktab",
+            "short": "tasktab",
+            "display": "示範任務 tasktab",
+            "date": "2026-09-22",
+            "status": "done",
+            "index_note": "merged 0a50f1f",
+            "branch": "dk/tasktab",
+            "worktree": "/projects/teamflow/.worktrees/tasktab",
+            "task_tab": null,
+            "repo_names": [
+              "main"
+            ],
+            "current_wave": null,
+            "waves_planned": 4,
+            "waves_closed": 4,
+            "created_at": "2026-09-22T21:14",
+            "gate1_at": "2026-09-22T21:42",
+            "closed_at": "2026-09-23T00:38",
+            "close_result": "merged 0a50f1f",
+            "updated_at": "2026-09-23T00:38",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 22,
+              "autonomous_rulings": 0,
+              "minors": 0,
+              "undelivered": 0,
+              "escalations": 1
+            }
+          },
+          {
+            "dir": "2026-09-23-ops",
+            "short": "ops",
+            "display": "示範任務 ops",
+            "date": "2026-09-23",
+            "status": "done",
+            "index_note": "merged ccb5668",
+            "branch": "dk/ops",
+            "worktree": "/projects/teamflow/.worktrees/ops",
+            "task_tab": "wB:tJ",
+            "repo_names": [
+              "main"
+            ],
+            "current_wave": null,
+            "waves_planned": 4,
+            "waves_closed": 4,
+            "created_at": "2026-09-23T07:50",
+            "gate1_at": "2026-09-23T08:45",
+            "closed_at": "2026-09-23T11:44",
+            "close_result": "merged ccb5668",
+            "updated_at": "2026-09-23T11:44",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 19,
+              "autonomous_rulings": 0,
+              "minors": 17,
+              "undelivered": 2,
+              "escalations": 1
+            }
+          },
+          {
+            "dir": "2026-09-24-bklog",
+            "short": "bklog",
+            "display": "示範任務 bklog",
+            "date": "2026-09-24",
+            "status": "done",
+            "index_note": "merged 8dc8442",
+            "branch": "dk/bklog",
+            "worktree": "/projects/teamflow/.worktrees/bklog",
+            "task_tab": "wB:tM",
+            "repo_names": [
+              "main"
+            ],
+            "current_wave": null,
+            "waves_planned": 2,
+            "waves_closed": 2,
+            "created_at": "2026-09-24T08:06",
+            "gate1_at": "2026-09-24T08:44",
+            "closed_at": "2026-09-24T16:42",
+            "close_result": "merged 8dc8442",
+            "updated_at": "2026-09-24T16:42",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 17,
+              "autonomous_rulings": 8,
+              "minors": 13,
+              "undelivered": 1,
+              "escalations": 3
+            }
+          },
+          {
+            "dir": "2026-09-24-rest",
+            "short": "rest",
+            "display": "示範任務 rest",
+            "date": "2026-09-24",
+            "status": "done",
+            "index_note": "merged 82bd82b",
+            "branch": "dk/rest",
+            "worktree": "/projects/teamflow/.worktrees/rest",
+            "task_tab": "wB:tP",
+            "repo_names": [
+              "main"
+            ],
+            "current_wave": null,
+            "waves_planned": 1,
+            "waves_closed": 1,
+            "created_at": "2026-09-24T17:46",
+            "gate1_at": "2026-09-24T18:46",
+            "closed_at": "2026-09-24T20:14",
+            "close_result": "merged 82bd82b",
+            "updated_at": "2026-09-24T20:14",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 16,
+              "autonomous_rulings": 6,
+              "minors": 4,
+              "undelivered": 2,
+              "escalations": 0
+            }
+          },
+          {
+            "dir": "2026-09-24-testtrust",
+            "short": "testtrust",
+            "display": "示範任務 testtrust",
+            "date": "2026-09-24",
+            "status": "done",
+            "index_note": "merged d887626",
+            "branch": "dk/testtrust",
+            "worktree": "/projects/teamflow/.worktrees/testtrust",
+            "task_tab": "wB:tK",
+            "repo_names": [
+              "main"
+            ],
+            "current_wave": null,
+            "waves_planned": 2,
+            "waves_closed": 2,
+            "created_at": "2026-09-24T06:49",
+            "gate1_at": "2026-09-24T08:04",
+            "closed_at": "2026-09-24T14:22",
+            "close_result": "merged d887626",
+            "updated_at": "2026-09-24T14:22",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 12,
+              "autonomous_rulings": 4,
+              "minors": 7,
+              "undelivered": 0,
+              "escalations": 0
+            }
+          },
+          {
+            "dir": "2026-09-25-status",
+            "short": "status",
+            "display": "示範任務 status",
+            "date": "2026-09-25",
+            "status": "done",
+            "index_note": "merged e99d452",
+            "branch": "dk/status",
+            "worktree": "/projects/teamflow/.worktrees/status",
+            "task_tab": "wB:tR",
+            "repo_names": [
+              "main"
+            ],
+            "current_wave": null,
+            "waves_planned": 1,
+            "waves_closed": 1,
+            "created_at": "2026-09-25T09:10",
+            "gate1_at": "2026-09-25T09:22",
+            "closed_at": "2026-09-25T13:45",
+            "close_result": "merged e99d452",
+            "updated_at": "2026-09-25T13:45",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 10,
+              "autonomous_rulings": 2,
+              "minors": 3,
+              "undelivered": 0,
+              "escalations": 0
+            }
+          }
+        ]
+      },
+      "active": {},
+      "panes": [],
+      "otherPanes": [
+        {
+          "paneId": "wB:p4C",
+          "tabId": "wB:tG",
+          "workspaceId": "wB",
+          "name": null,
+          "agent": "claude",
+          "status": "idle",
+          "cwd": "/projects/teamflow",
+          "model": "opus 5.5",
+          "effort": "medium",
+          "cost": 1.94,
+          "ctxPct": 10,
+          "usage5hPct": null,
+          "usageWkPct": 35,
+          "taskDir": null,
+          "member": null
+        }
+      ]
+    },
+    {
+      "name": "collect",
+      "path": "/projects/collect",
+      "dkboVersion": "0.16.0",
+      "mode": "compat",
+      "error": null,
+      "stale": false,
+      "fetchedAt": 1790332812093,
+      "list": {
+        "schema_version": 1,
+        "dkbo_version": "0.17.0",
+        "generated_at": "2026-09-25T18:40",
+        "kinds_down": [
+          {
+            "kind": "agy",
+            "until": "2026-09-30T20:49",
+            "until_epoch": 1790772542,
+            "exact": true,
+            "recorded_at": "2026-09-25T00:24",
+            "from_task": "2026-09-25-beacon",
+            "agent": "beacon-reviewer-p3",
+            "reason": "⚠ Individual quota reached. Please"
+          },
+          {
+            "kind": "codex",
+            "until": "2026-10-11T19:32",
+            "until_epoch": 1791718351,
+            "exact": true,
+            "recorded_at": "2026-09-25T00:22",
+            "from_task": "2026-09-25-beacon",
+            "agent": "beacon-reviewer-p2",
+            "reason": "■ You’ve hit your usage limit. Upgrade to Plus to continue using Codex"
+          }
+        ],
+        "tasks": [
+          {
+            "dir": "2026-09-25-cobalt",
+            "short": "cobalt",
+            "display": "示範任務 cobalt",
+            "date": "2026-09-25",
+            "status": "done",
+            "index_note": "merged 9d3c976",
+            "branch": "dk/cobalt",
+            "worktree": "/projects/collect/.worktrees/cobalt",
+            "task_tab": "wD:t5",
+            "repo_names": [
+              "main"
+            ],
+            "current_wave": null,
+            "waves_planned": 3,
+            "waves_closed": 3,
+            "created_at": "2026-09-25T09:27",
+            "gate1_at": "2026-09-25T09:38",
+            "closed_at": "2026-09-25T13:46",
+            "close_result": "merged 9d3c976",
+            "updated_at": "2026-09-25T13:46",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 12,
+              "autonomous_rulings": 9,
+              "minors": 6,
+              "undelivered": 4,
+              "escalations": 2
+            }
+          },
+          {
+            "dir": "2026-09-25-atlas",
+            "short": "atlas",
+            "display": "示範任務 atlas",
+            "date": "2026-09-25",
+            "status": "running",
+            "index_note": "示範備註",
+            "branch": "dk/atlas",
+            "worktree": "/projects/collect/.worktrees/atlas",
+            "task_tab": "wD:t6",
+            "repo_names": [
+              "main"
+            ],
+            "current_wave": null,
+            "waves_planned": 3,
+            "waves_closed": 3,
+            "created_at": "2026-09-25T14:19",
+            "gate1_at": "2026-09-25T14:42",
+            "closed_at": null,
+            "close_result": null,
+            "updated_at": "2026-09-25T18:39",
+            "panes_open": 1,
+            "counts": {
+              "rulings": 17,
+              "autonomous_rulings": 11,
+              "minors": 21,
+              "undelivered": 4,
+              "escalations": 4
+            }
+          },
+          {
+            "dir": "2026-09-25-beacon",
+            "short": "beacon",
+            "display": "示範任務 beacon",
+            "date": "2026-09-25",
+            "status": "done",
+            "index_note": "merged 9c10795",
+            "branch": "dk/beacon",
+            "worktree": "/projects/collect/.worktrees/beacon",
+            "task_tab": "wD:t4",
+            "repo_names": [
+              "main"
+            ],
+            "current_wave": null,
+            "waves_planned": 3,
+            "waves_closed": 3,
+            "created_at": "2026-09-25T00:19",
+            "gate1_at": "2026-09-25T00:27",
+            "closed_at": "2026-09-25T08:16",
+            "close_result": "merged 9c10795",
+            "updated_at": "2026-09-25T08:16",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 23,
+              "autonomous_rulings": 15,
+              "minors": 24,
+              "undelivered": 0,
+              "escalations": 0
+            }
+          }
+        ]
+      },
+      "active": {
+        "2026-09-25-atlas": {
+          "dir": "2026-09-25-atlas",
+          "short": "atlas",
+          "display": "示範任務 atlas",
+          "date": "2026-09-25",
+          "status": "running",
+          "index_note": "示範備註",
+          "branch": "dk/atlas",
+          "worktree": "/projects/collect/.worktrees/atlas",
+          "task_tab": "wD:t6",
+          "repo_names": [
+            "main"
+          ],
+          "current_wave": null,
+          "waves_planned": 3,
+          "waves_closed": 3,
+          "created_at": "2026-09-25T14:19",
+          "gate1_at": "2026-09-25T14:42",
+          "closed_at": null,
+          "close_result": null,
+          "updated_at": "2026-09-25T18:39",
+          "panes_open": 1,
+          "counts": {
+            "rulings": 17,
+            "autonomous_rulings": 11,
+            "minors": 21,
+            "undelivered": 4,
+            "escalations": 4
+          },
+          "repos": [
+            {
+              "name": "main",
+              "path": "/projects/collect",
+              "worktree": "/projects/collect/.worktrees/atlas",
+              "base": "13dd7c66513c72b45fc40b449c00412e6f074f41"
+            }
+          ],
+          "brief": {
+            "goal": "示範任務 atlas 的目標（已去識別化）",
+            "acceptance": [
+              {
+                "text": "AC1 示範驗收條件",
+                "checked": false
+              },
+              {
+                "text": "AC2 示範驗收條件",
+                "checked": false
+              },
+              {
+                "text": "AC3 示範驗收條件",
+                "checked": false
+              },
+              {
+                "text": "AC4 示範驗收條件",
+                "checked": false
+              },
+              {
+                "text": "AC5 示範驗收條件",
+                "checked": false
+              },
+              {
+                "text": "AC6 示範驗收條件",
+                "checked": false
+              },
+              {
+                "text": "AC7 示範驗收條件",
+                "checked": false
+              },
+              {
+                "text": "AC8 示範驗收條件",
+                "checked": false
+              },
+              {
+                "text": "AC9 示範驗收條件",
+                "checked": false
+              },
+              {
+                "text": "AC10 示範驗收條件",
+                "checked": false
+              },
+              {
+                "text": "AC11 示範驗收條件",
+                "checked": false
+              }
+            ],
+            "owners": [
+              {
+                "member": "assets",
+                "writable": [
+                  "src/assets/area1/**"
+                ],
+                "readonly": [
+                  "src/shared/ro1/**",
+                  "src/shared/ro2/**"
+                ],
+                "exclusive": []
+              },
+              {
+                "member": "engine",
+                "writable": [
+                  "src/engine/area1/**",
+                  "src/engine/area2/**",
+                  "src/engine/area3/**",
+                  "src/engine/area4/**",
+                  "src/engine/area5/**"
+                ],
+                "readonly": [
+                  "src/shared/ro1/**",
+                  "src/shared/ro2/**",
+                  "src/shared/ro3/**",
+                  "src/shared/ro4/**",
+                  "src/shared/ro5/**",
+                  "src/shared/ro6/**",
+                  "src/shared/ro7/**",
+                  "src/shared/ro8/**",
+                  "src/shared/ro9/**"
+                ],
+                "exclusive": [
+                  "dev:5175"
+                ]
+              },
+              {
+                "member": "engine-hud",
+                "writable": [
+                  "src/engine-hud/area1/**",
+                  "src/engine-hud/area2/**",
+                  "src/engine-hud/area3/**"
+                ],
+                "readonly": [
+                  "src/shared/ro1/**",
+                  "src/shared/ro2/**"
+                ],
+                "exclusive": []
+              },
+              {
+                "member": "qa",
+                "writable": [
+                  "src/qa/area1/**"
+                ],
+                "readonly": [
+                  "src/shared/ro1/**"
+                ],
+                "exclusive": [
+                  "dev:5174",
+                  "dev:5176",
+                  "firebase:battle"
+                ]
+              }
+            ],
+            "waves": [
+              {
+                "wave": 1,
+                "type": "實作",
+                "member": "assets",
+                "what": "第 1 波示範工作",
+                "tier": "M",
+                "done": "示範完成條件",
+                "review": "預設"
+              },
+              {
+                "wave": 1,
+                "type": "實作",
+                "member": "engine",
+                "what": "第 1 波示範工作",
+                "tier": "L",
+                "done": "示範完成條件",
+                "review": null
+              },
+              {
+                "wave": 1,
+                "type": "實作",
+                "member": "engine-hud",
+                "what": "第 1 波示範工作",
+                "tier": "M",
+                "done": "示範完成條件",
+                "review": null
+              },
+              {
+                "wave": 2,
+                "type": "實作",
+                "member": "engine",
+                "what": "第 2 波示範工作",
+                "tier": "L",
+                "done": "示範完成條件",
+                "review": "預設"
+              },
+              {
+                "wave": 2,
+                "type": "驗收",
+                "member": "qa",
+                "what": "第 2 波示範工作",
+                "tier": "M",
+                "done": "示範完成條件",
+                "review": null
+              },
+              {
+                "wave": 3,
+                "type": "實作",
+                "member": "engine",
+                "what": "第 3 波示範工作",
+                "tier": "L",
+                "done": "示範完成條件",
+                "review": "預設"
+              },
+              {
+                "wave": 3,
+                "type": "實作",
+                "member": "engine-hud",
+                "what": "第 3 波示範工作",
+                "tier": "M",
+                "done": "示範完成條件",
+                "review": null
+              },
+              {
+                "wave": 3,
+                "type": "驗收",
+                "member": "qa",
+                "what": "第 3 波示範工作",
+                "tier": "M",
+                "done": "示範完成條件",
+                "review": null
+              }
+            ]
+          },
+          "waves": [
+            {
+              "wave": 1,
+              "opened_at": "2026-09-25T14:44",
+              "dev_done_at": "2026-09-25T15:21",
+              "review_spawned_at": "2026-09-25T15:14",
+              "review_verdict_at": "2026-09-25T15:21",
+              "review_verdict": "a: ok",
+              "closed_at": "2026-09-25T15:21",
+              "tests": "ok (M=$(git rev-parse --git-common-dir); M=${M%/.git}; [ -e node_modules ] || ln -s \"$M/node_modules\" node_modules; [ -e .env.local ] || { [ -f \"$M/.env.local\" ] && ln -s \"$M/.env.local\" .env.local; }; node_modules/.bin/eslint . && node_modules/.bin/tsc -b --noEmit && node_modules/.bin/vitest run)",
+              "tests_ok": true,
+              "commits": [
+                {
+                  "repo": null,
+                  "sha": "277be00"
+                }
+              ]
+            },
+            {
+              "wave": 2,
+              "opened_at": "2026-09-25T15:22",
+              "dev_done_at": "2026-09-25T15:58",
+              "review_spawned_at": "2026-09-25T15:42",
+              "review_verdict_at": "2026-09-25T15:59",
+              "review_verdict": "a: ok",
+              "closed_at": "2026-09-25T16:02",
+              "tests": "ok (M=$(git rev-parse --git-common-dir); M=${M%/.git}; [ -e node_modules ] || ln -s \"$M/node_modules\" node_modules; [ -e .env.local ] || { [ -f \"$M/.env.local\" ] && ln -s \"$M/.env.local\" .env.local; }; node_modules/.bin/eslint . && node_modules/.bin/tsc -b --noEmit && node_modules/.bin/vitest run)",
+              "tests_ok": true,
+              "commits": [
+                {
+                  "repo": null,
+                  "sha": "4c9b88c"
+                }
+              ]
+            },
+            {
+              "wave": 3,
+              "opened_at": "2026-09-25T16:03",
+              "dev_done_at": "2026-09-25T18:04",
+              "review_spawned_at": "2026-09-25T17:34",
+              "review_verdict_at": "2026-09-25T18:05",
+              "review_verdict": "a: ok",
+              "closed_at": "2026-09-25T18:39",
+              "tests": "ok (M=$(git rev-parse --git-common-dir); M=${M%/.git}; [ -e node_modules ] || ln -s \"$M/node_modules\" node_modules; [ -e .env.local ] || { [ -f \"$M/.env.local\" ] && ln -s \"$M/.env.local\" .env.local; }; node_modules/.bin/eslint . && node_modules/.bin/tsc -b --noEmit && node_modules/.bin/vitest run)",
+              "tests_ok": true,
+              "commits": [
+                {
+                  "repo": null,
+                  "sha": "1168cf0"
+                }
+              ]
+            }
+          ],
+          "members": [
+            {
+              "name": "assets",
+              "status": "done",
+              "wave": 1,
+              "current": "示範進度",
+              "touched": [
+                "src/assets/file1.ts",
+                "src/assets/file2.ts",
+                "src/assets/file3.ts",
+                "src/assets/file4.ts",
+                "src/assets/file5.ts",
+                "src/assets/file6.ts"
+              ],
+              "todo": [],
+              "blocked_by": null,
+              "notes": "示範備註",
+              "has_report": true
+            },
+            {
+              "name": "engine-hud",
+              "status": "done",
+              "wave": 3,
+              "current": "示範進度",
+              "touched": [
+                "src/engine-hud/file1.ts",
+                "src/engine-hud/file2.ts",
+                "src/engine-hud/file3.ts",
+                "src/engine-hud/file4.ts",
+                "src/engine-hud/file5.ts",
+                "src/engine-hud/file6.ts"
+              ],
+              "todo": [],
+              "blocked_by": null,
+              "notes": "示範備註",
+              "has_report": true
+            },
+            {
+              "name": "engine",
+              "status": "done",
+              "wave": 3,
+              "current": "示範進度",
+              "touched": [
+                "src/engine/file1.ts",
+                "src/engine/file2.ts",
+                "src/engine/file3.ts",
+                "src/engine/file4.ts",
+                "src/engine/file5.ts",
+                "src/engine/file6.ts",
+                "src/engine/file7.ts",
+                "src/engine/file8.ts",
+                "src/engine/file9.ts",
+                "src/engine/file10.ts",
+                "src/engine/file11.ts",
+                "src/engine/file12.ts",
+                "src/engine/file13.ts",
+                "src/engine/file14.ts",
+                "src/engine/file15.ts",
+                "src/engine/file16.ts",
+                "src/engine/file17.ts",
+                "src/engine/file18.ts"
+              ],
+              "todo": [],
+              "blocked_by": "示範阻塞原因",
+              "notes": "示範備註",
+              "has_report": true
+            },
+            {
+              "name": "qa",
+              "status": "done",
+              "wave": 3,
+              "current": "示範進度",
+              "touched": [],
+              "todo": [],
+              "blocked_by": null,
+              "notes": "示範備註",
+              "has_report": true
+            },
+            {
+              "name": "reviewer-a",
+              "status": "working",
+              "wave": null,
+              "current": "示範進度",
+              "touched": [],
+              "todo": [
+                "示範待辦 1",
+                "示範待辦 2"
+              ],
+              "blocked_by": null,
+              "notes": null,
+              "has_report": true
+            },
+            {
+              "name": "reviewer-p1",
+              "status": "done",
+              "wave": 0,
+              "current": "示範進度",
+              "touched": [],
+              "todo": [],
+              "blocked_by": null,
+              "notes": "示範備註",
+              "has_report": true
+            }
+          ],
+          "panes": [
+            {
+              "agent": "atlas-reviewer-a",
+              "pane": "wD:p1A",
+              "since_epoch": 1790332788,
+              "group": "review",
+              "tab": "1",
+              "slot": "1"
+            }
+          ],
+          "rulings": [
+            {
+              "ts": "2026-09-25T14:20",
+              "text": "示範裁定 1",
+              "autonomous": false
+            },
+            {
+              "ts": "2026-09-25T14:24",
+              "text": "示範裁定 2",
+              "autonomous": false
+            },
+            {
+              "ts": "2026-09-25T14:42",
+              "text": "示範裁定 3",
+              "autonomous": false
+            },
+            {
+              "ts": "2026-09-25T14:54",
+              "text": "[自主] 示範裁定 4",
+              "autonomous": true
+            },
+            {
+              "ts": "2026-09-25T14:59",
+              "text": "[自主] 示範裁定 5",
+              "autonomous": true
+            },
+            {
+              "ts": "2026-09-25T15:14",
+              "text": "[自主] 示範裁定 6",
+              "autonomous": true
+            },
+            {
+              "ts": "2026-09-25T15:19",
+              "text": "示範裁定 7",
+              "autonomous": false
+            },
+            {
+              "ts": "2026-09-25T15:19",
+              "text": "示範裁定 8",
+              "autonomous": false
+            },
+            {
+              "ts": "2026-09-25T15:22",
+              "text": "[自主] 示範裁定 9",
+              "autonomous": true
+            },
+            {
+              "ts": "2026-09-25T15:24",
+              "text": "[自主] 示範裁定 10",
+              "autonomous": true
+            },
+            {
+              "ts": "2026-09-25T15:26",
+              "text": "[自主] 示範裁定 11",
+              "autonomous": true
+            },
+            {
+              "ts": "2026-09-25T15:46",
+              "text": "示範裁定 12",
+              "autonomous": false
+            },
+            {
+              "ts": "2026-09-25T16:03",
+              "text": "[自主] 示範裁定 13",
+              "autonomous": true
+            },
+            {
+              "ts": "2026-09-25T17:34",
+              "text": "[自主] 示範裁定 14",
+              "autonomous": true
+            },
+            {
+              "ts": "2026-09-25T17:34",
+              "text": "[自主] 示範裁定 15",
+              "autonomous": true
+            },
+            {
+              "ts": "2026-09-25T17:55",
+              "text": "[自主] 示範裁定 16",
+              "autonomous": true
+            },
+            {
+              "ts": "2026-09-25T18:39",
+              "text": "[自主] 示範裁定 17",
+              "autonomous": true
+            }
+          ],
+          "events": [
+            {
+              "ts": "2026-09-25T14:19",
+              "kind": "task-new",
+              "text": "task-new atlas"
+            },
+            {
+              "ts": "2026-09-25T14:19",
+              "kind": "watch",
+              "text": "watch restarted (pid 27053)"
+            },
+            {
+              "ts": "2026-09-25T14:19",
+              "kind": "events",
+              "text": "events started (pid 27078)"
+            },
+            {
+              "ts": "2026-09-25T14:20",
+              "kind": "ruling",
+              "text": "ruling: 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T14:20",
+              "kind": "spawn",
+              "text": "spawn atlas-reviewer-p1 (claude L) isolated override-kind"
+            },
+            {
+              "ts": "2026-09-25T14:20",
+              "kind": "brief-review",
+              "text": "brief-review spawned atlas-reviewer-p1(claude)"
+            },
+            {
+              "ts": "2026-09-25T14:24",
+              "kind": "brief-review",
+              "text": "brief-review verdict p1: 要改 6 處"
+            },
+            {
+              "ts": "2026-09-25T14:24",
+              "kind": "ruling",
+              "text": "ruling: 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T14:24",
+              "kind": "pane-close",
+              "text": "pane-close atlas-reviewer-p1"
+            },
+            {
+              "ts": "2026-09-25T14:42",
+              "kind": "ruling",
+              "text": "ruling: 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T14:42",
+              "kind": "gate1",
+              "text": "gate1 approved"
+            },
+            {
+              "ts": "2026-09-25T14:44",
+              "kind": "materialize",
+              "text": "materialize repos main tab wD:t6"
+            },
+            {
+              "ts": "2026-09-25T14:44",
+              "kind": "handoff",
+              "text": "handoff run-leader pane wD:pY"
+            },
+            {
+              "ts": "2026-09-25T14:44",
+              "kind": "wave-open",
+              "text": "wave-open 1 repo main base 13dd7c6"
+            },
+            {
+              "ts": "2026-09-25T14:44",
+              "kind": "wave-open",
+              "text": "wave-open 1 base 13dd7c6 members assets(M) engine(L) engine-hud(M)"
+            },
+            {
+              "ts": "2026-09-25T14:45",
+              "kind": "spawn",
+              "text": "spawn atlas-engine (claude L)"
+            },
+            {
+              "ts": "2026-09-25T14:45",
+              "kind": "spawn",
+              "text": "spawn atlas-engine-hud (claude M)"
+            },
+            {
+              "ts": "2026-09-25T14:45",
+              "kind": "spawn",
+              "text": "spawn atlas-assets (claude M)"
+            },
+            {
+              "ts": "2026-09-25T14:54",
+              "kind": "blocked",
+              "text": "blocked atlas-engine-hud"
+            },
+            {
+              "ts": "2026-09-25T14:54",
+              "kind": "ruling",
+              "text": "ruling: [自主] 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T14:59",
+              "kind": "ruling",
+              "text": "ruling: [自主] 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T14:59",
+              "kind": "pane-close",
+              "text": "pane-close atlas-engine-hud"
+            },
+            {
+              "ts": "2026-09-25T15:13",
+              "kind": "dev-done",
+              "text": "dev-done wave 1 (2: engine, assets)"
+            },
+            {
+              "ts": "2026-09-25T15:14",
+              "kind": "spawn",
+              "text": "spawn atlas-reviewer-a (claude L) isolated override-kind"
+            },
+            {
+              "ts": "2026-09-25T15:14",
+              "kind": "review",
+              "text": "review 1 spawned atlas-reviewer-a(claude)"
+            },
+            {
+              "ts": "2026-09-25T15:14",
+              "kind": "ruling",
+              "text": "ruling: [自主] 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T15:14",
+              "kind": "dev-done",
+              "text": "dev-done wave 1 (2: engine, assets)"
+            },
+            {
+              "ts": "2026-09-25T15:19",
+              "kind": "review",
+              "text": "review 1 verdict a: important 1"
+            },
+            {
+              "ts": "2026-09-25T15:19",
+              "kind": "ruling",
+              "text": "ruling: 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T15:19",
+              "kind": "minor",
+              "text": "minor: 示範內容 30"
+            },
+            {
+              "ts": "2026-09-25T15:19",
+              "kind": "minor",
+              "text": "minor: 示範內容 31"
+            },
+            {
+              "ts": "2026-09-25T15:19",
+              "kind": "minor",
+              "text": "minor: 示範內容 32"
+            },
+            {
+              "ts": "2026-09-25T15:19",
+              "kind": "minor",
+              "text": "minor: 示範內容 33"
+            },
+            {
+              "ts": "2026-09-25T15:19",
+              "kind": "minor",
+              "text": "minor: 示範內容 34"
+            },
+            {
+              "ts": "2026-09-25T15:19",
+              "kind": "minor",
+              "text": "minor: 示範內容 35"
+            },
+            {
+              "ts": "2026-09-25T15:19",
+              "kind": "minor",
+              "text": "minor: 示範內容 36"
+            },
+            {
+              "ts": "2026-09-25T15:19",
+              "kind": "ruling",
+              "text": "ruling: 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T15:20",
+              "kind": "dev-done",
+              "text": "dev-done wave 1 (2: engine, assets)"
+            },
+            {
+              "ts": "2026-09-25T15:21",
+              "kind": "review",
+              "text": "review 1 verdict a: ok"
+            },
+            {
+              "ts": "2026-09-25T15:21",
+              "kind": "dev-done",
+              "text": "dev-done wave 1 (2: engine, assets)"
+            },
+            {
+              "ts": "2026-09-25T15:21",
+              "kind": "wave-close",
+              "text": "wave-close 1 tests ok (M=$(git rev-parse --git-common-dir); M=${M%/.git}; [ -e node_modules ] || ln -s \"$M/node_modules\" node_modules; [ -e .env.local ] || { [ -f \"$M/.env.local\" ] && ln -s \"$M/.env.local\" .env.local; }; node_modules/.bin/eslint . && node_modules/.bin/tsc -b --noEmit && node_modules/.bin/vitest run) 3 agents closed"
+            },
+            {
+              "ts": "2026-09-25T15:21",
+              "kind": "wave",
+              "text": "wave 1 耗時 37m（dev 37m、審查 7m）"
+            },
+            {
+              "ts": "2026-09-25T15:21",
+              "kind": "commit",
+              "text": "commit 277be00 wave 1"
+            },
+            {
+              "ts": "2026-09-25T15:22",
+              "kind": "ruling",
+              "text": "ruling: [自主] 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T15:22",
+              "kind": "wave-open",
+              "text": "wave-open 2 repo main base 277be00"
+            },
+            {
+              "ts": "2026-09-25T15:22",
+              "kind": "wave-open",
+              "text": "wave-open 2 base 277be00 members engine(L) qa(M)"
+            },
+            {
+              "ts": "2026-09-25T15:22",
+              "kind": "spawn",
+              "text": "spawn atlas-engine (claude L)"
+            },
+            {
+              "ts": "2026-09-25T15:22",
+              "kind": "spawn",
+              "text": "spawn atlas-qa (claude M)"
+            },
+            {
+              "ts": "2026-09-25T15:24",
+              "kind": "ruling",
+              "text": "ruling: [自主] 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T15:24",
+              "kind": "wave-refresh",
+              "text": "wave-refresh 2 members engine(L) qa(M)"
+            },
+            {
+              "ts": "2026-09-25T15:26",
+              "kind": "ruling",
+              "text": "ruling: [自主] 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T15:41",
+              "kind": "dev-done",
+              "text": "dev-done wave 2 (1: engine)"
+            },
+            {
+              "ts": "2026-09-25T15:42",
+              "kind": "spawn",
+              "text": "spawn atlas-reviewer-a (claude L) isolated override-kind"
+            },
+            {
+              "ts": "2026-09-25T15:42",
+              "kind": "review",
+              "text": "review 2 spawned atlas-reviewer-a(claude)"
+            },
+            {
+              "ts": "2026-09-25T15:46",
+              "kind": "review",
+              "text": "review 2 verdict a: important 2"
+            },
+            {
+              "ts": "2026-09-25T15:46",
+              "kind": "ruling",
+              "text": "ruling: 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T15:46",
+              "kind": "minor",
+              "text": "minor: 示範內容 57"
+            },
+            {
+              "ts": "2026-09-25T15:46",
+              "kind": "minor",
+              "text": "minor: 示範內容 58"
+            },
+            {
+              "ts": "2026-09-25T15:46",
+              "kind": "minor",
+              "text": "minor: 示範內容 59"
+            },
+            {
+              "ts": "2026-09-25T15:46",
+              "kind": "minor",
+              "text": "minor: 示範內容 60"
+            },
+            {
+              "ts": "2026-09-25T15:46",
+              "kind": "minor",
+              "text": "minor: 示範內容 61"
+            },
+            {
+              "ts": "2026-09-25T15:58",
+              "kind": "dev-done",
+              "text": "dev-done wave 2 (1: engine)"
+            },
+            {
+              "ts": "2026-09-25T15:59",
+              "kind": "review",
+              "text": "review 2 verdict a: ok"
+            },
+            {
+              "ts": "2026-09-25T16:02",
+              "kind": "wave-close",
+              "text": "wave-close 2 tests ok (M=$(git rev-parse --git-common-dir); M=${M%/.git}; [ -e node_modules ] || ln -s \"$M/node_modules\" node_modules; [ -e .env.local ] || { [ -f \"$M/.env.local\" ] && ln -s \"$M/.env.local\" .env.local; }; node_modules/.bin/eslint . && node_modules/.bin/tsc -b --noEmit && node_modules/.bin/vitest run) 3 agents closed"
+            },
+            {
+              "ts": "2026-09-25T16:02",
+              "kind": "wave",
+              "text": "wave 2 耗時 40m（dev 36m、審查 17m）"
+            },
+            {
+              "ts": "2026-09-25T16:02",
+              "kind": "commit",
+              "text": "commit 4c9b88c wave 2"
+            },
+            {
+              "ts": "2026-09-25T16:03",
+              "kind": "ruling",
+              "text": "ruling: [自主] 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T16:03",
+              "kind": "wave-open",
+              "text": "wave-open 3 repo main base 4c9b88c"
+            },
+            {
+              "ts": "2026-09-25T16:03",
+              "kind": "wave-open",
+              "text": "wave-open 3 base 4c9b88c members engine(L) engine-hud(M) qa(M)"
+            },
+            {
+              "ts": "2026-09-25T16:03",
+              "kind": "spawn",
+              "text": "spawn atlas-engine (claude L)"
+            },
+            {
+              "ts": "2026-09-25T16:03",
+              "kind": "spawn",
+              "text": "spawn atlas-engine-hud (claude M)"
+            },
+            {
+              "ts": "2026-09-25T16:03",
+              "kind": "spawn",
+              "text": "spawn atlas-qa (claude M)"
+            },
+            {
+              "ts": "2026-09-25T17:03",
+              "kind": "timeout",
+              "text": "timeout wave 3 (60min)"
+            },
+            {
+              "ts": "2026-09-25T17:03",
+              "kind": "wave",
+              "text": "wave 3 timeout 60m"
+            },
+            {
+              "ts": "2026-09-25T17:34",
+              "kind": "dev-done",
+              "text": "dev-done wave 3 (2: engine, engine-hud)"
+            },
+            {
+              "ts": "2026-09-25T17:34",
+              "kind": "spawn",
+              "text": "spawn atlas-reviewer-a (claude L) isolated override-kind"
+            },
+            {
+              "ts": "2026-09-25T17:34",
+              "kind": "review",
+              "text": "review 3 spawned atlas-reviewer-a(claude)"
+            },
+            {
+              "ts": "2026-09-25T17:34",
+              "kind": "ruling",
+              "text": "ruling: [自主] 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T17:34",
+              "kind": "ruling",
+              "text": "ruling: [自主] 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T17:35",
+              "kind": "dev-done",
+              "text": "dev-done wave 3 (2: engine, engine-hud)"
+            },
+            {
+              "ts": "2026-09-25T17:39",
+              "kind": "review",
+              "text": "review 3 verdict a: ok"
+            },
+            {
+              "ts": "2026-09-25T17:39",
+              "kind": "minor",
+              "text": "minor: 示範內容 82"
+            },
+            {
+              "ts": "2026-09-25T17:39",
+              "kind": "minor",
+              "text": "minor: 示範內容 83"
+            },
+            {
+              "ts": "2026-09-25T17:39",
+              "kind": "minor",
+              "text": "minor: 示範內容 84"
+            },
+            {
+              "ts": "2026-09-25T17:39",
+              "kind": "minor",
+              "text": "minor: 示範內容 85"
+            },
+            {
+              "ts": "2026-09-25T17:39",
+              "kind": "minor",
+              "text": "minor: 示範內容 86"
+            },
+            {
+              "ts": "2026-09-25T17:55",
+              "kind": "ruling",
+              "text": "ruling: [自主] 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T18:04",
+              "kind": "dev-done",
+              "text": "dev-done wave 3 (2: engine, engine-hud)"
+            },
+            {
+              "ts": "2026-09-25T18:05",
+              "kind": "minor",
+              "text": "minor: 示範內容 89"
+            },
+            {
+              "ts": "2026-09-25T18:05",
+              "kind": "review",
+              "text": "review 3 verdict a: ok"
+            },
+            {
+              "ts": "2026-09-25T18:38",
+              "kind": "undelivered",
+              "text": "undelivered: 示範內容 91"
+            },
+            {
+              "ts": "2026-09-25T18:39",
+              "kind": "minor",
+              "text": "minor: 示範內容 92"
+            },
+            {
+              "ts": "2026-09-25T18:39",
+              "kind": "minor",
+              "text": "minor: 示範內容 93"
+            },
+            {
+              "ts": "2026-09-25T18:39",
+              "kind": "minor",
+              "text": "minor: 示範內容 94"
+            },
+            {
+              "ts": "2026-09-25T18:39",
+              "kind": "ruling",
+              "text": "ruling: [自主] 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T18:39",
+              "kind": "wave-close",
+              "text": "wave-close 3 tests ok (M=$(git rev-parse --git-common-dir); M=${M%/.git}; [ -e node_modules ] || ln -s \"$M/node_modules\" node_modules; [ -e .env.local ] || { [ -f \"$M/.env.local\" ] && ln -s \"$M/.env.local\" .env.local; }; node_modules/.bin/eslint . && node_modules/.bin/tsc -b --noEmit && node_modules/.bin/vitest run) 4 agents closed"
+            },
+            {
+              "ts": "2026-09-25T18:39",
+              "kind": "wave",
+              "text": "wave 3 耗時 156m（dev 121m、審查 31m）"
+            },
+            {
+              "ts": "2026-09-25T18:39",
+              "kind": "commit",
+              "text": "commit 1168cf0 wave 3"
+            },
+            {
+              "ts": "2026-09-25T18:39",
+              "kind": "spawn",
+              "text": "spawn atlas-reviewer-a (claude L) isolated override-kind"
+            },
+            {
+              "ts": "2026-09-25T18:39",
+              "kind": "review",
+              "text": "review task spawned atlas-reviewer-a(claude)"
+            }
+          ],
+          "messages": [
+            {
+              "ts": "2026-09-25T14:23",
+              "from": "atlas-reviewer-p1",
+              "to": "leader-atlas",
+              "type": "DONE",
+              "text": "brief-review: 示範訊息 1"
+            },
+            {
+              "ts": "2026-09-25T14:44",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T14:57",
+              "from": "atlas-engine-hud",
+              "to": "leader-atlas",
+              "type": "DONE",
+              "text": "示範訊息 3"
+            },
+            {
+              "ts": "2026-09-25T14:58",
+              "from": "leader-atlas",
+              "to": "atlas-engine-hud",
+              "type": "TASK",
+              "text": "示範訊息 4"
+            },
+            {
+              "ts": "2026-09-25T14:58",
+              "from": "atlas-engine-hud",
+              "to": "leader-atlas",
+              "type": "FIXED",
+              "text": "示範訊息 5"
+            },
+            {
+              "ts": "2026-09-25T14:58",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T14:59",
+              "from": "atlas-engine-hud",
+              "to": "leader-atlas",
+              "type": "ESCALATE",
+              "text": "示範訊息 7"
+            },
+            {
+              "ts": "2026-09-25T14:59",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T15:13",
+              "from": "atlas-engine",
+              "to": "leader-atlas",
+              "type": "DONE",
+              "text": "示範訊息 9"
+            },
+            {
+              "ts": "2026-09-25T15:14",
+              "from": "atlas-assets",
+              "to": "atlas-engine",
+              "type": "DONE",
+              "text": "示範訊息 10"
+            },
+            {
+              "ts": "2026-09-25T15:14",
+              "from": "atlas-assets",
+              "to": "leader-atlas",
+              "type": "DONE",
+              "text": "示範訊息 11"
+            },
+            {
+              "ts": "2026-09-25T15:14",
+              "from": "leader-atlas",
+              "to": "atlas-engine",
+              "type": "TASK",
+              "text": "示範訊息 12"
+            },
+            {
+              "ts": "2026-09-25T15:14",
+              "from": "atlas-engine",
+              "to": "leader-atlas",
+              "type": "FIXED",
+              "text": "示範訊息 13"
+            },
+            {
+              "ts": "2026-09-25T15:14",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T15:19",
+              "from": "atlas-reviewer-a",
+              "to": "leader-atlas",
+              "type": "DONE",
+              "text": "示範訊息 15"
+            },
+            {
+              "ts": "2026-09-25T15:19",
+              "from": "leader-atlas",
+              "to": "atlas-engine",
+              "type": "BUG",
+              "text": "示範訊息 16"
+            },
+            {
+              "ts": "2026-09-25T15:20",
+              "from": "atlas-engine",
+              "to": "leader-atlas",
+              "type": "FIXED",
+              "text": "示範訊息 17"
+            },
+            {
+              "ts": "2026-09-25T15:20",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T15:20",
+              "from": "leader-atlas",
+              "to": "atlas-reviewer-a",
+              "type": "TASK",
+              "text": "示範訊息 19"
+            },
+            {
+              "ts": "2026-09-25T15:20",
+              "from": "atlas-reviewer-a",
+              "to": "leader-atlas",
+              "type": "DONE",
+              "text": "示範訊息 20"
+            },
+            {
+              "ts": "2026-09-25T15:21",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T15:21",
+              "from": "leader-atlas",
+              "to": "atlas-engine",
+              "type": "TASK",
+              "text": "示範訊息 22"
+            },
+            {
+              "ts": "2026-09-25T15:21",
+              "from": "atlas-engine",
+              "to": "leader-atlas",
+              "type": "FIXED",
+              "text": "示範訊息 23"
+            },
+            {
+              "ts": "2026-09-25T15:21",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T15:24",
+              "from": "atlas-engine",
+              "to": "leader-atlas",
+              "type": "ESCALATE",
+              "text": "示範訊息 25"
+            },
+            {
+              "ts": "2026-09-25T15:24",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T15:25",
+              "from": "atlas-qa",
+              "to": "leader-atlas",
+              "type": "ESCALATE",
+              "text": "示範訊息 27"
+            },
+            {
+              "ts": "2026-09-25T15:26",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T15:41",
+              "from": "atlas-engine",
+              "to": "leader-atlas",
+              "type": "DONE",
+              "text": "示範訊息 29"
+            },
+            {
+              "ts": "2026-09-25T15:42",
+              "from": "leader-atlas",
+              "to": "atlas-engine",
+              "type": "DECISION",
+              "text": "示範訊息 30"
+            },
+            {
+              "ts": "2026-09-25T15:42",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T15:46",
+              "from": "atlas-reviewer-a",
+              "to": "leader-atlas",
+              "type": "DONE",
+              "text": "示範訊息 32"
+            },
+            {
+              "ts": "2026-09-25T15:46",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T15:56",
+              "from": "atlas-qa",
+              "to": "atlas-engine",
+              "type": "BUG",
+              "text": "示範訊息 34"
+            },
+            {
+              "ts": "2026-09-25T15:57",
+              "from": "atlas-engine",
+              "to": "atlas-qa",
+              "type": "DONE",
+              "text": "示範訊息 35"
+            },
+            {
+              "ts": "2026-09-25T15:57",
+              "from": "leader-atlas",
+              "to": "atlas-qa",
+              "type": "DECISION",
+              "text": "示範訊息 36"
+            },
+            {
+              "ts": "2026-09-25T15:58",
+              "from": "leader-atlas",
+              "to": "atlas-reviewer-a",
+              "type": "TASK",
+              "text": "示範訊息 37"
+            },
+            {
+              "ts": "2026-09-25T15:59",
+              "from": "atlas-reviewer-a",
+              "to": "leader-atlas",
+              "type": "DONE",
+              "text": "示範訊息 38"
+            },
+            {
+              "ts": "2026-09-25T15:59",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T16:02",
+              "from": "atlas-qa",
+              "to": "leader-atlas",
+              "type": "DONE",
+              "text": "示範訊息 40"
+            },
+            {
+              "ts": "2026-09-25T16:02",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T16:02",
+              "from": "leader-atlas",
+              "to": "atlas-qa",
+              "type": "TASK",
+              "text": "示範訊息 42"
+            },
+            {
+              "ts": "2026-09-25T16:02",
+              "from": "atlas-engine",
+              "to": "atlas-qa",
+              "type": "FIXED",
+              "text": "示範訊息 43"
+            },
+            {
+              "ts": "2026-09-25T16:02",
+              "from": "leader-atlas",
+              "to": "atlas-qa",
+              "type": "DECISION",
+              "text": "示範訊息 44"
+            },
+            {
+              "ts": "2026-09-25T16:06",
+              "from": "atlas-engine-hud",
+              "to": "leader-atlas",
+              "type": "DONE",
+              "text": "示範訊息 45"
+            },
+            {
+              "ts": "2026-09-25T16:38",
+              "from": "atlas-engine-hud",
+              "to": "atlas-qa",
+              "type": "UNDELIVERED",
+              "text": "示範訊息 46"
+            },
+            {
+              "ts": "2026-09-25T17:03",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T17:34",
+              "from": "atlas-engine",
+              "to": "leader-atlas",
+              "type": "DONE",
+              "text": "示範訊息 48"
+            },
+            {
+              "ts": "2026-09-25T17:34",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T17:34",
+              "from": "leader-atlas",
+              "to": "atlas-engine-hud",
+              "type": "TASK",
+              "text": "示範訊息 50"
+            },
+            {
+              "ts": "2026-09-25T17:35",
+              "from": "atlas-engine-hud",
+              "to": "leader-atlas",
+              "type": "FIXED",
+              "text": "示範訊息 51"
+            },
+            {
+              "ts": "2026-09-25T17:35",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T17:39",
+              "from": "atlas-reviewer-a",
+              "to": "leader-atlas",
+              "type": "DONE",
+              "text": "示範訊息 53"
+            },
+            {
+              "ts": "2026-09-25T17:39",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T17:39",
+              "from": "leader-atlas",
+              "to": "atlas-reviewer-a",
+              "type": "TASK",
+              "text": "示範訊息 55"
+            },
+            {
+              "ts": "2026-09-25T17:40",
+              "from": "atlas-reviewer-a",
+              "to": "leader-atlas",
+              "type": "DONE",
+              "text": "示範訊息 56"
+            },
+            {
+              "ts": "2026-09-25T17:40",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T17:52",
+              "from": "atlas-qa",
+              "to": "atlas-engine",
+              "type": "BUG",
+              "text": "示範訊息 58"
+            },
+            {
+              "ts": "2026-09-25T17:54",
+              "from": "atlas-qa",
+              "to": "leader-atlas",
+              "type": "ESCALATE",
+              "text": "示範訊息 59"
+            },
+            {
+              "ts": "2026-09-25T17:55",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T17:55",
+              "from": "leader-atlas",
+              "to": "atlas-engine-hud",
+              "type": "TASK",
+              "text": "示範訊息 61"
+            },
+            {
+              "ts": "2026-09-25T17:59",
+              "from": "atlas-engine-hud",
+              "to": "leader-atlas",
+              "type": "FIXED",
+              "text": "示範訊息 62"
+            },
+            {
+              "ts": "2026-09-25T17:59",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T18:04",
+              "from": "leader-atlas",
+              "to": "atlas-reviewer-a",
+              "type": "TASK",
+              "text": "示範訊息 64"
+            },
+            {
+              "ts": "2026-09-25T18:05",
+              "from": "atlas-engine",
+              "to": "atlas-qa",
+              "type": "UNDELIVERED",
+              "text": "示範訊息 65"
+            },
+            {
+              "ts": "2026-09-25T18:05",
+              "from": "atlas-reviewer-a",
+              "to": "leader-atlas",
+              "type": "DONE",
+              "text": "示範訊息 66"
+            },
+            {
+              "ts": "2026-09-25T18:05",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T18:35",
+              "from": "atlas-engine",
+              "to": "atlas-qa",
+              "type": "UNDELIVERED",
+              "text": "示範訊息 68"
+            },
+            {
+              "ts": "2026-09-25T18:35",
+              "from": "atlas-engine",
+              "to": "leader-atlas",
+              "type": "FIXED",
+              "text": "示範訊息 69"
+            },
+            {
+              "ts": "2026-09-25T18:35",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T18:38",
+              "from": "leader-atlas",
+              "to": "atlas-qa",
+              "type": "UNDELIVERED",
+              "text": "示範訊息 71"
+            },
+            {
+              "ts": "2026-09-25T18:39",
+              "from": "atlas-qa",
+              "to": "leader-atlas",
+              "type": "DONE",
+              "text": "示範訊息 72"
+            },
+            {
+              "ts": "2026-09-25T18:39",
+              "from": "leader-atlas",
+              "to": "atlas-qa",
+              "type": "DECISION",
+              "text": "示範訊息 73"
+            },
+            {
+              "ts": "2026-09-25T18:39",
+              "from": "leader-atlas",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            }
+          ],
+          "skipped_lines": {
+            "process": 0,
+            "messages": 0
+          }
+        }
+      },
+      "panes": [
+        {
+          "paneId": "wD:p1A",
+          "tabId": "wD:t6",
+          "workspaceId": "wD",
+          "name": "atlas-reviewer-a",
+          "agent": "claude",
+          "status": "working",
+          "cwd": "/projects/collect/.worktrees/atlas",
+          "model": "opus 5.5",
+          "effort": "high",
+          "cost": 0.43,
+          "ctxPct": 8,
+          "usage5hPct": 3,
+          "usageWkPct": 41,
+          "taskDir": "2026-09-25-atlas",
+          "member": "reviewer-a"
+        }
+      ],
+      "otherPanes": [
+        {
+          "paneId": "wD:p3",
+          "tabId": "wD:t3",
+          "workspaceId": "wD",
+          "name": null,
+          "agent": "claude",
+          "status": "idle",
+          "cwd": "/projects/collect",
+          "model": "opus 5.5",
+          "effort": "medium",
+          "cost": 15.8,
+          "ctxPct": 33,
+          "usage5hPct": null,
+          "usageWkPct": 35,
+          "taskDir": null,
+          "member": null
+        },
+        {
+          "paneId": "wD:pY",
+          "tabId": "wD:t6",
+          "workspaceId": "wD",
+          "name": "leader-atlas",
+          "agent": "claude",
+          "status": "done",
+          "cwd": "/projects/collect",
+          "model": "opus 5.5",
+          "effort": "high",
+          "cost": 5.23,
+          "ctxPct": 15,
+          "usage5hPct": 3,
+          "usageWkPct": 41,
+          "taskDir": "2026-09-25-atlas",
+          "member": null
+        }
+      ]
+    },
+    {
+      "name": "sport-demo",
+      "path": "/projects/sport-demo",
+      "dkboVersion": "0.16.0",
+      "mode": "compat",
+      "error": null,
+      "stale": false,
+      "fetchedAt": 1790332807720,
+      "list": {
+        "schema_version": 1,
+        "dkbo_version": "0.17.0",
+        "generated_at": "2026-09-25T18:40",
+        "kinds_down": [
+          {
+            "kind": "agy",
+            "until": "2026-09-30T20:51",
+            "until_epoch": 1790772689,
+            "exact": true,
+            "recorded_at": "2026-09-23T22:55",
+            "from_task": "2026-09-23-swq",
+            "agent": "swq-reviewer-b",
+            "reason": "⚠ Individual quota reached. Please upgrade your subscription to increase your limits. Resets in 165h55m44s."
+          },
+          {
+            "kind": "codex",
+            "until": "2026-10-11T19:32",
+            "until_epoch": 1791718368,
+            "exact": true,
+            "recorded_at": "2026-09-23T16:49",
+            "from_task": "2026-09-23-swp",
+            "agent": "swp-reviewer-p2",
+            "reason": "■ You’ve hit your usage limit. Upgrade to Plus to continue using Codex"
+          }
+        ],
+        "tasks": [
+          {
+            "dir": "2026-09-12-swa",
+            "short": "swa",
+            "display": "示範任務 swa",
+            "date": "2026-09-12",
+            "status": "done",
+            "index_note": "merged 7a7d3c3",
+            "branch": "dk/swa",
+            "worktree": "/projects/sport-demo/.worktrees/swa",
+            "task_tab": null,
+            "repo_names": [],
+            "current_wave": null,
+            "waves_planned": 3,
+            "waves_closed": 3,
+            "created_at": "2026-09-12T21:29",
+            "gate1_at": "2026-09-12T21:43",
+            "closed_at": "2026-09-12T23:46",
+            "close_result": "merged 7a7d3c3",
+            "updated_at": "2026-09-12T23:46",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 11,
+              "autonomous_rulings": 0,
+              "minors": 0,
+              "undelivered": 20,
+              "escalations": 0
+            }
+          },
+          {
+            "dir": "2026-09-13-swb",
+            "short": "swb",
+            "display": "示範任務 swb",
+            "date": "2026-09-13",
+            "status": "done",
+            "index_note": "merged a07cba2",
+            "branch": "dk/swb",
+            "worktree": "/projects/sport-demo/.worktrees/swb",
+            "task_tab": null,
+            "repo_names": [],
+            "current_wave": null,
+            "waves_planned": 2,
+            "waves_closed": 2,
+            "created_at": "2026-09-13T23:33",
+            "gate1_at": "2026-09-14T07:20",
+            "closed_at": "2026-09-14T14:17",
+            "close_result": "merged a07cba2",
+            "updated_at": "2026-09-14T14:17",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 3,
+              "autonomous_rulings": 0,
+              "minors": 0,
+              "undelivered": 0,
+              "escalations": 0
+            }
+          },
+          {
+            "dir": "2026-09-15-swc",
+            "short": "swc",
+            "display": "示範任務 swc",
+            "date": "2026-09-15",
+            "status": "done",
+            "index_note": "merged 4b5050c",
+            "branch": "dk/swc",
+            "worktree": "/projects/sport-demo/.worktrees/swc",
+            "task_tab": null,
+            "repo_names": [],
+            "current_wave": null,
+            "waves_planned": 14,
+            "waves_closed": 14,
+            "created_at": "2026-09-15T19:04",
+            "gate1_at": "2026-09-15T19:08",
+            "closed_at": "2026-09-16T16:53",
+            "close_result": "merged 4b5050c",
+            "updated_at": "2026-09-16T16:53",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 39,
+              "autonomous_rulings": 0,
+              "minors": 0,
+              "undelivered": 1,
+              "escalations": 12
+            }
+          },
+          {
+            "dir": "2026-09-16-swd",
+            "short": "swd",
+            "display": "示範任務 swd",
+            "date": "2026-09-16",
+            "status": "done",
+            "index_note": "merged de3656f",
+            "branch": "dk/swd",
+            "worktree": "/projects/sport-demo/.worktrees/swd",
+            "task_tab": null,
+            "repo_names": [],
+            "current_wave": null,
+            "waves_planned": 1,
+            "waves_closed": 1,
+            "created_at": "2026-09-16T20:43",
+            "gate1_at": "2026-09-16T20:44",
+            "closed_at": "2026-09-16T21:18",
+            "close_result": "merged de3656f",
+            "updated_at": "2026-09-16T21:18",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 1,
+              "autonomous_rulings": 0,
+              "minors": 0,
+              "undelivered": 0,
+              "escalations": 1
+            }
+          },
+          {
+            "dir": "2026-09-16-swe",
+            "short": "swe",
+            "display": "示範任務 swe",
+            "date": "2026-09-16",
+            "status": "done",
+            "index_note": "merged aa22191",
+            "branch": "dk/swe",
+            "worktree": "/projects/sport-demo/.worktrees/swe",
+            "task_tab": null,
+            "repo_names": [],
+            "current_wave": null,
+            "waves_planned": 1,
+            "waves_closed": 1,
+            "created_at": "2026-09-16T21:25",
+            "gate1_at": "2026-09-16T21:43",
+            "closed_at": "2026-09-16T22:46",
+            "close_result": "merged aa22191",
+            "updated_at": "2026-09-16T22:46",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 5,
+              "autonomous_rulings": 0,
+              "minors": 0,
+              "undelivered": 0,
+              "escalations": 1
+            }
+          },
+          {
+            "dir": "2026-09-16-swf",
+            "short": "swf",
+            "display": "示範任務 swf",
+            "date": "2026-09-16",
+            "status": "done",
+            "index_note": "merged 08f5a8a",
+            "branch": "dk/swf",
+            "worktree": "/projects/sport-demo/.worktrees/swf",
+            "task_tab": null,
+            "repo_names": [],
+            "current_wave": null,
+            "waves_planned": 1,
+            "waves_closed": 1,
+            "created_at": "2026-09-16T22:56",
+            "gate1_at": "2026-09-16T23:01",
+            "closed_at": "2026-09-16T23:39",
+            "close_result": "merged 08f5a8a",
+            "updated_at": "2026-09-16T23:39",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 1,
+              "autonomous_rulings": 0,
+              "minors": 0,
+              "undelivered": 0,
+              "escalations": 1
+            }
+          },
+          {
+            "dir": "2026-09-16-swg",
+            "short": "swg",
+            "display": "示範任務 swg",
+            "date": "2026-09-16",
+            "status": "abandoned",
+            "index_note": "示範備註",
+            "branch": "dk/swg",
+            "worktree": "/projects/sport-demo/.worktrees/swg",
+            "task_tab": null,
+            "repo_names": [],
+            "current_wave": null,
+            "waves_planned": 1,
+            "waves_closed": 0,
+            "created_at": "2026-09-16T17:28",
+            "gate1_at": null,
+            "closed_at": "2026-09-19T01:45",
+            "close_result": "abandoned: 示範理由",
+            "updated_at": "2026-09-19T01:45",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 0,
+              "autonomous_rulings": 0,
+              "minors": 0,
+              "undelivered": 0,
+              "escalations": 0
+            }
+          },
+          {
+            "dir": "2026-09-16-swh",
+            "short": "swh",
+            "display": "示範任務 swh",
+            "date": "2026-09-16",
+            "status": "done",
+            "index_note": "merged 7068ad1",
+            "branch": "dk/swh",
+            "worktree": "/projects/sport-demo/.worktrees/swh",
+            "task_tab": null,
+            "repo_names": [],
+            "current_wave": null,
+            "waves_planned": 1,
+            "waves_closed": 1,
+            "created_at": "2026-09-16T18:55",
+            "gate1_at": "2026-09-16T19:05",
+            "closed_at": "2026-09-16T20:08",
+            "close_result": "merged 7068ad1",
+            "updated_at": "2026-09-16T20:08",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 4,
+              "autonomous_rulings": 0,
+              "minors": 0,
+              "undelivered": 0,
+              "escalations": 3
+            }
+          },
+          {
+            "dir": "2026-09-18-swi",
+            "short": "swi",
+            "display": "示範任務 swi",
+            "date": "2026-09-18",
+            "status": "abandoned",
+            "index_note": "示範備註",
+            "branch": "dk/swi",
+            "worktree": "/projects/sport-demo/.worktrees/swi",
+            "task_tab": null,
+            "repo_names": [],
+            "current_wave": null,
+            "waves_planned": 3,
+            "waves_closed": 0,
+            "created_at": "2026-09-18T23:51",
+            "gate1_at": null,
+            "closed_at": null,
+            "close_result": null,
+            "updated_at": "2026-09-19T00:06",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 1,
+              "autonomous_rulings": 0,
+              "minors": 0,
+              "undelivered": 0,
+              "escalations": 0
+            }
+          },
+          {
+            "dir": "2026-09-19-swj",
+            "short": "swj",
+            "display": "示範任務 swj",
+            "date": "2026-09-19",
+            "status": "done",
+            "index_note": "merged deb5515",
+            "branch": "dk/swj",
+            "worktree": "/projects/sport-demo/.worktrees/swj",
+            "task_tab": null,
+            "repo_names": [],
+            "current_wave": null,
+            "waves_planned": 3,
+            "waves_closed": 3,
+            "created_at": "2026-09-19T07:05",
+            "gate1_at": "2026-09-19T07:12",
+            "closed_at": "2026-09-19T10:27",
+            "close_result": "merged deb5515",
+            "updated_at": "2026-09-19T10:27",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 14,
+              "autonomous_rulings": 0,
+              "minors": 0,
+              "undelivered": 0,
+              "escalations": 0
+            }
+          },
+          {
+            "dir": "2026-09-19-swk",
+            "short": "swk",
+            "display": "示範任務 swk",
+            "date": "2026-09-19",
+            "status": "done",
+            "index_note": "merged ccec033",
+            "branch": "dk/swk",
+            "worktree": "/projects/sport-demo/.worktrees/swk",
+            "task_tab": null,
+            "repo_names": [],
+            "current_wave": null,
+            "waves_planned": 3,
+            "waves_closed": 3,
+            "created_at": "2026-09-19T10:43",
+            "gate1_at": "2026-09-19T10:47",
+            "closed_at": "2026-09-19T13:13",
+            "close_result": "merged ccec033",
+            "updated_at": "2026-09-19T13:13",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 13,
+              "autonomous_rulings": 0,
+              "minors": 0,
+              "undelivered": 1,
+              "escalations": 1
+            }
+          },
+          {
+            "dir": "2026-09-19-swl",
+            "short": "swl",
+            "display": "示範任務 swl",
+            "date": "2026-09-19",
+            "status": "done",
+            "index_note": "merged 94ecbef",
+            "branch": "dk/swl",
+            "worktree": "/projects/sport-demo/.worktrees/swl",
+            "task_tab": null,
+            "repo_names": [],
+            "current_wave": null,
+            "waves_planned": 3,
+            "waves_closed": 3,
+            "created_at": "2026-09-19T20:43",
+            "gate1_at": "2026-09-19T21:03",
+            "closed_at": "2026-09-19T23:15",
+            "close_result": "merged 94ecbef",
+            "updated_at": "2026-09-20T14:48",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 19,
+              "autonomous_rulings": 0,
+              "minors": 7,
+              "undelivered": 0,
+              "escalations": 0
+            }
+          },
+          {
+            "dir": "2026-09-19-swm",
+            "short": "swm",
+            "display": "示範任務 swm",
+            "date": "2026-09-19",
+            "status": "done",
+            "index_note": "merged 8cd92f6",
+            "branch": "dk/swm",
+            "worktree": "/projects/sport-demo/.worktrees/swm",
+            "task_tab": null,
+            "repo_names": [],
+            "current_wave": null,
+            "waves_planned": 2,
+            "waves_closed": 2,
+            "created_at": "2026-09-19T01:46",
+            "gate1_at": "2026-09-19T01:55",
+            "closed_at": "2026-09-19T07:00",
+            "close_result": "merged 8cd92f6",
+            "updated_at": "2026-09-19T07:00",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 5,
+              "autonomous_rulings": 0,
+              "minors": 0,
+              "undelivered": 0,
+              "escalations": 1
+            }
+          },
+          {
+            "dir": "2026-09-20-swn",
+            "short": "swn",
+            "display": "示範任務 swn",
+            "date": "2026-09-20",
+            "status": "abandoned",
+            "index_note": "示範備註",
+            "branch": "dk/swn",
+            "worktree": null,
+            "task_tab": null,
+            "repo_names": [],
+            "current_wave": null,
+            "waves_planned": 0,
+            "waves_closed": 0,
+            "created_at": "2026-09-20T16:47",
+            "gate1_at": null,
+            "closed_at": "2026-09-20T16:50",
+            "close_result": "abandoned: 示範理由",
+            "updated_at": "2026-09-20T16:50",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 1,
+              "autonomous_rulings": 0,
+              "minors": 0,
+              "undelivered": 0,
+              "escalations": 0
+            }
+          },
+          {
+            "dir": "2026-09-22-swo",
+            "short": "swo",
+            "display": "示範任務 swo",
+            "date": "2026-09-22",
+            "status": "done",
+            "index_note": "merged 6461612",
+            "branch": "dk/swo",
+            "worktree": "/projects/sport-demo/.worktrees/swo",
+            "task_tab": null,
+            "repo_names": [
+              "main"
+            ],
+            "current_wave": null,
+            "waves_planned": 2,
+            "waves_closed": 2,
+            "created_at": "2026-09-22T20:08",
+            "gate1_at": "2026-09-22T20:27",
+            "closed_at": "2026-09-22T22:59",
+            "close_result": "merged 6461612",
+            "updated_at": "2026-09-22T22:59",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 29,
+              "autonomous_rulings": 0,
+              "minors": 10,
+              "undelivered": 0,
+              "escalations": 3
+            }
+          },
+          {
+            "dir": "2026-09-23-swp",
+            "short": "swp",
+            "display": "示範任務 swp",
+            "date": "2026-09-23",
+            "status": "done",
+            "index_note": "merged f75b596",
+            "branch": "dk/swp",
+            "worktree": "/projects/sport-demo/.worktrees/swp",
+            "task_tab": "w9:tH",
+            "repo_names": [
+              "main"
+            ],
+            "current_wave": null,
+            "waves_planned": 4,
+            "waves_closed": 4,
+            "created_at": "2026-09-23T16:48",
+            "gate1_at": "2026-09-23T16:57",
+            "closed_at": "2026-09-23T20:19",
+            "close_result": "merged f75b596",
+            "updated_at": "2026-09-23T20:19",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 14,
+              "autonomous_rulings": 0,
+              "minors": 12,
+              "undelivered": 0,
+              "escalations": 0
+            }
+          },
+          {
+            "dir": "2026-09-23-swq",
+            "short": "swq",
+            "display": "示範任務 swq",
+            "date": "2026-09-23",
+            "status": "abandoned",
+            "index_note": "示範備註",
+            "branch": "dk/swq",
+            "worktree": "/projects/sport-demo/.worktrees/swq",
+            "task_tab": "w9:tJ",
+            "repo_names": [
+              "main"
+            ],
+            "current_wave": null,
+            "waves_planned": 1,
+            "waves_closed": 1,
+            "created_at": "2026-09-23T21:30",
+            "gate1_at": "2026-09-23T21:39",
+            "closed_at": "2026-09-23T23:13",
+            "close_result": "abandoned: 示範理由",
+            "updated_at": "2026-09-23T23:13",
+            "panes_open": 0,
+            "counts": {
+              "rulings": 15,
+              "autonomous_rulings": 10,
+              "minors": 9,
+              "undelivered": 0,
+              "escalations": 1
+            }
+          }
+        ]
+      },
+      "active": {},
+      "panes": [],
+      "otherPanes": [
+        {
+          "paneId": "w9:p6Y",
+          "tabId": "w9:tG",
+          "workspaceId": "w9",
+          "name": null,
+          "agent": "claude",
+          "status": "idle",
+          "cwd": "/projects/sport-demo",
+          "model": "opus 5.5",
+          "effort": "medium",
+          "cost": 0.46,
+          "ctxPct": 6,
+          "usage5hPct": null,
+          "usageWkPct": null,
+          "taskDir": null,
+          "member": null
+        }
+      ]
+    },
+    {
+      "name": "dkbo-team-dashboard",
+      "path": "/projects/dkbo-team-dashboard",
+      "dkboVersion": "0.17.0",
+      "mode": "native",
+      "error": null,
+      "stale": false,
+      "fetchedAt": 1790332811771,
+      "list": {
+        "schema_version": 1,
+        "dkbo_version": "0.17.0",
+        "generated_at": "2026-09-25T18:40",
+        "kinds_down": [
+          {
+            "kind": "agy",
+            "until": "2026-09-30T20:49",
+            "until_epoch": 1790772548,
+            "exact": true,
+            "recorded_at": "2026-09-25T14:31",
+            "from_task": "-",
+            "agent": "leader",
+            "reason": "帳號層額度，沿用 teamflow testtrust 的記錄"
+          },
+          {
+            "kind": "codex",
+            "until": "2026-10-11T19:32",
+            "until_epoch": 1791718328,
+            "exact": true,
+            "recorded_at": "2026-09-25T14:31",
+            "from_task": "-",
+            "agent": "leader",
+            "reason": "帳號層額度，沿用 teamflow testtrust 的記錄"
+          }
+        ],
+        "tasks": [
+          {
+            "dir": "2026-09-25-dashv1",
+            "short": "dashv1",
+            "display": "示範任務 dashv1",
+            "date": "2026-09-25",
+            "status": "running",
+            "index_note": "示範備註",
+            "branch": "dk/dashv1",
+            "worktree": "/projects/dkbo-team-dashboard/.worktrees/dashv1",
+            "task_tab": "wM:t2",
+            "repo_names": [
+              "main"
+            ],
+            "current_wave": 2,
+            "waves_planned": 2,
+            "waves_closed": 1,
+            "created_at": "2026-09-25T17:15",
+            "gate1_at": "2026-09-25T18:08",
+            "closed_at": null,
+            "close_result": null,
+            "updated_at": "2026-09-25T18:37",
+            "panes_open": 4,
+            "counts": {
+              "rulings": 9,
+              "autonomous_rulings": 4,
+              "minors": 5,
+              "undelivered": 0,
+              "escalations": 1
+            }
+          }
+        ]
+      },
+      "active": {
+        "2026-09-25-dashv1": {
+          "dir": "2026-09-25-dashv1",
+          "short": "dashv1",
+          "display": "示範任務 dashv1",
+          "date": "2026-09-25",
+          "status": "running",
+          "index_note": "示範備註",
+          "branch": "dk/dashv1",
+          "worktree": "/projects/dkbo-team-dashboard/.worktrees/dashv1",
+          "task_tab": "wM:t2",
+          "repo_names": [
+            "main"
+          ],
+          "current_wave": 2,
+          "waves_planned": 2,
+          "waves_closed": 1,
+          "created_at": "2026-09-25T17:15",
+          "gate1_at": "2026-09-25T18:08",
+          "closed_at": null,
+          "close_result": null,
+          "updated_at": "2026-09-25T18:37",
+          "panes_open": 4,
+          "counts": {
+            "rulings": 9,
+            "autonomous_rulings": 4,
+            "minors": 5,
+            "undelivered": 0,
+            "escalations": 1
+          },
+          "repos": [
+            {
+              "name": "main",
+              "path": "/projects/dkbo-team-dashboard",
+              "worktree": "/projects/dkbo-team-dashboard/.worktrees/dashv1",
+              "base": "66c5f88ef912c7fdf0746766851334811cb73e23"
+            }
+          ],
+          "brief": {
+            "goal": "示範任務 dashv1 的目標（已去識別化）",
+            "acceptance": [
+              {
+                "text": "AC1 示範驗收條件",
+                "checked": false
+              },
+              {
+                "text": "AC2 示範驗收條件",
+                "checked": false
+              },
+              {
+                "text": "AC3 示範驗收條件",
+                "checked": false
+              },
+              {
+                "text": "AC4 示範驗收條件",
+                "checked": false
+              },
+              {
+                "text": "AC5 示範驗收條件",
+                "checked": false
+              },
+              {
+                "text": "AC6 示範驗收條件",
+                "checked": false
+              },
+              {
+                "text": "AC7 示範驗收條件",
+                "checked": false
+              },
+              {
+                "text": "AC8 示範驗收條件",
+                "checked": false
+              },
+              {
+                "text": "AC9 示範驗收條件",
+                "checked": false
+              },
+              {
+                "text": "AC10 示範驗收條件",
+                "checked": false
+              },
+              {
+                "text": "AC11 示範驗收條件",
+                "checked": false
+              },
+              {
+                "text": "AC12 示範驗收條件",
+                "checked": false
+              }
+            ],
+            "owners": [
+              {
+                "member": "it",
+                "writable": [
+                  "src/it/area1/**",
+                  "src/it/area2/**",
+                  "src/it/area3/**",
+                  "src/it/area4/**",
+                  "src/it/area5/**",
+                  "src/it/area6/**",
+                  "src/it/area7/**",
+                  "src/it/area8/**",
+                  "src/it/area9/**",
+                  "src/it/area10/**",
+                  "src/it/area11/**",
+                  "src/it/area12/**",
+                  "src/it/area13/**",
+                  "src/it/area14/**",
+                  "src/it/area15/**",
+                  "src/it/area16/**",
+                  "src/it/area17/**",
+                  "src/it/area18/**",
+                  "src/it/area19/**",
+                  "src/it/area20/**",
+                  "src/it/area21/**",
+                  "src/it/area22/**",
+                  "src/it/area23/**"
+                ],
+                "readonly": [
+                  "src/shared/ro1/**",
+                  "src/shared/ro2/**"
+                ],
+                "exclusive": []
+              },
+              {
+                "member": "backend",
+                "writable": [
+                  "src/backend/area1/**",
+                  "src/backend/area2/**",
+                  "src/backend/area3/**",
+                  "src/backend/area4/**",
+                  "src/backend/area5/**"
+                ],
+                "readonly": [
+                  "src/shared/ro1/**",
+                  "src/shared/ro2/**"
+                ],
+                "exclusive": [
+                  "port:4317"
+                ]
+              },
+              {
+                "member": "frontend-shell",
+                "writable": [
+                  "src/frontend-shell/area1/**",
+                  "src/frontend-shell/area2/**",
+                  "src/frontend-shell/area3/**",
+                  "src/frontend-shell/area4/**",
+                  "src/frontend-shell/area5/**",
+                  "src/frontend-shell/area6/**",
+                  "src/frontend-shell/area7/**",
+                  "src/frontend-shell/area8/**",
+                  "src/frontend-shell/area9/**",
+                  "src/frontend-shell/area10/**",
+                  "src/frontend-shell/area11/**",
+                  "src/frontend-shell/area12/**",
+                  "src/frontend-shell/area13/**",
+                  "src/frontend-shell/area14/**"
+                ],
+                "readonly": [
+                  "src/shared/ro1/**",
+                  "src/shared/ro2/**"
+                ],
+                "exclusive": [
+                  "port:4318",
+                  "port:5174"
+                ]
+              },
+              {
+                "member": "frontend-detail",
+                "writable": [
+                  "src/frontend-detail/area1/**",
+                  "src/frontend-detail/area2/**",
+                  "src/frontend-detail/area3/**",
+                  "src/frontend-detail/area4/**",
+                  "src/frontend-detail/area5/**"
+                ],
+                "readonly": [
+                  "src/shared/ro1/**",
+                  "src/shared/ro2/**",
+                  "src/shared/ro3/**",
+                  "src/shared/ro4/**",
+                  "src/shared/ro5/**"
+                ],
+                "exclusive": [
+                  "port:4319",
+                  "port:5175"
+                ]
+              },
+              {
+                "member": "qa",
+                "writable": [
+                  "src/qa/area1/**",
+                  "src/qa/area2/**"
+                ],
+                "readonly": [
+                  "src/shared/ro1/**",
+                  "src/shared/ro2/**"
+                ],
+                "exclusive": [
+                  "port:4417",
+                  "port:5273"
+                ]
+              }
+            ],
+            "waves": [
+              {
+                "wave": 1,
+                "type": "實作",
+                "member": "it",
+                "what": "第 1 波示範工作",
+                "tier": "M",
+                "done": "示範完成條件",
+                "review": "預設"
+              },
+              {
+                "wave": 2,
+                "type": "實作",
+                "member": "backend",
+                "what": "第 2 波示範工作",
+                "tier": "L",
+                "done": "示範完成條件",
+                "review": "預設"
+              },
+              {
+                "wave": 2,
+                "type": "實作",
+                "member": "frontend-shell",
+                "what": "第 2 波示範工作",
+                "tier": "L",
+                "done": "示範完成條件",
+                "review": null
+              },
+              {
+                "wave": 2,
+                "type": "實作",
+                "member": "frontend-detail",
+                "what": "第 2 波示範工作",
+                "tier": "L",
+                "done": "示範完成條件",
+                "review": null
+              },
+              {
+                "wave": 2,
+                "type": "驗證",
+                "member": "qa",
+                "what": "第 2 波示範工作",
+                "tier": "M",
+                "done": "示範完成條件",
+                "review": null
+              }
+            ]
+          },
+          "waves": [
+            {
+              "wave": 1,
+              "opened_at": "2026-09-25T18:10",
+              "dev_done_at": "2026-09-25T18:15",
+              "review_spawned_at": "2026-09-25T18:15",
+              "review_verdict_at": "2026-09-25T18:20",
+              "review_verdict": "a: important 1",
+              "closed_at": "2026-09-25T18:20",
+              "tests": "skipped (no DK_TEST_CMD)",
+              "tests_ok": true,
+              "commits": [
+                {
+                  "repo": null,
+                  "sha": "8a847ba"
+                }
+              ]
+            },
+            {
+              "wave": 2,
+              "opened_at": "2026-09-25T18:20",
+              "dev_done_at": null,
+              "review_spawned_at": null,
+              "review_verdict_at": null,
+              "review_verdict": null,
+              "closed_at": null,
+              "tests": null,
+              "tests_ok": null,
+              "commits": []
+            }
+          ],
+          "members": [
+            {
+              "name": "backend",
+              "status": "working",
+              "wave": 2,
+              "current": "示範進度",
+              "touched": [
+                "src/backend/file1.ts",
+                "src/backend/file2.ts",
+                "src/backend/file3.ts",
+                "src/backend/file4.ts",
+                "src/backend/file5.ts",
+                "src/backend/file6.ts",
+                "src/backend/file7.ts",
+                "src/backend/file8.ts",
+                "src/backend/file9.ts",
+                "src/backend/file10.ts",
+                "src/backend/file11.ts",
+                "src/backend/file12.ts",
+                "src/backend/file13.ts",
+                "src/backend/file14.ts",
+                "src/backend/file15.ts",
+                "src/backend/file16.ts",
+                "src/backend/file17.ts",
+                "src/backend/file18.ts",
+                "src/backend/file19.ts",
+                "src/backend/file20.ts",
+                "src/backend/file21.ts",
+                "src/backend/file22.ts",
+                "src/backend/file23.ts",
+                "src/backend/file24.ts",
+                "src/backend/file25.ts",
+                "src/backend/file26.ts",
+                "src/backend/file27.ts",
+                "src/backend/file28.ts",
+                "src/backend/file29.ts"
+              ],
+              "todo": [
+                "示範待辦 1",
+                "示範待辦 2",
+                "示範待辦 3"
+              ],
+              "blocked_by": null,
+              "notes": "示範備註",
+              "has_report": false
+            },
+            {
+              "name": "frontend-detail",
+              "status": "working",
+              "wave": 2,
+              "current": "示範進度",
+              "touched": [
+                "src/frontend-detail/file1.ts",
+                "src/frontend-detail/file2.ts",
+                "src/frontend-detail/file3.ts",
+                "src/frontend-detail/file4.ts",
+                "src/frontend-detail/file5.ts",
+                "src/frontend-detail/file6.ts",
+                "src/frontend-detail/file7.ts",
+                "src/frontend-detail/file8.ts",
+                "src/frontend-detail/file9.ts",
+                "src/frontend-detail/file10.ts",
+                "src/frontend-detail/file11.ts",
+                "src/frontend-detail/file12.ts",
+                "src/frontend-detail/file13.ts",
+                "src/frontend-detail/file14.ts",
+                "src/frontend-detail/file15.ts",
+                "src/frontend-detail/file16.ts",
+                "src/frontend-detail/file17.ts",
+                "src/frontend-detail/file18.ts",
+                "src/frontend-detail/file19.ts"
+              ],
+              "todo": [
+                "示範待辦 1",
+                "示範待辦 2"
+              ],
+              "blocked_by": null,
+              "notes": "示範備註",
+              "has_report": true
+            },
+            {
+              "name": "frontend-shell",
+              "status": "working",
+              "wave": 2,
+              "current": "示範進度",
+              "touched": [
+                "src/frontend-shell/file1.ts",
+                "src/frontend-shell/file2.ts",
+                "src/frontend-shell/file3.ts",
+                "src/frontend-shell/file4.ts",
+                "src/frontend-shell/file5.ts",
+                "src/frontend-shell/file6.ts",
+                "src/frontend-shell/file7.ts",
+                "src/frontend-shell/file8.ts",
+                "src/frontend-shell/file9.ts",
+                "src/frontend-shell/file10.ts",
+                "src/frontend-shell/file11.ts",
+                "src/frontend-shell/file12.ts",
+                "src/frontend-shell/file13.ts",
+                "src/frontend-shell/file14.ts",
+                "src/frontend-shell/file15.ts",
+                "src/frontend-shell/file16.ts",
+                "src/frontend-shell/file17.ts",
+                "src/frontend-shell/file18.ts",
+                "src/frontend-shell/file19.ts",
+                "src/frontend-shell/file20.ts",
+                "src/frontend-shell/file21.ts",
+                "src/frontend-shell/file22.ts",
+                "src/frontend-shell/file23.ts",
+                "src/frontend-shell/file24.ts",
+                "src/frontend-shell/file25.ts",
+                "src/frontend-shell/file26.ts",
+                "src/frontend-shell/file27.ts",
+                "src/frontend-shell/file28.ts",
+                "src/frontend-shell/file29.ts",
+                "src/frontend-shell/file30.ts",
+                "src/frontend-shell/file31.ts",
+                "src/frontend-shell/file32.ts",
+                "src/frontend-shell/file33.ts",
+                "src/frontend-shell/file34.ts"
+              ],
+              "todo": [
+                "示範待辦 1"
+              ],
+              "blocked_by": null,
+              "notes": "示範備註",
+              "has_report": true
+            },
+            {
+              "name": "it",
+              "status": "done",
+              "wave": 1,
+              "current": "示範進度",
+              "touched": [
+                "src/it/file1.ts",
+                "src/it/file2.ts",
+                "src/it/file3.ts",
+                "src/it/file4.ts",
+                "src/it/file5.ts",
+                "src/it/file6.ts",
+                "src/it/file7.ts",
+                "src/it/file8.ts",
+                "src/it/file9.ts",
+                "src/it/file10.ts",
+                "src/it/file11.ts",
+                "src/it/file12.ts",
+                "src/it/file13.ts",
+                "src/it/file14.ts",
+                "src/it/file15.ts",
+                "src/it/file16.ts",
+                "src/it/file17.ts",
+                "src/it/file18.ts",
+                "src/it/file19.ts",
+                "src/it/file20.ts",
+                "src/it/file21.ts",
+                "src/it/file22.ts",
+                "src/it/file23.ts",
+                "src/it/file24.ts",
+                "src/it/file25.ts",
+                "src/it/file26.ts",
+                "src/it/file27.ts",
+                "src/it/file28.ts",
+                "src/it/file29.ts",
+                "src/it/file30.ts",
+                "src/it/file31.ts",
+                "src/it/file32.ts",
+                "src/it/file33.ts",
+                "src/it/file34.ts",
+                "src/it/file35.ts",
+                "src/it/file36.ts",
+                "src/it/file37.ts",
+                "src/it/file38.ts",
+                "src/it/file39.ts",
+                "src/it/file40.ts",
+                "src/it/file41.ts",
+                "src/it/file42.ts",
+                "src/it/file43.ts",
+                "src/it/file44.ts",
+                "src/it/file45.ts",
+                "src/it/file46.ts"
+              ],
+              "todo": [],
+              "blocked_by": null,
+              "notes": "示範備註",
+              "has_report": true
+            },
+            {
+              "name": "qa",
+              "status": "working",
+              "wave": 2,
+              "current": "示範進度",
+              "touched": [
+                "src/qa/file1.ts",
+                "src/qa/file2.ts",
+                "src/qa/file3.ts",
+                "src/qa/file4.ts",
+                "src/qa/file5.ts"
+              ],
+              "todo": [
+                "示範待辦 1",
+                "示範待辦 2"
+              ],
+              "blocked_by": null,
+              "notes": "示範備註",
+              "has_report": false
+            },
+            {
+              "name": "reviewer-a",
+              "status": "done",
+              "wave": 1,
+              "current": "示範進度",
+              "touched": [],
+              "todo": [],
+              "blocked_by": null,
+              "notes": "示範備註",
+              "has_report": true
+            },
+            {
+              "name": "reviewer-p1",
+              "status": "done",
+              "wave": 0,
+              "current": "示範進度",
+              "touched": [],
+              "todo": [],
+              "blocked_by": null,
+              "notes": "示範備註",
+              "has_report": true
+            }
+          ],
+          "panes": [
+            {
+              "agent": "dashv1-backend",
+              "pane": "wM:p7",
+              "since_epoch": 1790331637,
+              "group": "dev",
+              "tab": "1",
+              "slot": "1"
+            },
+            {
+              "agent": "dashv1-qa",
+              "pane": "wM:pA",
+              "since_epoch": 1790331664,
+              "group": "review",
+              "tab": "1",
+              "slot": "4"
+            },
+            {
+              "agent": "dashv1-frontend-shell",
+              "pane": "wM:pB",
+              "since_epoch": 1790331703,
+              "group": "dev",
+              "tab": "2",
+              "slot": "1"
+            },
+            {
+              "agent": "dashv1-frontend-detail",
+              "pane": "wM:pC",
+              "since_epoch": 1790331711,
+              "group": "dev",
+              "tab": "2",
+              "slot": "2"
+            }
+          ],
+          "rulings": [
+            {
+              "ts": "2026-09-25T17:23",
+              "text": "示範裁定 1",
+              "autonomous": false
+            },
+            {
+              "ts": "2026-09-25T17:23",
+              "text": "示範裁定 2",
+              "autonomous": false
+            },
+            {
+              "ts": "2026-09-25T17:23",
+              "text": "示範裁定 3",
+              "autonomous": false
+            },
+            {
+              "ts": "2026-09-25T17:23",
+              "text": "示範裁定 4",
+              "autonomous": false
+            },
+            {
+              "ts": "2026-09-25T18:10",
+              "text": "[自主] 示範裁定 5",
+              "autonomous": true
+            },
+            {
+              "ts": "2026-09-25T18:15",
+              "text": "[自主] 示範裁定 6",
+              "autonomous": true
+            },
+            {
+              "ts": "2026-09-25T18:20",
+              "text": "示範裁定 7",
+              "autonomous": false
+            },
+            {
+              "ts": "2026-09-25T18:21",
+              "text": "[自主] 示範裁定 8",
+              "autonomous": true
+            },
+            {
+              "ts": "2026-09-25T18:37",
+              "text": "[自主] 示範裁定 9",
+              "autonomous": true
+            }
+          ],
+          "events": [
+            {
+              "ts": "2026-09-25T17:15",
+              "kind": "task-new",
+              "text": "task-new dashv1"
+            },
+            {
+              "ts": "2026-09-25T17:15",
+              "kind": "watch",
+              "text": "watch restarted (pid 259362)"
+            },
+            {
+              "ts": "2026-09-25T17:15",
+              "kind": "events",
+              "text": "events started (pid 259388)"
+            },
+            {
+              "ts": "2026-09-25T17:17",
+              "kind": "spawn",
+              "text": "spawn dashv1-reviewer-p1 (claude L) isolated override-kind"
+            },
+            {
+              "ts": "2026-09-25T17:17",
+              "kind": "brief-review",
+              "text": "brief-review spawned dashv1-reviewer-p1(claude)"
+            },
+            {
+              "ts": "2026-09-25T17:23",
+              "kind": "brief-review",
+              "text": "brief-review verdict p1: 要改 12 處"
+            },
+            {
+              "ts": "2026-09-25T17:23",
+              "kind": "ruling",
+              "text": "ruling: 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T17:23",
+              "kind": "ruling",
+              "text": "ruling: 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T17:23",
+              "kind": "ruling",
+              "text": "ruling: 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T17:23",
+              "kind": "ruling",
+              "text": "ruling: 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T17:23",
+              "kind": "pane-close",
+              "text": "pane-close dashv1-reviewer-p1"
+            },
+            {
+              "ts": "2026-09-25T18:08",
+              "kind": "gate1",
+              "text": "gate1 approved"
+            },
+            {
+              "ts": "2026-09-25T18:08",
+              "kind": "note",
+              "text": "note: 示範內容 13"
+            },
+            {
+              "ts": "2026-09-25T18:08",
+              "kind": "note",
+              "text": "note: 示範內容 14"
+            },
+            {
+              "ts": "2026-09-25T18:09",
+              "kind": "materialize",
+              "text": "materialize repos main tab wM:t2"
+            },
+            {
+              "ts": "2026-09-25T18:09",
+              "kind": "handoff",
+              "text": "handoff run-leader pane wM:p4"
+            },
+            {
+              "ts": "2026-09-25T18:10",
+              "kind": "wave-open",
+              "text": "wave-open 1 repo main base 66c5f88"
+            },
+            {
+              "ts": "2026-09-25T18:10",
+              "kind": "wave-open",
+              "text": "wave-open 1 base 66c5f88 members it(M)"
+            },
+            {
+              "ts": "2026-09-25T18:10",
+              "kind": "spawn",
+              "text": "spawn dashv1-it (claude M)"
+            },
+            {
+              "ts": "2026-09-25T18:10",
+              "kind": "ruling",
+              "text": "ruling: [自主] 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T18:15",
+              "kind": "dev-done",
+              "text": "dev-done wave 1 (1: it)"
+            },
+            {
+              "ts": "2026-09-25T18:15",
+              "kind": "ruling",
+              "text": "ruling: [自主] 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T18:15",
+              "kind": "spawn",
+              "text": "spawn dashv1-reviewer-a (claude L) isolated override-kind"
+            },
+            {
+              "ts": "2026-09-25T18:15",
+              "kind": "review",
+              "text": "review 1 spawned dashv1-reviewer-a(claude)"
+            },
+            {
+              "ts": "2026-09-25T18:20",
+              "kind": "review",
+              "text": "review 1 verdict a: important 1"
+            },
+            {
+              "ts": "2026-09-25T18:20",
+              "kind": "ruling",
+              "text": "ruling: 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T18:20",
+              "kind": "minor",
+              "text": "minor: 示範內容 27"
+            },
+            {
+              "ts": "2026-09-25T18:20",
+              "kind": "minor",
+              "text": "minor: 示範內容 28"
+            },
+            {
+              "ts": "2026-09-25T18:20",
+              "kind": "minor",
+              "text": "minor: 示範內容 29"
+            },
+            {
+              "ts": "2026-09-25T18:20",
+              "kind": "minor",
+              "text": "minor: 示範內容 30"
+            },
+            {
+              "ts": "2026-09-25T18:20",
+              "kind": "minor",
+              "text": "minor: 示範內容 31"
+            },
+            {
+              "ts": "2026-09-25T18:20",
+              "kind": "wave-close",
+              "text": "wave-close 1 tests skipped (no DK_TEST_CMD) 2 agents closed"
+            },
+            {
+              "ts": "2026-09-25T18:20",
+              "kind": "wave",
+              "text": "wave 1 耗時 10m（dev 5m、審查 5m）"
+            },
+            {
+              "ts": "2026-09-25T18:20",
+              "kind": "commit",
+              "text": "commit 8a847ba wave 1"
+            },
+            {
+              "ts": "2026-09-25T18:20",
+              "kind": "note",
+              "text": "note: 示範內容 35"
+            },
+            {
+              "ts": "2026-09-25T18:20",
+              "kind": "note",
+              "text": "note: 示範內容 36"
+            },
+            {
+              "ts": "2026-09-25T18:20",
+              "kind": "wave-open",
+              "text": "wave-open 2 repo main base 8a847ba"
+            },
+            {
+              "ts": "2026-09-25T18:20",
+              "kind": "wave-open",
+              "text": "wave-open 2 base 8a847ba members backend(L) frontend-shell(L) frontend-detail(L) qa(M)"
+            },
+            {
+              "ts": "2026-09-25T18:20",
+              "kind": "spawn",
+              "text": "spawn dashv1-backend (claude L)"
+            },
+            {
+              "ts": "2026-09-25T18:20",
+              "kind": "spawn",
+              "text": "spawn dashv1-frontend-frontend-shell (claude L)"
+            },
+            {
+              "ts": "2026-09-25T18:20",
+              "kind": "spawn",
+              "text": "spawn dashv1-frontend-frontend-detail (claude L)"
+            },
+            {
+              "ts": "2026-09-25T18:21",
+              "kind": "spawn",
+              "text": "spawn dashv1-qa (claude M)"
+            },
+            {
+              "ts": "2026-09-25T18:21",
+              "kind": "pane-close",
+              "text": "pane-close dashv1-frontend-frontend-shell"
+            },
+            {
+              "ts": "2026-09-25T18:21",
+              "kind": "pane-close",
+              "text": "pane-close dashv1-frontend-frontend-detail"
+            },
+            {
+              "ts": "2026-09-25T18:21",
+              "kind": "ruling",
+              "text": "ruling: [自主] 示範裁定"
+            },
+            {
+              "ts": "2026-09-25T18:21",
+              "kind": "tab",
+              "text": "tab 2 wM:t3 opened"
+            },
+            {
+              "ts": "2026-09-25T18:21",
+              "kind": "spawn",
+              "text": "spawn dashv1-frontend-shell (claude L)"
+            },
+            {
+              "ts": "2026-09-25T18:21",
+              "kind": "spawn",
+              "text": "spawn dashv1-frontend-detail (claude L)"
+            },
+            {
+              "ts": "2026-09-25T18:37",
+              "kind": "ruling",
+              "text": "ruling: [自主] 示範裁定"
+            }
+          ],
+          "messages": [
+            {
+              "ts": "2026-09-25T17:22",
+              "from": "dashv1-reviewer-p1",
+              "to": "leader-dashv1",
+              "type": "DONE",
+              "text": "brief-review: 示範訊息 1"
+            },
+            {
+              "ts": "2026-09-25T18:10",
+              "from": "leader-dashv1",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T18:14",
+              "from": "dashv1-it",
+              "to": "leader-dashv1",
+              "type": "DONE",
+              "text": "示範訊息 3"
+            },
+            {
+              "ts": "2026-09-25T18:14",
+              "from": "leader-dashv1",
+              "to": "dashv1-it",
+              "type": "TASK",
+              "text": "示範訊息 4"
+            },
+            {
+              "ts": "2026-09-25T18:14",
+              "from": "dashv1-it",
+              "to": "leader-dashv1",
+              "type": "FIXED",
+              "text": "示範訊息 5"
+            },
+            {
+              "ts": "2026-09-25T18:15",
+              "from": "leader-dashv1",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T18:15",
+              "from": "leader-dashv1",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T18:19",
+              "from": "dashv1-reviewer-a",
+              "to": "leader-dashv1",
+              "type": "DONE",
+              "text": "示範訊息 8"
+            },
+            {
+              "ts": "2026-09-25T18:19",
+              "from": "leader-dashv1",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            },
+            {
+              "ts": "2026-09-25T18:32",
+              "from": "dashv1-frontend-shell",
+              "to": "dashv1-frontend-detail",
+              "type": "ANSWER",
+              "text": "示範訊息 10"
+            },
+            {
+              "ts": "2026-09-25T18:37",
+              "from": "dashv1-frontend-shell",
+              "to": "leader-dashv1",
+              "type": "ESCALATE",
+              "text": "示範訊息 11"
+            },
+            {
+              "ts": "2026-09-25T18:37",
+              "from": "leader-dashv1",
+              "to": null,
+              "type": "ACK",
+              "text": ""
+            }
+          ],
+          "skipped_lines": {
+            "process": 0,
+            "messages": 0
+          }
+        }
+      },
+      "panes": [
+        {
+          "paneId": "wM:p7",
+          "tabId": "wM:t2",
+          "workspaceId": "wM",
+          "name": "dashv1-backend",
+          "agent": "claude",
+          "status": "working",
+          "cwd": "/projects/dkbo-team-dashboard/.worktrees/dashv1",
+          "model": "opus 5.5",
+          "effort": "high",
+          "cost": 5.61,
+          "ctxPct": 23,
+          "usage5hPct": 3,
+          "usageWkPct": 41,
+          "taskDir": "2026-09-25-dashv1",
+          "member": "backend"
+        },
+        {
+          "paneId": "wM:pA",
+          "tabId": "wM:t2",
+          "workspaceId": "wM",
+          "name": "dashv1-qa",
+          "agent": "claude",
+          "status": "done",
+          "cwd": "/projects/dkbo-team-dashboard/.worktrees/dashv1",
+          "model": "opus 5.5",
+          "effort": "medium",
+          "cost": 0.85,
+          "ctxPct": 8,
+          "usage5hPct": null,
+          "usageWkPct": 41,
+          "taskDir": "2026-09-25-dashv1",
+          "member": "qa"
+        },
+        {
+          "paneId": "wM:pB",
+          "tabId": "wM:t3",
+          "workspaceId": "wM",
+          "name": "dashv1-frontend-shell",
+          "agent": "claude",
+          "status": "working",
+          "cwd": "/projects/dkbo-team-dashboard/.worktrees/dashv1",
+          "model": "opus 5.5",
+          "effort": "high",
+          "cost": 4.04,
+          "ctxPct": 17,
+          "usage5hPct": 3,
+          "usageWkPct": 41,
+          "taskDir": "2026-09-25-dashv1",
+          "member": "frontend-shell"
+        },
+        {
+          "paneId": "wM:pC",
+          "tabId": "wM:t3",
+          "workspaceId": "wM",
+          "name": "dashv1-frontend-detail",
+          "agent": "claude",
+          "status": "working",
+          "cwd": "/projects/dkbo-team-dashboard/.worktrees/dashv1",
+          "model": "opus 5.5",
+          "effort": "high",
+          "cost": 3.61,
+          "ctxPct": 16,
+          "usage5hPct": 3,
+          "usageWkPct": 41,
+          "taskDir": "2026-09-25-dashv1",
+          "member": "frontend-detail"
+        }
+      ],
+      "otherPanes": [
+        {
+          "paneId": "wM:p1",
+          "tabId": "wM:t1",
+          "workspaceId": "wM",
+          "name": null,
+          "agent": "claude",
+          "status": "idle",
+          "cwd": "/projects/dkbo-team-dashboard",
+          "model": "opus 5.5",
+          "effort": "medium",
+          "cost": 2.82,
+          "ctxPct": 14,
+          "usage5hPct": null,
+          "usageWkPct": 40,
+          "taskDir": null,
+          "member": null
+        },
+        {
+          "paneId": "wM:p4",
+          "tabId": "wM:t2",
+          "workspaceId": "wM",
+          "name": "leader-dashv1",
+          "agent": "claude",
+          "status": "done",
+          "cwd": "/projects/dkbo-team-dashboard",
+          "model": "opus 5.5",
+          "effort": "high",
+          "cost": 1.34,
+          "ctxPct": 9,
+          "usage5hPct": 2,
+          "usageWkPct": 41,
+          "taskDir": "2026-09-25-dashv1",
+          "member": null
+        }
+      ]
+    }
+  ],
+  "kindsDown": [
+    {
+      "kind": "agy",
+      "until": "2026-09-30T20:51",
+      "until_epoch": 1790772689,
+      "exact": true,
+      "recorded_at": "2026-09-23T22:55",
+      "from_task": "2026-09-23-swq",
+      "agent": "swq-reviewer-b",
+      "reason": "⚠ Individual quota reached. Please upgrade your subscription to increase your limits. Resets in 165h55m44s.",
+      "project": "sport-demo"
+    },
+    {
+      "kind": "agy",
+      "until": "2026-09-30T20:49",
+      "until_epoch": 1790772549,
+      "exact": true,
+      "recorded_at": "2026-09-24T06:55",
+      "from_task": "2026-09-24-testtrust",
+      "agent": "testtrust-reviewer-p3",
+      "reason": "⚠ Individual quota reached. Please upgrade your subscription to increase your limits.",
+      "project": "teamflow"
+    },
+    {
+      "kind": "agy",
+      "until": "2026-09-30T20:49",
+      "until_epoch": 1790772548,
+      "exact": true,
+      "recorded_at": "2026-09-25T14:31",
+      "from_task": "-",
+      "agent": "leader",
+      "reason": "帳號層額度，沿用 teamflow testtrust 的記錄",
+      "project": "dkbo-team-dashboard"
+    },
+    {
+      "kind": "agy",
+      "until": "2026-09-30T20:49",
+      "until_epoch": 1790772542,
+      "exact": true,
+      "recorded_at": "2026-09-25T00:24",
+      "from_task": "2026-09-25-beacon",
+      "agent": "beacon-reviewer-p3",
+      "reason": "⚠ Individual quota reached. Please",
+      "project": "collect"
+    },
+    {
+      "kind": "codex",
+      "until": "2026-10-11T19:32",
+      "until_epoch": 1791718368,
+      "exact": true,
+      "recorded_at": "2026-09-23T16:49",
+      "from_task": "2026-09-23-swp",
+      "agent": "swp-reviewer-p2",
+      "reason": "■ You’ve hit your usage limit. Upgrade to Plus to continue using Codex",
+      "project": "sport-demo"
+    },
+    {
+      "kind": "codex",
+      "until": "2026-10-11T19:32",
+      "until_epoch": 1791718351,
+      "exact": true,
+      "recorded_at": "2026-09-25T00:22",
+      "from_task": "2026-09-25-beacon",
+      "agent": "beacon-reviewer-p2",
+      "reason": "■ You’ve hit your usage limit. Upgrade to Plus to continue using Codex",
+      "project": "collect"
+    },
+    {
+      "kind": "codex",
+      "until": "2026-10-11T19:32",
+      "until_epoch": 1791718349,
+      "exact": true,
+      "recorded_at": "2026-09-24T06:52",
+      "from_task": "2026-09-24-testtrust",
+      "agent": "testtrust-reviewer-p2",
+      "reason": "■ You’ve hit your usage limit. Upgrade to Plus to continue using Codex",
+      "project": "teamflow"
+    },
+    {
+      "kind": "codex",
+      "until": "2026-10-11T19:32",
+      "until_epoch": 1791718328,
+      "exact": true,
+      "recorded_at": "2026-09-25T14:31",
+      "from_task": "-",
+      "agent": "leader",
+      "reason": "帳號層額度，沿用 teamflow testtrust 的記錄",
+      "project": "dkbo-team-dashboard"
+    }
+  ],
+  "usage": {
+    "claude": {
+      "fiveHourPct": 3,
+      "weekPct": 41
+    }
+  },
+  "herdr": {
+    "state": "subscribed",
+    "lastAt": 1790332810170
+  }
+}

@@ -1,0 +1,196 @@
+{
+  "protocol": 22,
+  "version": "0.9.0",
+  "focused_pane_id": null,
+  "focused_tab_id": null,
+  "focused_workspace_id": null,
+  "workspaces": [
+    {
+      "workspace_id": "wE",
+      "label": "teamflow",
+      "number": 1,
+      "agent_status": "working",
+      "active_tab_id": "wE:t1"
+    }
+  ],
+  "tabs": [
+    {
+      "tab_id": "wE:t1",
+      "workspace_id": "wE",
+      "label": "1",
+      "number": 1,
+      "agent_status": "working"
+    }
+  ],
+  "layouts": [
+    {
+      "tab_id": "wE:t1",
+      "workspace_id": "wE",
+      "area": {
+        "x": 0,
+        "y": 0,
+        "width": 120,
+        "height": 30
+      },
+      "focused_pane_id": "wE:p1",
+      "zoomed": false,
+      "splits": [],
+      "panes": [
+        {
+          "pane_id": "wE:p1",
+          "focused": true,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 120,
+            "height": 30
+          }
+        },
+        {
+          "pane_id": "wE:p2",
+          "focused": false,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 60,
+            "height": 15
+          }
+        },
+        {
+          "pane_id": "wE:p3",
+          "focused": false,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 60,
+            "height": 15
+          }
+        }
+      ]
+    }
+  ],
+  "agents": [
+    {
+      "agent": "claude",
+      "agent_status": "working",
+      "cwd": "{{PROJECTS}}/teamflow",
+      "name": "leader-e2e",
+      "pane_id": "wE:p1",
+      "tab_id": "wE:t1",
+      "workspace_id": "wE",
+      "tokens": {
+        "cost": "$1.25",
+        "ctx": "12%",
+        "ctx_num": "12",
+        "effort": "high",
+        "model": "opus 5.5",
+        "usage_session_num": "42",
+        "usage_period_num": "40"
+      },
+      "focused": false,
+      "foreground_cwd": "{{PROJECTS}}/teamflow"
+    },
+    {
+      "agent": "claude",
+      "agent_status": "idle",
+      "cwd": "{{PROJECTS}}/teamflow",
+      "name": "e2erun-frontend-shell",
+      "pane_id": "wE:p2",
+      "tab_id": "wE:t1",
+      "workspace_id": "wE",
+      "tokens": {
+        "cost": "$0.50",
+        "ctx": "12%",
+        "ctx_num": "12",
+        "effort": "high",
+        "model": "sonnet 5",
+        "usage_session_num": "42",
+        "usage_period_num": "40"
+      },
+      "focused": false,
+      "foreground_cwd": "{{PROJECTS}}/teamflow"
+    },
+    {
+      "agent": "claude",
+      "agent_status": "idle",
+      "cwd": "{{PROJECTS}}/teamflow",
+      "name": "e2erun-backend",
+      "pane_id": "wE:p3",
+      "tab_id": "wE:t1",
+      "workspace_id": "wE",
+      "tokens": {
+        "cost": "$0.50",
+        "ctx": "12%",
+        "ctx_num": "12",
+        "effort": "high",
+        "model": "opus 5.5",
+        "usage_session_num": "42",
+        "usage_period_num": "40"
+      },
+      "focused": false,
+      "foreground_cwd": "{{PROJECTS}}/teamflow"
+    }
+  ],
+  "panes": [
+    {
+      "agent": "claude",
+      "agent_status": "working",
+      "cwd": "{{PROJECTS}}/teamflow",
+      "name": "leader-e2e",
+      "pane_id": "wE:p1",
+      "tab_id": "wE:t1",
+      "workspace_id": "wE",
+      "tokens": {
+        "cost": "$1.25",
+        "ctx": "12%",
+        "ctx_num": "12",
+        "effort": "high",
+        "model": "opus 5.5",
+        "usage_session_num": "42",
+        "usage_period_num": "40"
+      },
+      "focused": false,
+      "foreground_cwd": "{{PROJECTS}}/teamflow"
+    },
+    {
+      "agent": "claude",
+      "agent_status": "idle",
+      "cwd": "{{PROJECTS}}/teamflow",
+      "name": "e2erun-frontend-shell",
+      "pane_id": "wE:p2",
+      "tab_id": "wE:t1",
+      "workspace_id": "wE",
+      "tokens": {
+        "cost": "$0.50",
+        "ctx": "12%",
+        "ctx_num": "12",
+        "effort": "high",
+        "model": "sonnet 5",
+        "usage_session_num": "42",
+        "usage_period_num": "40"
+      },
+      "focused": false,
+      "foreground_cwd": "{{PROJECTS}}/teamflow"
+    },
+    {
+      "agent": "claude",
+      "agent_status": "idle",
+      "cwd": "{{PROJECTS}}/teamflow",
+      "name": "e2erun-backend",
+      "pane_id": "wE:p3",
+      "tab_id": "wE:t1",
+      "workspace_id": "wE",
+      "tokens": {
+        "cost": "$0.50",
+        "ctx": "12%",
+        "ctx_num": "12",
+        "effort": "high",
+        "model": "opus 5.5",
+        "usage_session_num": "42",
+        "usage_period_num": "40"
+      },
+      "focused": false,
+      "foreground_cwd": "{{PROJECTS}}/teamflow"
+    }
+  ]
+}
