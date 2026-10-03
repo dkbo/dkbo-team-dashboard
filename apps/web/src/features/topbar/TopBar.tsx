@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { Cloud } from 'lucide-react'
 import { NavLink } from 'react-router'
 import { ThemeToggle } from '@/app/theme'
@@ -42,25 +43,39 @@ function Light({ id, label, state, hint }: { id: string; label: string; state: L
 
 const navClass = ({ isActive }: { isActive: boolean }) =>
   cn(
-    'rounded-full px-3 py-1 text-sm transition-colors',
+    'rounded-full px-3 py-1 text-sm whitespace-nowrap transition-colors',
     isActive ? 'bg-primary font-semibold text-primary-foreground shadow-soft' : 'text-muted-foreground hover:bg-muted hover:text-foreground',
   )
 
+/** 把頂部列高度寫進 <html> 的 --topbar-h（它在窄一點的寬度會換行），總覽活動欄的 sticky top 靠它對齊 */
+function useTopbarHeightVar() {
+  const ref = useRef<HTMLElement>(null)
+  useEffect(() => {
+    const el = ref.current
+    if (!el || typeof ResizeObserver === 'undefined') return
+    const ro = new ResizeObserver(() => document.documentElement.style.setProperty('--topbar-h', `${el.getBoundingClientRect().height}px`))
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+  return ref
+}
+
 export function TopBar({ now }: { now: number }) {
+  const headerRef = useTopbarHeightVar()
   const { sse, herdr } = useConnection()
   const overview = useDashStore((s) => s.overview)
   const downs = overview ? latestKindsDown(overview.kindsDown, now) : []
   const usage = overview ? usageRows(overview.usage) : []
 
   return (
-    <header className="sticky top-0 z-20 border-b bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+    <header ref={headerRef} className="sticky top-0 z-20 bg-background/90 shadow-soft backdrop-blur supports-[backdrop-filter]:bg-background/70">
       <div className="mx-auto flex max-w-screen-2xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2">
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 font-bold">
-            <Cloud aria-hidden className="size-5 fill-primary/30 text-primary" />
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 font-bold whitespace-nowrap">
+            <Cloud aria-hidden className="size-5 fill-brand-violet/30 text-brand-blue" />
             dkbo 儀表板
           </span>
-          <nav className="flex gap-1">
+          <nav className="flex flex-wrap gap-1">
             <NavLink to="/" end className={navClass}>
               總覽
             </NavLink>
@@ -85,7 +100,7 @@ export function TopBar({ now }: { now: number }) {
             <span
               key={d.kind}
               title={`${d.project} · ${d.reason}`}
-              className="rounded-full border border-red-500/40 bg-red-500/10 px-2 py-0.5 font-medium text-red-700 dark:text-red-300"
+              className="rounded-full border-[1.5px] border-red-500 bg-transparent px-2 py-0.5 font-medium text-red-700 dark:border-red-400 dark:text-red-300"
             >
               {d.kind} 熔斷 · 還剩 {formatCountdown(d.until_epoch, now)}
             </span>
@@ -96,7 +111,7 @@ export function TopBar({ now }: { now: number }) {
             </span>
           ) : (
             usage.map((u) => (
-              <span key={u.kind} data-testid={`usage-${u.kind}`} className="inline-flex items-center gap-1.5 rounded-full border bg-card/70 px-2.5 py-0.5">
+              <span key={u.kind} data-testid={`usage-${u.kind}`} className="inline-flex items-center gap-1.5 rounded-full border-[1.5px] border-brand-blue/70 bg-transparent px-2.5 py-0.5">
                 <span className="font-medium">{u.kind}</span>
                 <span className="text-muted-foreground tabular-nums">5h {formatPct(u.fiveHourPct)}</span>
                 <span className="text-muted-foreground tabular-nums">週 {formatPct(u.weekPct)}</span>

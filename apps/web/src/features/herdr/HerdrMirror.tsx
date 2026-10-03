@@ -297,7 +297,8 @@ function PaneBox({
       className={cn('absolute flex flex-col overflow-hidden border', selected ? 'z-10 border-emerald-500' : 'border-zinc-800')}
       style={style}
     >
-      <div className="flex shrink-0 items-center gap-2 border-b border-zinc-800 bg-zinc-900 px-2 py-0.5 font-sans text-xs text-zinc-300">
+      {/* 標頭固定黑底：用 .dark 範圍讓透明底的狀態膠囊取深色 token */}
+      <div className="dark flex shrink-0 items-center gap-2 border-b border-zinc-800 bg-zinc-900 px-2 py-0.5 font-sans text-xs text-zinc-300">
         <StatusPill status={pane.status} className="h-5 px-2 text-[0.7rem]" />
         <span className="truncate font-medium">{pane.name ?? pane.agent ?? pane.paneId}</span>
         {link && (

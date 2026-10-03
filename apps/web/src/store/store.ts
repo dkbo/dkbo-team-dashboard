@@ -80,6 +80,14 @@ function panesOf(doc: OverviewDoc): Record<string, PaneLive> {
   return out
 }
 
+const streamListeners = new Set<(e: SseEvent) => void>()
+
+/** 訂閱每一則 SSE 事件（活動欄靠它決定何時重抓）；回傳取消訂閱函式。 */
+export function subscribeStreamEvents(fn: (e: SseEvent) => void): () => void {
+  streamListeners.add(fn)
+  return () => void streamListeners.delete(fn)
+}
+
 export const useDashStore = create<DashState>()((set, get) => {
   // 較舊的 overview（例如 SSE 已推來較新的，fetch 才回來）不覆蓋較新的。
   const acceptOverview = (doc: OverviewDoc) => {
@@ -156,6 +164,7 @@ export const useDashStore = create<DashState>()((set, get) => {
     },
 
     handleEvent(e) {
+      for (const fn of streamListeners) fn(e)
       switch (e.event) {
         case 'overview.updated':
           acceptOverview(e.data)

@@ -34,7 +34,7 @@ function AcceptancePanel({ task }: { task: TaskDetail }) {
       {items.map((a, i) => (
         <li key={i} className="flex gap-2">
           {a.checked ? (
-            <CheckSquare className="mt-0.5 size-4 shrink-0 text-emerald-600" aria-label="已勾選" />
+            <CheckSquare className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" aria-label="已勾選" />
           ) : (
             <Square className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-label="未勾選" />
           )}

@@ -1,7 +1,17 @@
 // HTTP／SSE API（契約見 brief「HTTP／SSE API」）。全部唯讀。
 import { Hono } from 'hono';
 import { streamSSE } from 'hono/streaming';
-import { GIT_LOG_DEFAULT, GIT_LOG_MAX, type HistoryResponse, type SseEvent, type TaskDetailResponse } from '@dash/shared';
+import {
+  ACTIVITY_LIMIT_DEFAULT,
+  ACTIVITY_LIMIT_MAX,
+  activityFeed,
+  GIT_LOG_DEFAULT,
+  GIT_LOG_MAX,
+  type ActivityResponse,
+  type HistoryResponse,
+  type SseEvent,
+  type TaskDetailResponse,
+} from '@dash/shared';
 import type { StatusCollector } from './collector.ts';
 import { BadGitRead, GitFailure, UnknownCommit, UnknownFile, type GitReader } from './git.ts';
 import { BadRead, HerdrUnavailable, UnknownPane, type HerdrReader } from './herdr-view.ts';
@@ -73,6 +83,16 @@ export function createApp(collector: StatusCollector, hub: Hub, reader: HerdrRea
 
   app.get('/api/history', async (c) => {
     const body: HistoryResponse = { tasks: await collector.history() };
+    return c.json(body);
+  });
+
+  // 活動欄：只用 collector 手上已有的 detail，不為它跑 dk-status
+  app.get('/api/activity', (c) => {
+    const limit = c.req.query('limit') ?? String(ACTIVITY_LIMIT_DEFAULT);
+    if (!/^\d{1,3}$/.test(limit) || Number(limit) < 1 || Number(limit) > ACTIVITY_LIMIT_MAX)
+      return c.json({ error: { kind: 'bad-request', message: `limit 為 1–${ACTIVITY_LIMIT_MAX} 的整數` } }, 400);
+    const now = Date.now();
+    const body: ActivityResponse = { generatedAt: now, items: activityFeed(collector.activityTasks(), { now, limit: Number(limit) }) };
     return c.json(body);
   });
 

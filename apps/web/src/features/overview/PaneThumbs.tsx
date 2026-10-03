@@ -35,7 +35,8 @@ export function PaneThumbs({ panes, screens }: { panes: PaneLive[]; screens: Rec
               p.status === 'blocked' && 'border-red-500 ring-1 ring-red-500/50',
             )}
           >
-            <div className="flex items-center gap-1.5 border-b border-zinc-800 bg-zinc-900 px-1.5 py-0.5 text-xs text-zinc-300">
+            {/* 標頭固定黑底：用 .dark 範圍讓透明底的狀態膠囊取深色 token */}
+            <div className="dark flex items-center gap-1.5 border-b border-zinc-800 bg-zinc-900 px-1.5 py-0.5 text-xs text-zinc-300">
               <StatusPill status={p.status} className="h-4 px-1.5 text-[0.65rem]" />
               <span className="truncate">{p.member ?? paneLabel(p)}</span>
             </div>

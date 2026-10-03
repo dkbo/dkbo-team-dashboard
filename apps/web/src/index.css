@@ -10,6 +10,10 @@
     --font-heading: var(--font-sans);
     --font-sans: 'Nunito Variable', 'Huninn', sans-serif;
     --shadow-soft: 0 6px 20px -10px var(--soft-shadow), 0 1px 3px -1px var(--soft-shadow);
+    --shadow-pop: 0 14px 30px -14px var(--soft-shadow), 0 2px 6px -2px var(--soft-shadow);
+    --color-brand-blue: var(--brand-blue);
+    --color-brand-violet: var(--brand-violet);
+    --color-brand-coral: var(--brand-coral);
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -51,85 +55,96 @@
 }
 
 :root {
-    --background: #f5f9ff;
-    --foreground: #1e2a44;
+    --background: #eef0fb;
+    --foreground: #1d2045;
     --card: #ffffff;
-    --card-foreground: #1e2a44;
+    --card-foreground: #1d2045;
     --popover: #ffffff;
-    --popover-foreground: #1e2a44;
-    --primary: #6aaef0;
-    --primary-foreground: #10243f;
-    --secondary: #fff1cc;
-    --secondary-foreground: #5a4410;
-    --muted: #edf3fb;
-    --muted-foreground: #5f6e87;
-    --accent: #eee9fe;
-    --accent-foreground: #3b2c7a;
-    --destructive: #cf3f45;
-    --border: #dce7f5;
-    --input: #d3e1f2;
-    --ring: #6aaef0;
+    --popover-foreground: #1d2045;
+    --primary: #5b8cff;
+    --primary-foreground: #10163a;
+    --secondary: #f1edff;
+    --secondary-foreground: #3d2c8a;
+    --muted: #f3f4fc;
+    --muted-foreground: #565b82;
+    --accent: #ece8ff;
+    --accent-foreground: #3d2c8a;
+    --destructive: #c62a44;
+    --border: #e2e5f5;
+    --input: #d6daf0;
+    --ring: #7b5cff;
     --chart-1: #3d8fe0;
     --chart-2: #2cb68a;
     --chart-3: #e9a520;
     --chart-4: #7a6ad8;
     --chart-5: #f0804f;
-    --radius: 1rem;
-    --soft-shadow: rgb(70 120 200 / 0.22);
-    --sidebar: #f0f6ff;
-    --sidebar-foreground: #1e2a44;
-    --sidebar-primary: #6aaef0;
-    --sidebar-primary-foreground: #10243f;
-    --sidebar-accent: #eee9fe;
-    --sidebar-accent-foreground: #3b2c7a;
-    --sidebar-border: #dce7f5;
-    --sidebar-ring: #6aaef0;
+    --radius: 0.875rem;
+    --soft-shadow: rgb(80 90 180 / 0.2);
+    /* 強調色：電光藍／紫／珊瑚（膠囊外框、裝飾用）；摘要卡漸層另取壓暗的一組，讓白字最亮處也有 4.5:1 */
+    --brand-blue: #5b8cff;
+    --brand-violet: #7b5cff;
+    --brand-coral: #ff5a6e;
+    --grad-blue-from: #4169e1;
+    --grad-blue-to: #2c47b8;
+    --grad-violet-from: #6a4cf0;
+    --grad-violet-to: #4a2fc0;
+    --grad-coral-from: #d6344d;
+    --grad-coral-to: #a8243f;
+    --sidebar: #f6f7fd;
+    --sidebar-foreground: #1d2045;
+    --sidebar-primary: #5b8cff;
+    --sidebar-primary-foreground: #10163a;
+    --sidebar-accent: #ece8ff;
+    --sidebar-accent-foreground: #3d2c8a;
+    --sidebar-border: #e2e5f5;
+    --sidebar-ring: #7b5cff;
 }
 
 .dark {
-    --background: #141b2e;
-    --foreground: #e8eefa;
-    --card: #1c2540;
-    --card-foreground: #e8eefa;
-    --popover: #1c2540;
-    --popover-foreground: #e8eefa;
-    --primary: #7fbdf5;
-    --primary-foreground: #0e1a2e;
-    --secondary: #3a3220;
-    --secondary-foreground: #fce7b0;
-    --muted: #232e4c;
-    --muted-foreground: #9aa8c4;
-    --accent: #2c2850;
-    --accent-foreground: #dcd4ff;
-    --destructive: #f07777;
-    --border: rgb(150 180 230 / 14%);
-    --input: rgb(150 180 230 / 20%);
-    --ring: #7fbdf5;
+    --background: #1e2142;
+    --foreground: #eceeff;
+    --card: #282b55;
+    --card-foreground: #eceeff;
+    --popover: #2e3260;
+    --popover-foreground: #eceeff;
+    --primary: #5b8cff;
+    --primary-foreground: #0f1433;
+    --secondary: #353a6e;
+    --secondary-foreground: #e3e6ff;
+    --muted: #31356a;
+    --muted-foreground: #aeb2dc;
+    --accent: #3a3577;
+    --accent-foreground: #e0d9ff;
+    --destructive: #ff6b7f;
+    --border: rgb(170 180 255 / 10%);
+    --input: rgb(170 180 255 / 16%);
+    --ring: #7b5cff;
     --chart-1: #4290e2;
     --chart-2: #1a9e74;
     --chart-3: #c4880f;
     --chart-4: #8a7ce6;
     --chart-5: #dc6a3c;
-    --soft-shadow: rgb(0 0 0 / 0.45);
-    --sidebar: #1c2540;
-    --sidebar-foreground: #e8eefa;
-    --sidebar-primary: #7fbdf5;
-    --sidebar-primary-foreground: #0e1a2e;
-    --sidebar-accent: #2c2850;
-    --sidebar-accent-foreground: #dcd4ff;
-    --sidebar-border: rgb(150 180 230 / 14%);
-    --sidebar-ring: #7fbdf5;
+    --soft-shadow: rgb(8 10 30 / 0.55);
+    --sidebar: #282b55;
+    --sidebar-foreground: #eceeff;
+    --sidebar-primary: #5b8cff;
+    --sidebar-primary-foreground: #0f1433;
+    --sidebar-accent: #3a3577;
+    --sidebar-accent-foreground: #e0d9ff;
+    --sidebar-border: rgb(170 180 255 / 10%);
+    --sidebar-ring: #7b5cff;
 }
 
-/* 狀態色（emerald／red／amber／sky…）改成馬卡龍調：亮度沿用 Tailwind 預設以保留文字對比，只降彩度、微調色相 */
+/* 狀態色（emerald／red／amber／sky…）改成馬卡龍調：亮度大致沿用 Tailwind 預設，只降彩度、微調色相；
+   red-400、orange-700、amber-600／700、emerald-600、sky-600 另調過亮度，對新底色（含 /10、/15 疊色）仍有 4.5:1 */
 @theme {
     --color-emerald-300: oklch(0.845 0.11 168);
     --color-emerald-400: oklch(0.765 0.135 168);
     --color-emerald-500: oklch(0.7 0.13 168);
-    --color-emerald-600: oklch(0.596 0.115 168);
+    --color-emerald-600: oklch(0.55 0.105 168);
     --color-emerald-700: oklch(0.508 0.095 170);
     --color-red-300: oklch(0.808 0.095 20);
-    --color-red-400: oklch(0.704 0.155 20);
+    --color-red-400: oklch(0.73 0.15 20);
     --color-red-500: oklch(0.64 0.185 22);
     --color-red-600: oklch(0.577 0.19 24);
     --color-red-700: oklch(0.505 0.17 25);
@@ -137,19 +152,19 @@
     --color-amber-300: oklch(0.879 0.13 88);
     --color-amber-400: oklch(0.828 0.145 82);
     --color-amber-500: oklch(0.769 0.15 72);
-    --color-amber-600: oklch(0.666 0.145 62);
-    --color-amber-700: oklch(0.555 0.13 55);
+    --color-amber-600: oklch(0.575 0.135 60);
+    --color-amber-700: oklch(0.53 0.125 55);
     --color-sky-200: oklch(0.901 0.05 240);
     --color-sky-300: oklch(0.828 0.095 242);
     --color-sky-400: oklch(0.746 0.125 245);
     --color-sky-500: oklch(0.685 0.135 247);
-    --color-sky-600: oklch(0.588 0.13 249);
+    --color-sky-600: oklch(0.565 0.13 249);
     --color-sky-700: oklch(0.5 0.11 250);
     --color-sky-900: oklch(0.391 0.075 250);
     --color-orange-300: oklch(0.837 0.105 60);
     --color-orange-400: oklch(0.75 0.145 52);
     --color-orange-500: oklch(0.705 0.165 45);
-    --color-orange-700: oklch(0.553 0.155 40);
+    --color-orange-700: oklch(0.52 0.15 40);
     --color-yellow-300: oklch(0.905 0.14 96);
     --color-yellow-500: oklch(0.795 0.15 86);
     --color-violet-400: oklch(0.702 0.15 293);
@@ -164,8 +179,8 @@
   body {
     @apply bg-background text-foreground;
     background-image:
-      radial-gradient(48rem 28rem at 0% 0%, color-mix(in oklab, var(--primary) 12%, transparent), transparent 70%),
-      radial-gradient(40rem 24rem at 100% 0%, color-mix(in oklab, var(--secondary) 55%, transparent), transparent 70%);
+      radial-gradient(48rem 28rem at 0% 0%, color-mix(in oklab, var(--brand-blue) 10%, transparent), transparent 70%),
+      radial-gradient(40rem 24rem at 100% 0%, color-mix(in oklab, var(--brand-violet) 10%, transparent), transparent 70%);
     background-attachment: fixed;
     }
   html {

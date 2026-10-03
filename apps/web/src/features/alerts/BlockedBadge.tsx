@@ -18,7 +18,7 @@ export function BlockedBadge() {
         <Link
           to={herdrHref(blocked[0])}
           data-testid="blocked-badge"
-          className="inline-flex items-center gap-1.5 rounded-md border border-red-500/40 bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-700 dark:text-red-300"
+          className="inline-flex items-center gap-1.5 rounded-full border-[1.5px] border-red-500 bg-transparent px-2 py-0.5 text-xs font-medium text-red-700 dark:border-red-400 dark:text-red-300"
         >
           <span aria-hidden className="size-1.5 animate-pulse rounded-full bg-red-500" />
           {blocked.length} 個 agent 卡住

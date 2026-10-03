@@ -12,10 +12,20 @@ export function parseLocalTs(ts: string | null | undefined): Date | null {
   return new Date(y, mo - 1, d, h, mi)
 }
 
+const formatDate = (d: Date) => `${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`
+
 export function formatTs(ts: string | null | undefined): string {
   const d = parseLocalTs(ts)
-  if (!d) return '—'
-  return `${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`
+  return d ? formatDate(d) : '—'
+}
+
+/** 活動欄的相對時間：<1 分鐘「剛剛」、<60 分鐘「N 分鐘前」、<24 小時「N 小時前」，其餘同 formatTs。 */
+export function formatRelative(atMs: number, nowMs: number): string {
+  const min = Math.floor((nowMs - atMs) / 60_000)
+  if (min < 1) return '剛剛'
+  if (min < 60) return `${min} 分鐘前`
+  if (min < 24 * 60) return `${Math.floor(min / 60)} 小時前`
+  return formatDate(new Date(atMs))
 }
 
 export function formatEpochMs(ms: number | null | undefined): string {

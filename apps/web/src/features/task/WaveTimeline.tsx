@@ -55,9 +55,9 @@ function WaveRow({ task, wave }: { task: TaskDetail; wave: TaskWave }) {
           <div className="flex items-center gap-2">
             <span className="shrink-0 text-muted-foreground">測試</span>
             {wave.tests_ok ? (
-              <CheckCircle2 className="size-3.5 text-emerald-600" aria-label="測試通過" />
+              <CheckCircle2 className="size-3.5 text-emerald-600 dark:text-emerald-400" aria-label="測試通過" />
             ) : (
-              <XCircle className="size-3.5 text-red-600" aria-label="測試失敗" />
+              <XCircle className="size-3.5 text-red-600 dark:text-red-400" aria-label="測試失敗" />
             )}
             <span className="font-mono">{wave.tests}</span>
           </div>

@@ -91,7 +91,7 @@ function ActiveTaskRow({ project, task, detail, now }: { project: ProjectView; t
   return (
     <li
       data-testid={`task-${task.dir}`}
-      className={cn('space-y-2 rounded-lg border p-3', alert && 'border-orange-500/60 bg-orange-500/5')}
+      className={cn('space-y-2 rounded-xl bg-muted p-3 shadow-soft', alert && 'bg-orange-500/10 ring-2 ring-orange-500/70')}
     >
       <div className="flex flex-wrap items-center gap-2">
         <Link to={taskHref(project.name, task.dir)} className="min-w-0 truncate font-medium hover:underline">
@@ -115,7 +115,7 @@ function ActiveTaskRow({ project, task, detail, now }: { project: ProjectView; t
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={w.pct}
-          className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted"
+          className="h-1.5 flex-1 overflow-hidden rounded-full bg-card"
         >
           <div className="h-full rounded-full bg-primary transition-[width]" style={{ width: `${w.pct}%` }} />
         </div>
@@ -141,7 +141,7 @@ function ActiveTaskRow({ project, task, detail, now }: { project: ProjectView; t
 
 function SimpleTaskRow({ project, task, tag }: { project: string; task: TaskSummary; tag?: string }) {
   return (
-    <li data-testid={`task-${task.dir}`} className="flex items-center gap-2 px-1 py-1 text-sm">
+    <li data-testid={`task-${task.dir}`} className="flex items-center gap-2 rounded-xl bg-muted px-3 py-1.5 text-sm">
       <Link to={taskHref(project, task.dir)} className="min-w-0 truncate hover:underline">
         {taskName(task)}
       </Link>
@@ -221,7 +221,7 @@ export function ProjectCard({ project, now, thumbs }: { project: ProjectView; no
               </ul>
             )}
             {groups.unknown.length > 0 && (
-              <ul>
+              <ul className="space-y-1.5">
                 {groups.unknown.map((t) => (
                   <SimpleTaskRow key={t.dir} project={project.name} task={t} tag="狀態不明" />
                 ))}
@@ -233,7 +233,7 @@ export function ProjectCard({ project, now, thumbs }: { project: ProjectView; no
                   已結案 {groups.closed.length} 件 {open ? '▾' : '▸'}
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                  <ul className="mt-1">
+                  <ul className="mt-1.5 space-y-1.5">
                     {groups.closed.map((t) => (
                       <SimpleTaskRow key={t.dir} project={project.name} task={t} />
                     ))}
