@@ -11,24 +11,24 @@ const MAX_LANES = 16
 
 // dataviz 參考色盤 slot 1–8（同 features/trends/palette.ts），淺／深色各一階；Tailwind 需要靜態字串
 const LANE_STROKE = [
-  'stroke-[#2a78d6] dark:stroke-[#3987e5]',
-  'stroke-[#eb6834] dark:stroke-[#d95926]',
-  'stroke-[#1baf7a] dark:stroke-[#199e70]',
-  'stroke-[#eda100] dark:stroke-[#c98500]',
-  'stroke-[#e87ba4] dark:stroke-[#d55181]',
-  'stroke-[#008300] dark:stroke-[#008300]',
-  'stroke-[#4a3aa7] dark:stroke-[#9085e9]',
-  'stroke-[#e34948] dark:stroke-[#e66767]',
+  'stroke-[#3d8fe0] dark:stroke-[#4290e2]',
+  'stroke-[#f0804f] dark:stroke-[#dc6a3c]',
+  'stroke-[#2cb68a] dark:stroke-[#1a9e74]',
+  'stroke-[#e9a520] dark:stroke-[#c4880f]',
+  'stroke-[#de7fb0] dark:stroke-[#d0659a]',
+  'stroke-[#4c9f45] dark:stroke-[#2f8f34]',
+  'stroke-[#7a6ad8] dark:stroke-[#8a7ce6]',
+  'stroke-[#e05f60] dark:stroke-[#e06363]',
 ]
 const LANE_FILL = [
-  'fill-[#2a78d6] dark:fill-[#3987e5]',
-  'fill-[#eb6834] dark:fill-[#d95926]',
-  'fill-[#1baf7a] dark:fill-[#199e70]',
-  'fill-[#eda100] dark:fill-[#c98500]',
-  'fill-[#e87ba4] dark:fill-[#d55181]',
-  'fill-[#008300] dark:fill-[#008300]',
-  'fill-[#4a3aa7] dark:fill-[#9085e9]',
-  'fill-[#e34948] dark:fill-[#e66767]',
+  'fill-[#3d8fe0] dark:fill-[#4290e2]',
+  'fill-[#f0804f] dark:fill-[#dc6a3c]',
+  'fill-[#2cb68a] dark:fill-[#1a9e74]',
+  'fill-[#e9a520] dark:fill-[#c4880f]',
+  'fill-[#de7fb0] dark:fill-[#d0659a]',
+  'fill-[#4c9f45] dark:fill-[#2f8f34]',
+  'fill-[#7a6ad8] dark:fill-[#8a7ce6]',
+  'fill-[#e05f60] dark:fill-[#e06363]',
 ]
 const stroke = (i: number) => LANE_STROKE[i % LANE_STROKE.length]
 const fill = (i: number) => LANE_FILL[i % LANE_FILL.length]

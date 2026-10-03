@@ -11,7 +11,7 @@ export function AppLayout() {
   useBlockedAlerts()
   const now = useNow(10_000)
   return (
-    <div className="min-h-svh bg-background">
+    <div className="min-h-svh">
       <TopBar now={now} />
       <main>
         <Outlet />

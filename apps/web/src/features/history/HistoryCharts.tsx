@@ -13,12 +13,12 @@ import type { DevReviewPoint } from './aggregate'
 
 // 類別色：dataviz 參考色盤 slot 1（藍）與 slot 2（橘），淺／深色各自一階，已過 validate_palette。
 const devReviewConfig = {
-  dev: { label: 'dev', theme: { light: '#2a78d6', dark: '#3987e5' } },
-  review: { label: '審查', theme: { light: '#eb6834', dark: '#d95926' } },
+  dev: { label: 'dev', theme: { light: '#3d8fe0', dark: '#4290e2' } },
+  review: { label: '審查', theme: { light: '#f0804f', dark: '#dc6a3c' } },
 } satisfies ChartConfig
 
 const weeklyConfig = {
-  count: { label: '結案數', theme: { light: '#2a78d6', dark: '#3987e5' } },
+  count: { label: '結案數', theme: { light: '#3d8fe0', dark: '#4290e2' } },
 } satisfies ChartConfig
 
 const ROW_PX = 28

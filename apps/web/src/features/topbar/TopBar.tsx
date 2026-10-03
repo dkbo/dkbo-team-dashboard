@@ -1,3 +1,4 @@
+import { Cloud } from 'lucide-react'
 import { NavLink } from 'react-router'
 import { ThemeToggle } from '@/app/theme'
 import { BlockedBadge, NotifyToggle } from '@/features/alerts/BlockedBadge'
@@ -40,7 +41,10 @@ function Light({ id, label, state, hint }: { id: string; label: string; state: L
 }
 
 const navClass = ({ isActive }: { isActive: boolean }) =>
-  cn('rounded-md px-2 py-1 text-sm', isActive ? 'bg-muted font-medium' : 'text-muted-foreground hover:text-foreground')
+  cn(
+    'rounded-full px-3 py-1 text-sm transition-colors',
+    isActive ? 'bg-primary font-semibold text-primary-foreground shadow-soft' : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+  )
 
 export function TopBar({ now }: { now: number }) {
   const { sse, herdr } = useConnection()
@@ -52,7 +56,10 @@ export function TopBar({ now }: { now: number }) {
     <header className="sticky top-0 z-20 border-b bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/70">
       <div className="mx-auto flex max-w-screen-2xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2">
         <div className="flex items-center gap-2">
-          <span className="font-semibold">dkbo 儀表板</span>
+          <span className="inline-flex items-center gap-1.5 font-bold">
+            <Cloud aria-hidden className="size-5 fill-primary/30 text-primary" />
+            dkbo 儀表板
+          </span>
           <nav className="flex gap-1">
             <NavLink to="/" end className={navClass}>
               總覽
@@ -78,7 +85,7 @@ export function TopBar({ now }: { now: number }) {
             <span
               key={d.kind}
               title={`${d.project} · ${d.reason}`}
-              className="rounded-md border border-red-500/40 bg-red-500/10 px-2 py-0.5 font-medium text-red-700 dark:text-red-300"
+              className="rounded-full border border-red-500/40 bg-red-500/10 px-2 py-0.5 font-medium text-red-700 dark:text-red-300"
             >
               {d.kind} 熔斷 · 還剩 {formatCountdown(d.until_epoch, now)}
             </span>
@@ -89,7 +96,7 @@ export function TopBar({ now }: { now: number }) {
             </span>
           ) : (
             usage.map((u) => (
-              <span key={u.kind} data-testid={`usage-${u.kind}`} className="inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5">
+              <span key={u.kind} data-testid={`usage-${u.kind}`} className="inline-flex items-center gap-1.5 rounded-full border bg-card/70 px-2.5 py-0.5">
                 <span className="font-medium">{u.kind}</span>
                 <span className="text-muted-foreground tabular-nums">5h {formatPct(u.fiveHourPct)}</span>
                 <span className="text-muted-foreground tabular-nums">週 {formatPct(u.weekPct)}</span>
