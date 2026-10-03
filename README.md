@@ -3,7 +3,7 @@
 本機唯讀 Web dashboard：聚合 `dashboard.config.json` 列出的 dkbo 專案（dk-status 任務記憶）與 herdr 即時 pane 狀態。
 
 ## 頁面
-- `/`：總覽（各專案任務、成員 pane 狀態、熔斷與額度；agent 畫面縮圖每 5 秒更新，右上可關，偏好存在瀏覽器）
+- `/`：總覽（上方三張摘要卡：進行中任務、今日花費、卡住的 agent；各專案任務、成員 pane 狀態、熔斷與額度；agent 畫面縮圖每 5 秒更新，右上可關，偏好存在瀏覽器；右側活動欄，見下方「活動欄」）
 - `/p/:project/t/:dir`：任務詳情（波次時間軸、成員）
 - `/history`：歷史與分析
 - `/trends`：花費與額度趨勢（額度與 ctx 曲線、撞額度預估、每日花費、依任務／角色／kind 的花費）；資料來源見下方「花費與額度趨勢」
@@ -78,6 +78,17 @@ server 開著時每 `DASH_SAMPLE_MS` 對手上已有的 herdr pane 狀態（`/ap
   - 派工時間只到分鐘：同一分鐘內、派工之前的花費會歸到新的那次派工
   - spawn 行的時間是跑 dk-status 那台機器的本地時間，轉 epoch 的前提是 server 與它同時區
   - 設定歸屬只用 server 手上有的任務詳情（進行中任務、已結案任務的快取；缺的已結案詳情會先補抓一次），其他狀態的任務歸「未知」
+
+## 活動欄
+總覽右側的活動動態，資料來自 `GET /api/activity?limit=1..200`（預設 50，其他值含非整數 400），回 `ActivityResponse`（型別與合併規則見 `packages/shared/src/activity.ts` 的 `activityFeed`）。
+- 只用 server 手上已有的任務詳情：進行中任務（running／planning）的詳情，加上 `closed_at` 在 24 小時內、且詳情已在快取裡的已結案任務；**不為它另跑 dk-status**
+- 收錄的 process 事件：`task-new`、`gate1`、`brief-review`、`spawn`、`wave-open`、`dev-done`、`review`、`ruling`、`timeout`、`wave-close`、`gate3`、`task-close`；收錄的訊息：`DONE`、`ESCALATE`、`BUG`、`FIXED`、`BLOCKED`、`LIMIT`、`TIMEOUT`、`DECISION`、`STOP`。其他（minor、commit、ACK、TASK、QUESTION…）略過
+- 依時間新到舊；同一分鐘同一任務的訊息排在事件前，同一來源原檔較後的行排前面；text 超過 300 字元截斷
+- 網頁收到 SSE `task.updated`／`overview.updated` 後 1 秒防抖重抓，另每 60 秒保底重抓
+- 限制：
+  - 已結案任務的詳情由背景每輪限量預抓（或有人開過它的詳情頁才進快取）：server 剛啟動、快取還沒補到時，最近結案任務的活動會暫時少幾筆
+  - 時間戳是跑 dk-status 那台機器的本地時間（只到分鐘），轉 epoch 的前提是 server 與它同時區
+  - 摘要卡的「今日／昨日花費」以瀏覽器本地日期比對 server 依它本地日期算的每日花費（`/api/trends?range=7d` 的 `costByDay`），前提是瀏覽器與 server 同時區；不同時區時跨日前後會對到錯的一天
 
 ## herdr 唯讀保證
 server 對 herdr 只會做三件事：`herdr api snapshot`、`herdr pane read <id> --source visible|recent [--lines N] --format ansi`、socket `events.subscribe`（pane 事件與 workspace／tab／layout 結構事件各一條連線）（白名單見 `apps/server/src/herdr-view.ts` 的 `herdrArgs`）。HTTP 只有 GET：`/api/herdr/view`、`/api/herdr/search?q=`、`/api/herdr/panes/:id/screen[?source=recent&lines=N]`。

@@ -2,7 +2,7 @@ import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { createServer, type Server, type Socket } from 'node:net';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import type { DetailDoc, HistoryResponse, ListDoc, OverviewDoc, PaneLive, SseEvent, TaskDetailResponse } from '@dash/shared';
+import type { ActivityResponse, DetailDoc, HistoryResponse, ListDoc, OverviewDoc, PaneLive, SseEvent, TaskDetailResponse } from '@dash/shared';
 import { edgeDetail, edgeList } from '../../../packages/shared/fixtures/index.ts';
 import { createDashServer, listen, type DashServer } from '../src/server.ts';
 import { calls, fakeProject, script, setFake, tmp, VENDOR_DIR, waitFor } from './helpers.ts';
@@ -216,6 +216,64 @@ describe('HTTP API', () => {
     expect(doc.herdr.state).toBe('down');
     expect(doc.projects[0].list!.tasks).toHaveLength(4);
     expect(doc.projects[0].panes).toEqual([]);
+  });
+});
+
+const localTs = (ms: number) => {
+  const d = new Date(ms);
+  const p = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+};
+
+describe('GET /api/activity', () => {
+  /** gaveup 改成 1 小時前結案（24h 內才收）；先輪詢一次、按需抓 gaveup，把 active 與已結案快取備好 */
+  async function ready() {
+    const { s, root } = await setup({ herdr: 'off' });
+    const closedAt = localTs(Date.now() - 3600_000);
+    const l = list();
+    l.tasks = l.tasks.map((t) => (t.dir === '2026-09-23-gaveup' ? { ...t, closed_at: closedAt } : t));
+    setFake(root, 'list.json', JSON.stringify(l));
+    setFake(root, 'detail-2026-09-23-gaveup.json', JSON.stringify(detailOf('2026-09-23-gaveup', { closed_at: closedAt })));
+    await s.collector.pollOnce('edge');
+    expect((await s.app.request('/api/projects/edge/tasks/2026-09-23-gaveup')).status).toBe(200);
+    return { s, root };
+  }
+
+  it('合併進行中與 24h 內結案任務的活動，預設 50 筆、新到舊', async () => {
+    const { s } = await ready();
+    const res = await s.app.request('/api/activity');
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as ActivityResponse;
+    expect(body.generatedAt).toBeGreaterThan(Date.now() - 5000);
+    expect(new Set(body.items.map((i) => i.taskDir))).toEqual(new Set(['2026-09-20-nulls', '2026-09-21-edge', '2026-09-23-gaveup']));
+    expect(body.items.every((i) => i.project === 'edge')).toBe(true);
+    expect(body.items.length).toBeLessThanOrEqual(50);
+    expect(body.items.map((i) => i.at)).toEqual([...body.items.map((i) => i.at)].sort((a, b) => b - a));
+    expect(body.items.some((i) => i.type === 'ACK' || i.type === 'UNDELIVERED' || i.type === 'minor')).toBe(false);
+    expect(body.items[0]).toMatchObject({ source: 'message', type: 'ESCALATE', actor: 'edge-qa', text: '卡住' });
+    const five = (await (await s.app.request('/api/activity?limit=5')).json()) as ActivityResponse;
+    expect(five.items).toEqual(body.items.slice(0, 5));
+  });
+
+  it('limit 只收 1–200 的整數，其他 400', async () => {
+    const { s } = await ready();
+    for (const ok of ['1', '200', '050']) expect((await s.app.request(`/api/activity?limit=${ok}`)).status, ok).toBe(200);
+    for (const bad of ['0', '201', '-1', '1.5', '1e2', 'abc', '', ' 5', '0x10', '9999']) {
+      const res = await s.app.request(`/api/activity?limit=${encodeURIComponent(bad)}`);
+      expect(res.status, bad).toBe(400);
+      expect(await res.json(), bad).toMatchObject({ error: { kind: 'bad-request' } });
+    }
+  });
+
+  it('只用 collector 手上的 detail：呼叫 /api/activity 不會跑任何 dk-status', async () => {
+    const { s, root } = await ready();
+    const before = calls(root).length;
+    expect(before).toBeGreaterThan(0);
+    const first = (await (await s.app.request('/api/activity')).json()) as ActivityResponse;
+    expect(first.items.length).toBeGreaterThan(0);
+    for (const q of ['?limit=1', '?limit=200', '?limit=0']) await s.app.request(`/api/activity${q}`);
+    await new Promise((r) => setTimeout(r, 200));
+    expect(calls(root)).toHaveLength(before);
   });
 });
 

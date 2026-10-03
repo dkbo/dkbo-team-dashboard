@@ -8,6 +8,7 @@ import {
   isActiveStatus,
   isClosedStatus,
   parseDispatch,
+  type ActivityTask,
   type DetailDoc,
   type Dispatch,
   type DispatchIndex,
@@ -307,6 +308,18 @@ export class StatusCollector extends EventEmitter {
         out[name] = byDir;
       }),
     );
+    return out;
+  }
+
+  /** 活動欄的來源：只取手上已有的 detail（進行中的 active、已結案的快取），不跑 dk-status；24h 過濾交給 activityFeed */
+  activityTasks(): ActivityTask[] {
+    const out: ActivityTask[] = [];
+    for (const s of this.states) {
+      for (const t of s.list?.tasks ?? []) {
+        const doc = s.active.get(t.dir) ?? (isClosedStatus(t.status) ? this.closedCached(s, t.dir) : null);
+        if (doc) out.push({ project: s.cfg.name, detail: doc.task });
+      }
+    }
     return out;
   }
 

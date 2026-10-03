@@ -1,4 +1,5 @@
 import type {
+  ActivityResponse,
   CostRange,
   CostsResponse,
   GitCommitDetail,
@@ -31,6 +32,7 @@ async function getJson<T>(url: string): Promise<T> {
 
 export const api = {
   overview: () => getJson<OverviewDoc>('/api/overview'),
+  activity: (limit: number) => getJson<ActivityResponse>(`/api/activity?limit=${limit}`),
   task: (project: string, dir: string) =>
     getJson<TaskDetailResponse>(`/api/projects/${encodeURIComponent(project)}/tasks/${encodeURIComponent(dir)}`),
   history: () => getJson<HistoryResponse>('/api/history'),

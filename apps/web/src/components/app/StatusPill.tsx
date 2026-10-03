@@ -13,11 +13,11 @@ const LABEL: Record<StatusTone, string> = {
 }
 
 const TONE_CLASS: Record<StatusTone, string> = {
-  working: 'border-emerald-500/40 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300',
-  idle: 'border-border bg-muted text-muted-foreground',
-  blocked: 'border-red-500/40 bg-red-500/15 text-red-700 dark:text-red-300',
-  done: 'border-emerald-500/40 bg-background text-emerald-700 dark:text-emerald-300',
-  unknown: 'border-border bg-muted text-muted-foreground',
+  working: 'border-emerald-500 text-emerald-700 dark:border-emerald-400 dark:text-emerald-300',
+  idle: 'border-muted-foreground/50 text-muted-foreground',
+  blocked: 'border-red-500 text-red-700 dark:border-red-400 dark:text-red-300',
+  done: 'border-emerald-500/70 text-emerald-700 dark:text-emerald-300',
+  unknown: 'border-muted-foreground/50 text-muted-foreground',
 }
 
 const DOT_CLASS: Record<StatusTone, string> = {
@@ -47,7 +47,7 @@ export function StatusPill({ status, label, note, className }: StatusPillProps) 
       data-slot="status-pill"
       data-tone={tone}
       className={cn(
-        'inline-flex h-6 max-w-full items-center gap-1.5 rounded-full border px-2.5 text-xs font-medium whitespace-nowrap',
+        'inline-flex h-6 max-w-full items-center gap-1.5 rounded-full border-[1.5px] bg-transparent px-2.5 text-xs font-medium whitespace-nowrap',
         TONE_CLASS[tone],
         className,
       )}

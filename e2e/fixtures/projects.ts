@@ -90,11 +90,51 @@ function runningTask(now: number): { summary: ListTask; detail: Detail } {
     { ts: localTs(now - 290 * 60_000), kind: 'spawn', text: 'spawn e2erun-frontend-shell (claude M)' },
     { ts: localTs(now - 290 * 60_000), kind: 'spawn', text: 'spawn e2erun-backend (claude M)' },
     { ts: localTs(now - 200 * 60_000), kind: 'spawn', text: 'spawn e2erun-backend (claude L) resume handoff' },
+    // 活動欄（cuteui）：內容照 backend notes；minor 與 ACK 應被略過
+    { ts: localTs(now - 30 * 60_000), kind: 'minor', text: 'minor: 命名' },
+    { ts: localTs(now - 20 * 60_000), kind: 'dev-done', text: 'dev-done wave 2' },
+    { ts: localTs(now - 10 * 60_000), kind: 'review', text: 'review 2 spawned' },
+  ]
+  detail.task.messages = [
+    { ts: localTs(now - 25 * 60_000), from: 'e2erun-backend', to: 'leader-e2erun', type: 'ESCALATE', text: '要動 apps/web 的檔' },
+    { ts: localTs(now - 20 * 60_000), from: 'e2erun-frontend-shell', to: 'leader-e2erun', type: 'DONE', text: '前端完成，見 report' },
+    { ts: localTs(now - 15 * 60_000), from: 'leader-e2erun', to: null, type: 'ACK', text: '' },
+    { ts: localTs(now - 5 * 60_000), from: 'e2erun-backend', to: 'leader-e2erun', type: 'DONE', text: '後端完成，見 report' },
   ]
   detail.task.waves = [
     { ...w1, wave: 1 },
     { ...w2, wave: 2, opened_at: localTs(now - 300 * 60_000), dev_done_at: null, review_spawned_at: null, review_verdict_at: null, review_verdict: null, closed_at: null },
   ]
+  return { summary, detail }
+}
+
+export const CLOSED_DIR = '2026-09-27-e2edone'
+/** 24 小時內結案的任務（活動欄收已結案 24h 內、且 detail 已進 collector 快取者）：120 分鐘前結案 */
+function recentlyClosedTask(now: number): { summary: ListTask; detail: Detail } {
+  const base = teamflowList.tasks.find((t) => t.status === 'done')!
+  const summary: ListTask = {
+    ...base,
+    dir: CLOSED_DIR,
+    short: 'e2edone',
+    display: '示範任務 e2edone',
+    branch: 'dk/e2edone',
+    worktree: null,
+    date: CLOSED_DIR.slice(0, 10),
+    status: 'done',
+    current_wave: null,
+    waves_planned: 1,
+    waves_closed: 1,
+    created_at: localTs(now - 300 * 60_000),
+    gate1_at: localTs(now - 290 * 60_000),
+    index_note: 'merged e2edone',
+    close_result: 'merged e2edone',
+    closed_at: localTs(now - 120 * 60_000),
+    updated_at: localTs(now - 120 * 60_000),
+    panes_open: 0,
+  }
+  const detail = synthDetail(summary)
+  detail.task.events = [{ ts: localTs(now - 120 * 60_000), kind: 'task-close', text: 'task-close merged' }]
+  detail.task.messages = [{ ts: localTs(now - 130 * 60_000), from: 'e2edone-dev', to: 'leader-e2edone', type: 'DONE', text: '收尾完成' }]
   return { summary, detail }
 }
 
@@ -117,9 +157,12 @@ function makeTeamflow() {
   }
   // 沒有任何 spawn 用到的 kind：被 source 或執行就會 touch canary
   writeFileSync(path.join(dkbo, 'kinds/canary.sh'), `KIND_DEFAULT_TIERS="S=x/$(touch ${kindsCanaryFile}) M=x/y"\n$(touch ${kindsCanaryFile})\n`)
-  const running = runningTask(Date.now())
-  writeJson(path.join(dkbo, 'fake/list.json'), { ...teamflowList, tasks: [...teamflowList.tasks, running.summary] })
+  const now = Date.now()
+  const running = runningTask(now)
+  const closed = recentlyClosedTask(now)
+  writeJson(path.join(dkbo, 'fake/list.json'), { ...teamflowList, tasks: [...teamflowList.tasks, running.summary, closed.summary] })
   writeJson(path.join(dkbo, 'fake/details', `${RUNNING_DIR}.json`), running.detail)
+  writeJson(path.join(dkbo, 'fake/details', `${CLOSED_DIR}.json`), closed.detail)
   const real = new Map([teamflowDetailOps, teamflowDetailBklog].map((d) => [d.task.dir, relocate(d)]))
   for (const t of teamflowList.tasks) writeJson(path.join(dkbo, 'fake/details', `${t.dir}.json`), real.get(t.dir) ?? synthDetail(t))
 }
