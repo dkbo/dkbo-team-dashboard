@@ -771,7 +771,7 @@
                               "fill": "#ffffff",
                               "textGrowth": "fixed-width",
                               "width": "fill_container",
-                              "content": "toybox · 波 3/4",
+                              "content": "atlas · 波 3/4",
                               "fontFamily": "Nunito",
                               "fontSize": 14,
                               "fontWeight": "600"
@@ -993,7 +993,7 @@
                               "fill": "#ffffff",
                               "textGrowth": "fixed-width",
                               "width": "fill_container",
-                              "content": "react-games（collect）",
+                              "content": "dev-a（collect）",
                               "fontFamily": "Nunito",
                               "fontSize": 14,
                               "fontWeight": "600"
@@ -1301,9 +1301,9 @@
                                 {
                                   "type": "text",
                                   "id": "Ia9vO",
-                                  "name": "t 全站改版（DKBO Toybox",
+                                  "name": "t 全站改版（示範主題 Atlas）",
                                   "fill": "$foreground",
-                                  "content": "全站改版（DKBO Toybox 玩具機風）",
+                                  "content": "全站改版（示範主題 Atlas）",
                                   "fontFamily": "Nunito",
                                   "fontSize": 14,
                                   "fontWeight": "700"
@@ -1442,7 +1442,7 @@
                                 {
                                   "type": "frame",
                                   "id": "hb2cH",
-                                  "name": "StatusPill designer",
+                                  "name": "StatusPill art",
                                   "height": 24,
                                   "cornerRadius": 999,
                                   "stroke": "$status-ok",
@@ -1465,9 +1465,9 @@
                                     {
                                       "type": "text",
                                       "id": "Vfis7",
-                                      "name": "t designer",
+                                      "name": "t art",
                                       "fill": "$status-ok-fg",
-                                      "content": "designer",
+                                      "content": "art",
                                       "fontFamily": "Nunito",
                                       "fontSize": 12,
                                       "fontWeight": "600"
@@ -1477,7 +1477,7 @@
                                 {
                                   "type": "frame",
                                   "id": "JAToC",
-                                  "name": "StatusPill react-theme",
+                                  "name": "StatusPill ui",
                                   "height": 24,
                                   "cornerRadius": 999,
                                   "stroke": "$status-ok",
@@ -1500,9 +1500,9 @@
                                     {
                                       "type": "text",
                                       "id": "Z5mll",
-                                      "name": "t react-theme",
+                                      "name": "t ui",
                                       "fill": "$status-ok-fg",
-                                      "content": "react-theme",
+                                      "content": "ui",
                                       "fontFamily": "Nunito",
                                       "fontSize": 12,
                                       "fontWeight": "600"
@@ -1512,7 +1512,7 @@
                                 {
                                   "type": "frame",
                                   "id": "CGEU4",
-                                  "name": "StatusPill react-games",
+                                  "name": "StatusPill dev-a",
                                   "height": 24,
                                   "cornerRadius": 999,
                                   "stroke": "$status-danger",
@@ -1535,9 +1535,9 @@
                                     {
                                       "type": "text",
                                       "id": "SFVj1",
-                                      "name": "t react-games",
+                                      "name": "t dev-a",
                                       "fill": "$status-danger-fg",
-                                      "content": "react-games",
+                                      "content": "dev-a",
                                       "fontFamily": "Nunito",
                                       "fontSize": 12,
                                       "fontWeight": "600"
@@ -1547,7 +1547,7 @@
                                 {
                                   "type": "frame",
                                   "id": "MpS6V",
-                                  "name": "StatusPill react-pages",
+                                  "name": "StatusPill dev-b",
                                   "height": 24,
                                   "cornerRadius": 999,
                                   "stroke": "$status-idle",
@@ -1570,9 +1570,9 @@
                                     {
                                       "type": "text",
                                       "id": "aohcj",
-                                      "name": "t react-pages",
+                                      "name": "t dev-b",
                                       "fill": "$status-idle-fg",
-                                      "content": "react-pages",
+                                      "content": "dev-b",
                                       "fontFamily": "Nunito",
                                       "fontSize": 12,
                                       "fontWeight": "600"
@@ -1628,7 +1628,7 @@
                             {
                               "type": "frame",
                               "id": "PMPFd",
-                              "name": "PaneThumb toybox-react-games",
+                              "name": "PaneThumb atlas-dev-a",
                               "clip": true,
                               "width": "fill_container",
                               "fill": "$terminal-bg",
@@ -1691,9 +1691,9 @@
                                     {
                                       "type": "text",
                                       "id": "lcAdB",
-                                      "name": "t toybox-react-gam",
+                                      "name": "t atlas-dev-a",
                                       "fill": "$terminal-fg",
-                                      "content": "toybox-react-games",
+                                      "content": "atlas-dev-a",
                                       "fontFamily": "Nunito",
                                       "fontSize": 11,
                                       "fontWeight": "600"
@@ -1837,7 +1837,7 @@
                             {
                               "type": "frame",
                               "id": "uyjrY",
-                              "name": "PaneThumb toybox-designer",
+                              "name": "PaneThumb atlas-art",
                               "clip": true,
                               "width": "fill_container",
                               "fill": "$terminal-bg",
@@ -1900,9 +1900,9 @@
                                     {
                                       "type": "text",
                                       "id": "P129r",
-                                      "name": "t toybox-designer",
+                                      "name": "t atlas-art",
                                       "fill": "$terminal-fg",
-                                      "content": "toybox-designer",
+                                      "content": "atlas-art",
                                       "fontFamily": "Nunito",
                                       "fontSize": 11,
                                       "fontWeight": "600"
@@ -2463,7 +2463,7 @@
                         {
                           "type": "frame",
                           "id": "oivRf",
-                          "name": "IdleProjectRow sport-frontend-panova",
+                          "name": "IdleProjectRow sport-demo",
                           "width": "fill_container",
                           "height": 44,
                           "cornerRadius": 14,
@@ -2487,9 +2487,9 @@
                             {
                               "type": "text",
                               "id": "k2cLm",
-                              "name": "t sport-frontend-p",
+                              "name": "t sport-demo",
                               "fill": "$foreground",
-                              "content": "sport-frontend-panova",
+                              "content": "sport-demo",
                               "fontFamily": "Nunito",
                               "fontSize": 14,
                               "fontWeight": "700"
@@ -2751,7 +2751,7 @@
                     {
                       "type": "frame",
                       "id": "so2Ag",
-                      "name": "ActivityGroup toybox",
+                      "name": "ActivityGroup atlas",
                       "width": "fill_container",
                       "layout": "vertical",
                       "gap": 2,
@@ -2783,9 +2783,9 @@
                             {
                               "type": "text",
                               "id": "Y2Sa0",
-                              "name": "t toybox",
+                              "name": "t atlas",
                               "fill": "$foreground",
-                              "content": "toybox",
+                              "content": "atlas",
                               "fontFamily": "Nunito",
                               "fontSize": 12,
                               "fontWeight": "800"
@@ -2892,9 +2892,9 @@
                                         {
                                           "type": "text",
                                           "id": "EWVcS",
-                                          "name": "t react-games",
+                                          "name": "t dev-a",
                                           "fill": "$foreground",
-                                          "content": "react-games",
+                                          "content": "dev-a",
                                           "fontFamily": "Nunito",
                                           "fontSize": 13,
                                           "fontWeight": "700"
@@ -3016,9 +3016,9 @@
                                         {
                                           "type": "text",
                                           "id": "sKkUT",
-                                          "name": "t designer",
+                                          "name": "t art",
                                           "fill": "$foreground",
-                                          "content": "designer",
+                                          "content": "art",
                                           "fontFamily": "Nunito",
                                           "fontSize": 13,
                                           "fontWeight": "700"
@@ -3164,11 +3164,11 @@
                                     {
                                       "type": "text",
                                       "id": "IMiNf",
-                                      "name": "t spawn toybox-rea",
+                                      "name": "t spawn atlas-dev-",
                                       "fill": "$muted-foreground",
                                       "textGrowth": "fixed-width",
                                       "width": "fill_container",
-                                      "content": "spawn toybox-react-pages（claude L）",
+                                      "content": "spawn atlas-dev-b（claude L）",
                                       "lineHeight": 1.4,
                                       "fontFamily": "Nunito",
                                       "fontSize": 13,
@@ -3464,7 +3464,7 @@
                     {
                       "type": "frame",
                       "id": "f5Uxq1",
-                      "name": "ActivityGroup toybox",
+                      "name": "ActivityGroup atlas",
                       "width": "fill_container",
                       "layout": "vertical",
                       "gap": 2,
@@ -3496,9 +3496,9 @@
                             {
                               "type": "text",
                               "id": "jWQxO",
-                              "name": "t toybox",
+                              "name": "t atlas",
                               "fill": "$foreground",
-                              "content": "toybox",
+                              "content": "atlas",
                               "fontFamily": "Nunito",
                               "fontSize": 12,
                               "fontWeight": "800"
@@ -3846,11 +3846,11 @@
                                     {
                                       "type": "text",
                                       "id": "ONoHd",
-                                      "name": "t react-theme：toke",
+                                      "name": "t ui：token 名要跟 ind",
                                       "fill": "$muted-foreground",
                                       "textGrowth": "fixed-width",
                                       "width": "fill_container",
-                                      "content": "react-theme：token 名要跟 index.css 對齊還是另開 namespace？",
+                                      "content": "ui：token 名要跟 index.css 對齊還是另開 namespace？",
                                       "lineHeight": 1.4,
                                       "fontFamily": "Nunito",
                                       "fontSize": 13,
@@ -3892,7 +3892,7 @@
                     {
                       "type": "frame",
                       "id": "ezK68",
-                      "name": "ActivityGroup panova",
+                      "name": "ActivityGroup demo",
                       "width": "fill_container",
                       "layout": "vertical",
                       "gap": 2,
@@ -3924,9 +3924,9 @@
                             {
                               "type": "text",
                               "id": "U6fBAz",
-                              "name": "t panova",
+                              "name": "t demo",
                               "fill": "$foreground",
-                              "content": "panova",
+                              "content": "demo",
                               "fontFamily": "Nunito",
                               "fontSize": 12,
                               "fontWeight": "800"
@@ -3934,9 +3934,9 @@
                             {
                               "type": "text",
                               "id": "jzr5n",
-                              "name": "t · sport-frontend",
+                              "name": "t · sport-demo",
                               "fill": "$muted-foreground",
-                              "content": "· sport-frontend-panova",
+                              "content": "· sport-demo",
                               "fontFamily": "Nunito",
                               "fontSize": 12,
                               "fontWeight": "normal"
@@ -4057,11 +4057,11 @@
                                     {
                                       "type": "text",
                                       "id": "r64dtv",
-                                      "name": "t ruling 串接新 API 延",
+                                      "name": "t ruling 示範功能延後到下一",
                                       "fill": "$muted-foreground",
                                       "textGrowth": "fixed-width",
                                       "width": "fill_container",
-                                      "content": "ruling 串接新 API 延後到下一波，先修 headermerge",
+                                      "content": "ruling 示範功能延後到下一波，先修列表排序",
                                       "lineHeight": 1.4,
                                       "fontFamily": "Nunito",
                                       "fontSize": 13,
@@ -4818,7 +4818,7 @@
                               "fill": "#ffffff",
                               "textGrowth": "fixed-width",
                               "width": "fill_container",
-                              "content": "toybox · 波 3/4",
+                              "content": "atlas · 波 3/4",
                               "fontFamily": "Nunito",
                               "fontSize": 14,
                               "fontWeight": "600"
@@ -5330,9 +5330,9 @@
                                 {
                                   "type": "text",
                                   "id": "l7LKdX",
-                                  "name": "t 全站改版（DKBO Toybox",
+                                  "name": "t 全站改版（示範主題 Atlas）",
                                   "fill": "$foreground",
-                                  "content": "全站改版（DKBO Toybox 玩具機風）",
+                                  "content": "全站改版（示範主題 Atlas）",
                                   "fontFamily": "Nunito",
                                   "fontSize": 14,
                                   "fontWeight": "700"
@@ -5471,7 +5471,7 @@
                                 {
                                   "type": "frame",
                                   "id": "i7BseF",
-                                  "name": "StatusPill designer",
+                                  "name": "StatusPill art",
                                   "height": 24,
                                   "cornerRadius": 999,
                                   "stroke": "$status-ok",
@@ -5494,9 +5494,9 @@
                                     {
                                       "type": "text",
                                       "id": "CzKpY",
-                                      "name": "t designer",
+                                      "name": "t art",
                                       "fill": "$status-ok-fg",
-                                      "content": "designer",
+                                      "content": "art",
                                       "fontFamily": "Nunito",
                                       "fontSize": 12,
                                       "fontWeight": "600"
@@ -5506,7 +5506,7 @@
                                 {
                                   "type": "frame",
                                   "id": "DGOdx",
-                                  "name": "StatusPill react-theme",
+                                  "name": "StatusPill ui",
                                   "height": 24,
                                   "cornerRadius": 999,
                                   "stroke": "$status-ok",
@@ -5529,9 +5529,9 @@
                                     {
                                       "type": "text",
                                       "id": "pn5Q9",
-                                      "name": "t react-theme",
+                                      "name": "t ui",
                                       "fill": "$status-ok-fg",
-                                      "content": "react-theme",
+                                      "content": "ui",
                                       "fontFamily": "Nunito",
                                       "fontSize": 12,
                                       "fontWeight": "600"
@@ -5541,7 +5541,7 @@
                                 {
                                   "type": "frame",
                                   "id": "YH7r3",
-                                  "name": "StatusPill react-games",
+                                  "name": "StatusPill dev-a",
                                   "height": 24,
                                   "cornerRadius": 999,
                                   "stroke": "$status-ok",
@@ -5564,9 +5564,9 @@
                                     {
                                       "type": "text",
                                       "id": "Ek04s",
-                                      "name": "t react-games",
+                                      "name": "t dev-a",
                                       "fill": "$status-ok-fg",
-                                      "content": "react-games",
+                                      "content": "dev-a",
                                       "fontFamily": "Nunito",
                                       "fontSize": 12,
                                       "fontWeight": "600"
@@ -5576,7 +5576,7 @@
                                 {
                                   "type": "frame",
                                   "id": "EZdTv",
-                                  "name": "StatusPill react-pages",
+                                  "name": "StatusPill dev-b",
                                   "height": 24,
                                   "cornerRadius": 999,
                                   "stroke": "$status-idle",
@@ -5599,9 +5599,9 @@
                                     {
                                       "type": "text",
                                       "id": "LCMkQ",
-                                      "name": "t react-pages",
+                                      "name": "t dev-b",
                                       "fill": "$status-idle-fg",
-                                      "content": "react-pages",
+                                      "content": "dev-b",
                                       "fontFamily": "Nunito",
                                       "fontSize": 12,
                                       "fontWeight": "600"
@@ -5657,7 +5657,7 @@
                             {
                               "type": "frame",
                               "id": "ecOJq",
-                              "name": "PaneThumb toybox-react-games",
+                              "name": "PaneThumb atlas-dev-a",
                               "clip": true,
                               "width": "fill_container",
                               "fill": "$terminal-bg",
@@ -5720,9 +5720,9 @@
                                     {
                                       "type": "text",
                                       "id": "MCzoi",
-                                      "name": "t toybox-react-gam",
+                                      "name": "t atlas-dev-a",
                                       "fill": "$terminal-fg",
-                                      "content": "toybox-react-games",
+                                      "content": "atlas-dev-a",
                                       "fontFamily": "Nunito",
                                       "fontSize": 11,
                                       "fontWeight": "600"
@@ -5765,7 +5765,7 @@
                                       "id": "oXZ5l",
                                       "name": "ln0",
                                       "fill": "$terminal-fg",
-                                      "content": "● 三個玩具卡元件完成",
+                                      "content": "● 三個卡片元件完成",
                                       "lineHeight": 1.35,
                                       "fontFamily": "JetBrains Mono",
                                       "fontSize": 11,
@@ -5776,7 +5776,7 @@
                                       "id": "SuvWk",
                                       "name": "ln1",
                                       "fill": "$terminal-dim",
-                                      "content": "  ⎿ src/games/*.tsx +412 −38",
+                                      "content": "  ⎿ src/cards/*.tsx +412 −38",
                                       "lineHeight": 1.35,
                                       "fontFamily": "JetBrains Mono",
                                       "fontSize": 11,
@@ -5866,7 +5866,7 @@
                             {
                               "type": "frame",
                               "id": "P67XM",
-                              "name": "PaneThumb toybox-designer",
+                              "name": "PaneThumb atlas-art",
                               "clip": true,
                               "width": "fill_container",
                               "fill": "$terminal-bg",
@@ -5929,9 +5929,9 @@
                                     {
                                       "type": "text",
                                       "id": "L3lRly",
-                                      "name": "t toybox-designer",
+                                      "name": "t atlas-art",
                                       "fill": "$terminal-fg",
-                                      "content": "toybox-designer",
+                                      "content": "atlas-art",
                                       "fontFamily": "Nunito",
                                       "fontSize": 11,
                                       "fontWeight": "600"
@@ -6492,7 +6492,7 @@
                         {
                           "type": "frame",
                           "id": "J63neY",
-                          "name": "IdleProjectRow sport-frontend-panova",
+                          "name": "IdleProjectRow sport-demo",
                           "width": "fill_container",
                           "height": 44,
                           "cornerRadius": 14,
@@ -6516,9 +6516,9 @@
                             {
                               "type": "text",
                               "id": "vwzEC",
-                              "name": "t sport-frontend-p",
+                              "name": "t sport-demo",
                               "fill": "$foreground",
-                              "content": "sport-frontend-panova",
+                              "content": "sport-demo",
                               "fontFamily": "Nunito",
                               "fontSize": 14,
                               "fontWeight": "700"
@@ -6780,7 +6780,7 @@
                     {
                       "type": "frame",
                       "id": "J4ojmz",
-                      "name": "ActivityGroup toybox",
+                      "name": "ActivityGroup atlas",
                       "width": "fill_container",
                       "layout": "vertical",
                       "gap": 2,
@@ -6812,9 +6812,9 @@
                             {
                               "type": "text",
                               "id": "C6ixS",
-                              "name": "t toybox",
+                              "name": "t atlas",
                               "fill": "$foreground",
-                              "content": "toybox",
+                              "content": "atlas",
                               "fontFamily": "Nunito",
                               "fontSize": 12,
                               "fontWeight": "800"
@@ -6921,9 +6921,9 @@
                                         {
                                           "type": "text",
                                           "id": "VSMJ9",
-                                          "name": "t react-games",
+                                          "name": "t dev-a",
                                           "fill": "$foreground",
-                                          "content": "react-games",
+                                          "content": "dev-a",
                                           "fontFamily": "Nunito",
                                           "fontSize": 13,
                                           "fontWeight": "700"
@@ -6976,11 +6976,11 @@
                                     {
                                       "type": "text",
                                       "id": "qa9rz",
-                                      "name": "t 遊戲頁三個玩具卡元件完成，測試 ",
+                                      "name": "t 列表頁三個卡片元件完成，測試 1",
                                       "fill": "$muted-foreground",
                                       "textGrowth": "fixed-width",
                                       "width": "fill_container",
-                                      "content": "遊戲頁三個玩具卡元件完成，測試 18 綠",
+                                      "content": "列表頁三個卡片元件完成，測試 18 綠",
                                       "lineHeight": 1.4,
                                       "fontFamily": "Nunito",
                                       "fontSize": 13,
@@ -7045,9 +7045,9 @@
                                         {
                                           "type": "text",
                                           "id": "gFWr3",
-                                          "name": "t designer",
+                                          "name": "t art",
                                           "fill": "$foreground",
-                                          "content": "designer",
+                                          "content": "art",
                                           "fontFamily": "Nunito",
                                           "fontSize": 13,
                                           "fontWeight": "700"
@@ -7193,11 +7193,11 @@
                                     {
                                       "type": "text",
                                       "id": "kN9oA",
-                                      "name": "t spawn toybox-rea",
+                                      "name": "t spawn atlas-dev-",
                                       "fill": "$muted-foreground",
                                       "textGrowth": "fixed-width",
                                       "width": "fill_container",
-                                      "content": "spawn toybox-react-pages（claude L）",
+                                      "content": "spawn atlas-dev-b（claude L）",
                                       "lineHeight": 1.4,
                                       "fontFamily": "Nunito",
                                       "fontSize": 13,
@@ -7493,7 +7493,7 @@
                     {
                       "type": "frame",
                       "id": "qhEfn",
-                      "name": "ActivityGroup toybox",
+                      "name": "ActivityGroup atlas",
                       "width": "fill_container",
                       "layout": "vertical",
                       "gap": 2,
@@ -7525,9 +7525,9 @@
                             {
                               "type": "text",
                               "id": "i9yRX",
-                              "name": "t toybox",
+                              "name": "t atlas",
                               "fill": "$foreground",
-                              "content": "toybox",
+                              "content": "atlas",
                               "fontFamily": "Nunito",
                               "fontSize": 12,
                               "fontWeight": "800"
@@ -7875,11 +7875,11 @@
                                     {
                                       "type": "text",
                                       "id": "r9JDn",
-                                      "name": "t react-theme：toke",
+                                      "name": "t ui：token 名要跟 ind",
                                       "fill": "$muted-foreground",
                                       "textGrowth": "fixed-width",
                                       "width": "fill_container",
-                                      "content": "react-theme：token 名要跟 index.css 對齊還是另開 namespace？",
+                                      "content": "ui：token 名要跟 index.css 對齊還是另開 namespace？",
                                       "lineHeight": 1.4,
                                       "fontFamily": "Nunito",
                                       "fontSize": 13,
@@ -7921,7 +7921,7 @@
                     {
                       "type": "frame",
                       "id": "i8KOV",
-                      "name": "ActivityGroup panova",
+                      "name": "ActivityGroup demo",
                       "width": "fill_container",
                       "layout": "vertical",
                       "gap": 2,
@@ -7953,9 +7953,9 @@
                             {
                               "type": "text",
                               "id": "jSn8y",
-                              "name": "t panova",
+                              "name": "t demo",
                               "fill": "$foreground",
-                              "content": "panova",
+                              "content": "demo",
                               "fontFamily": "Nunito",
                               "fontSize": 12,
                               "fontWeight": "800"
@@ -7963,9 +7963,9 @@
                             {
                               "type": "text",
                               "id": "Z6wQX",
-                              "name": "t · sport-frontend",
+                              "name": "t · sport-demo",
                               "fill": "$muted-foreground",
-                              "content": "· sport-frontend-panova",
+                              "content": "· sport-demo",
                               "fontFamily": "Nunito",
                               "fontSize": 12,
                               "fontWeight": "normal"
@@ -8086,11 +8086,11 @@
                                     {
                                       "type": "text",
                                       "id": "Puyby",
-                                      "name": "t ruling 串接新 API 延",
+                                      "name": "t ruling 示範功能延後到下一",
                                       "fill": "$muted-foreground",
                                       "textGrowth": "fixed-width",
                                       "width": "fill_container",
-                                      "content": "ruling 串接新 API 延後到下一波，先修 headermerge",
+                                      "content": "ruling 示範功能延後到下一波，先修列表排序",
                                       "lineHeight": 1.4,
                                       "fontFamily": "Nunito",
                                       "fontSize": 13,
@@ -8670,7 +8670,7 @@
                       "fill": "#ffffff",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "toybox · 波 3/4",
+                      "content": "atlas · 波 3/4",
                       "fontFamily": "Nunito",
                       "fontSize": 12,
                       "fontWeight": "600"
@@ -8902,7 +8902,7 @@
                       "fill": "#ffffff",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "react-games",
+                      "content": "dev-a",
                       "fontFamily": "Nunito",
                       "fontSize": 12,
                       "fontWeight": "600"
@@ -9200,9 +9200,9 @@
                         {
                           "type": "text",
                           "id": "baQgH",
-                          "name": "t 全站改版（Toybox）",
+                          "name": "t 全站改版（Atlas）",
                           "fill": "$foreground",
-                          "content": "全站改版（Toybox）",
+                          "content": "全站改版（Atlas）",
                           "fontFamily": "Nunito",
                           "fontSize": 14,
                           "fontWeight": "700"
@@ -9331,7 +9331,7 @@
                         {
                           "type": "frame",
                           "id": "fUHJJ",
-                          "name": "StatusPill designer",
+                          "name": "StatusPill art",
                           "height": 24,
                           "cornerRadius": 999,
                           "stroke": "$status-ok",
@@ -9354,9 +9354,9 @@
                             {
                               "type": "text",
                               "id": "pqr1N",
-                              "name": "t designer",
+                              "name": "t art",
                               "fill": "$status-ok-fg",
-                              "content": "designer",
+                              "content": "art",
                               "fontFamily": "Nunito",
                               "fontSize": 12,
                               "fontWeight": "600"
@@ -9366,7 +9366,7 @@
                         {
                           "type": "frame",
                           "id": "M8YUWk",
-                          "name": "StatusPill react-theme",
+                          "name": "StatusPill ui",
                           "height": 24,
                           "cornerRadius": 999,
                           "stroke": "$status-ok",
@@ -9389,9 +9389,9 @@
                             {
                               "type": "text",
                               "id": "E0yXDK",
-                              "name": "t react-theme",
+                              "name": "t ui",
                               "fill": "$status-ok-fg",
-                              "content": "react-theme",
+                              "content": "ui",
                               "fontFamily": "Nunito",
                               "fontSize": 12,
                               "fontWeight": "600"
@@ -9401,7 +9401,7 @@
                         {
                           "type": "frame",
                           "id": "Xs3BX",
-                          "name": "StatusPill react-games",
+                          "name": "StatusPill dev-a",
                           "height": 24,
                           "cornerRadius": 999,
                           "stroke": "$status-danger",
@@ -9424,9 +9424,9 @@
                             {
                               "type": "text",
                               "id": "SvesI",
-                              "name": "t react-games",
+                              "name": "t dev-a",
                               "fill": "$status-danger-fg",
-                              "content": "react-games",
+                              "content": "dev-a",
                               "fontFamily": "Nunito",
                               "fontSize": 12,
                               "fontWeight": "600"
@@ -9466,7 +9466,7 @@
                 {
                   "type": "frame",
                   "id": "y3kRx",
-                  "name": "PaneThumb toybox-react-games",
+                  "name": "PaneThumb atlas-dev-a",
                   "clip": true,
                   "width": "fill_container",
                   "fill": "$terminal-bg",
@@ -9529,9 +9529,9 @@
                         {
                           "type": "text",
                           "id": "GHMKs",
-                          "name": "t toybox-react-gam",
+                          "name": "t atlas-dev-a",
                           "fill": "$terminal-fg",
-                          "content": "toybox-react-games",
+                          "content": "atlas-dev-a",
                           "fontFamily": "Nunito",
                           "fontSize": 11,
                           "fontWeight": "600"
@@ -9916,7 +9916,7 @@
                 {
                   "type": "frame",
                   "id": "w7pVye",
-                  "name": "ActivityGroup toybox",
+                  "name": "ActivityGroup atlas",
                   "width": "fill_container",
                   "layout": "vertical",
                   "gap": 2,
@@ -9948,9 +9948,9 @@
                         {
                           "type": "text",
                           "id": "vy1qC",
-                          "name": "t toybox",
+                          "name": "t atlas",
                           "fill": "$foreground",
-                          "content": "toybox",
+                          "content": "atlas",
                           "fontFamily": "Nunito",
                           "fontSize": 12,
                           "fontWeight": "800"
@@ -10057,9 +10057,9 @@
                                     {
                                       "type": "text",
                                       "id": "Vqme3",
-                                      "name": "t react-games",
+                                      "name": "t dev-a",
                                       "fill": "$foreground",
-                                      "content": "react-games",
+                                      "content": "dev-a",
                                       "fontFamily": "Nunito",
                                       "fontSize": 13,
                                       "fontWeight": "700"
@@ -10181,9 +10181,9 @@
                                     {
                                       "type": "text",
                                       "id": "L8HNgh",
-                                      "name": "t designer",
+                                      "name": "t art",
                                       "fill": "$foreground",
-                                      "content": "designer",
+                                      "content": "art",
                                       "fontFamily": "Nunito",
                                       "fontSize": 13,
                                       "fontWeight": "700"
@@ -10329,11 +10329,11 @@
                                 {
                                   "type": "text",
                                   "id": "Y92oRQ",
-                                  "name": "t spawn toybox-rea",
+                                  "name": "t spawn atlas-dev-",
                                   "fill": "$muted-foreground",
                                   "textGrowth": "fixed-width",
                                   "width": "fill_container",
-                                  "content": "spawn toybox-react-pages（claude L）",
+                                  "content": "spawn atlas-dev-b（claude L）",
                                   "lineHeight": 1.4,
                                   "fontFamily": "Nunito",
                                   "fontSize": 13,
@@ -10974,7 +10974,7 @@
                 {
                   "type": "frame",
                   "id": "Y97o0a",
-                  "name": "IdleProjectRow sport-frontend…",
+                  "name": "IdleProjectRow sport-demo",
                   "width": "fill_container",
                   "height": 44,
                   "cornerRadius": 14,
@@ -10998,9 +10998,9 @@
                     {
                       "type": "text",
                       "id": "JEA58",
-                      "name": "t sport-frontend…",
+                      "name": "t sport-demo",
                       "fill": "$foreground",
-                      "content": "sport-frontend…",
+                      "content": "sport-demo",
                       "fontFamily": "Nunito",
                       "fontSize": 14,
                       "fontWeight": "700"
@@ -11633,9 +11633,9 @@
                 {
                   "type": "text",
                   "id": "zYg1i",
-                  "name": "t 2026-10-04-toybo",
+                  "name": "t 2026-10-04-atlas",
                   "fill": "$foreground",
-                  "content": "2026-10-04-toybox",
+                  "content": "2026-10-04-atlas",
                   "fontFamily": "JetBrains Mono",
                   "fontSize": 14,
                   "fontWeight": "600"
@@ -11694,7 +11694,7 @@
                           "id": "tK7y9",
                           "name": "PageTitle",
                           "fill": "$foreground",
-                          "content": "全站改版（DKBO Toybox 玩具機風）",
+                          "content": "全站改版（示範主題 Atlas）",
                           "fontFamily": "Nunito",
                           "fontSize": 24,
                           "fontWeight": "800"
@@ -11741,7 +11741,7 @@
                       "id": "j7L9E",
                       "name": "PageSubtitle",
                       "fill": "$muted-foreground",
-                      "content": "collect · 2026-10-04-toybox · dk/toybox",
+                      "content": "collect · 2026-10-04-atlas · dk/atlas",
                       "fontFamily": "Nunito",
                       "fontSize": 14,
                       "fontWeight": "normal"
@@ -12241,9 +12241,9 @@
                             {
                               "type": "text",
                               "id": "T8avd",
-                              "name": "t react-theme、desi",
+                              "name": "t ui、art · 1 小時 6 ",
                               "fill": "$muted-foreground",
-                              "content": "react-theme、designer · 1 小時 6 分",
+                              "content": "ui、art · 1 小時 6 分",
                               "fontFamily": "Nunito",
                               "fontSize": 13,
                               "fontWeight": "normal"
@@ -12386,9 +12386,9 @@
                                 {
                                   "type": "text",
                                   "id": "Gunro",
-                                  "name": "t react-games、reac",
+                                  "name": "t dev-a、dev-b、qa",
                                   "fill": "$muted-foreground",
-                                  "content": "react-games、react-pages、qa",
+                                  "content": "dev-a、dev-b、qa",
                                   "fontFamily": "Nunito",
                                   "fontSize": 13,
                                   "fontWeight": "normal"
@@ -13140,9 +13140,9 @@
                                     {
                                       "type": "text",
                                       "id": "rVQ4T",
-                                      "name": "t designer",
+                                      "name": "t art",
                                       "fill": "$foreground",
-                                      "content": "designer",
+                                      "content": "art",
                                       "fontFamily": "Nunito",
                                       "fontSize": 14,
                                       "fontWeight": "700"
@@ -13412,9 +13412,9 @@
                                     {
                                       "type": "text",
                                       "id": "bXPB6",
-                                      "name": "t react-games",
+                                      "name": "t dev-a",
                                       "fill": "$foreground",
-                                      "content": "react-games",
+                                      "content": "dev-a",
                                       "fontFamily": "Nunito",
                                       "fontSize": 14,
                                       "fontWeight": "700"
@@ -13686,9 +13686,9 @@
                                     {
                                       "type": "text",
                                       "id": "JBtlm",
-                                      "name": "t react-pages",
+                                      "name": "t dev-b",
                                       "fill": "$foreground",
-                                      "content": "react-pages",
+                                      "content": "dev-b",
                                       "fontFamily": "Nunito",
                                       "fontSize": 14,
                                       "fontWeight": "700"
@@ -13769,9 +13769,9 @@
                                     {
                                       "type": "text",
                                       "id": "OI0qv",
-                                      "name": "t 首頁與遊戲頁路由",
+                                      "name": "t 首頁與列表頁路由",
                                       "fill": "$foreground",
-                                      "content": "首頁與遊戲頁路由",
+                                      "content": "首頁與列表頁路由",
                                       "fontFamily": "Nunito",
                                       "fontSize": 14
                                     }
@@ -13957,9 +13957,9 @@
                                     {
                                       "type": "text",
                                       "id": "nTwSu",
-                                      "name": "t react-theme",
+                                      "name": "t ui",
                                       "fill": "$foreground",
-                                      "content": "react-theme",
+                                      "content": "ui",
                                       "fontFamily": "Nunito",
                                       "fontSize": 14,
                                       "fontWeight": "700"
@@ -14982,11 +14982,11 @@
                             {
                               "type": "text",
                               "id": "kjzws",
-                              "name": "t AC1 主題 token 與 T",
+                              "name": "t AC1 主題 token 與示範",
                               "fill": "$foreground",
                               "textGrowth": "fixed-width",
                               "width": "fill_container",
-                              "content": "AC1 主題 token 與 Toybox 玩具機配色對齊 index.css",
+                              "content": "AC1 主題 token 與示範配色對齊 index.css",
                               "fontFamily": "Nunito",
                               "fontSize": 14,
                               "fontWeight": "normal"
@@ -15013,11 +15013,11 @@
                             {
                               "type": "text",
                               "id": "wLMuw",
-                              "name": "t AC2 首頁三張玩具卡與遊戲頁路",
+                              "name": "t AC2 首頁三張卡片與列表頁路由",
                               "fill": "$foreground",
                               "textGrowth": "fixed-width",
                               "width": "fill_container",
-                              "content": "AC2 首頁三張玩具卡與遊戲頁路由",
+                              "content": "AC2 首頁三張卡片與列表頁路由",
                               "fontFamily": "Nunito",
                               "fontSize": 14,
                               "fontWeight": "normal"
@@ -15044,11 +15044,11 @@
                             {
                               "type": "text",
                               "id": "dgrrZ",
-                              "name": "t AC3 遊戲頁三個玩具卡元件＋單",
+                              "name": "t AC3 列表頁三個卡片元件＋單元",
                               "fill": "$foreground",
                               "textGrowth": "fixed-width",
                               "width": "fill_container",
-                              "content": "AC3 遊戲頁三個玩具卡元件＋單元測試",
+                              "content": "AC3 列表頁三個卡片元件＋單元測試",
                               "fontFamily": "Nunito",
                               "fontSize": 14,
                               "fontWeight": "normal"
@@ -15075,11 +15075,11 @@
                             {
                               "type": "text",
                               "id": "c5AJk",
-                              "name": "t AC4 e2e：首頁、遊戲頁 1",
+                              "name": "t AC4 e2e：首頁、列表頁 1",
                               "fill": "$foreground",
                               "textGrowth": "fixed-width",
                               "width": "fill_container",
-                              "content": "AC4 e2e：首頁、遊戲頁 1440／390 截圖",
+                              "content": "AC4 e2e：首頁、列表頁 1440／390 截圖",
                               "fontFamily": "Nunito",
                               "fontSize": 14,
                               "fontWeight": "normal"
@@ -15231,9 +15231,9 @@
                                 {
                                   "type": "text",
                                   "id": "swhgz",
-                                  "name": "t 2026-10-04-toybo",
+                                  "name": "t 2026-10-04-atlas",
                                   "fill": "$foreground",
-                                  "content": "2026-10-04-toybox",
+                                  "content": "2026-10-04-atlas",
                                   "fontFamily": "JetBrains Mono",
                                   "fontSize": 13,
                                   "fontWeight": "normal"
@@ -15273,9 +15273,9 @@
                                 {
                                   "type": "text",
                                   "id": "x7yLB",
-                                  "name": "t dk/toybox",
+                                  "name": "t dk/atlas",
                                   "fill": "$foreground",
-                                  "content": "dk/toybox",
+                                  "content": "dk/atlas",
                                   "fontFamily": "JetBrains Mono",
                                   "fontSize": 13,
                                   "fontWeight": "normal"
@@ -15582,7 +15582,7 @@
                             {
                               "type": "frame",
                               "id": "tKb7g",
-                              "name": "dlrow designer",
+                              "name": "dlrow art",
                               "width": "fill_container",
                               "height": 36,
                               "stroke": "$border",
@@ -15595,9 +15595,9 @@
                                 {
                                   "type": "text",
                                   "id": "C1vVdT",
-                                  "name": "t designer",
+                                  "name": "t art",
                                   "fill": "$muted-foreground",
-                                  "content": "designer",
+                                  "content": "art",
                                   "fontFamily": "Nunito",
                                   "fontSize": 13,
                                   "fontWeight": "normal"
@@ -15718,7 +15718,7 @@
                             {
                               "type": "frame",
                               "id": "WvCsu",
-                              "name": "dlrow react-theme",
+                              "name": "dlrow ui",
                               "width": "fill_container",
                               "height": 36,
                               "stroke": "$border",
@@ -15731,9 +15731,9 @@
                                 {
                                   "type": "text",
                                   "id": "N2jIQ1",
-                                  "name": "t react-theme",
+                                  "name": "t ui",
                                   "fill": "$muted-foreground",
-                                  "content": "react-theme",
+                                  "content": "ui",
                                   "fontFamily": "Nunito",
                                   "fontSize": 13,
                                   "fontWeight": "normal"
@@ -15786,7 +15786,7 @@
                             {
                               "type": "frame",
                               "id": "cIE82",
-                              "name": "dlrow react-games",
+                              "name": "dlrow dev-a",
                               "width": "fill_container",
                               "height": 36,
                               "stroke": "$border",
@@ -15799,9 +15799,9 @@
                                 {
                                   "type": "text",
                                   "id": "nVyBX",
-                                  "name": "t react-games",
+                                  "name": "t dev-a",
                                   "fill": "$muted-foreground",
-                                  "content": "react-games",
+                                  "content": "dev-a",
                                   "fontFamily": "Nunito",
                                   "fontSize": 13,
                                   "fontWeight": "normal"
@@ -16777,7 +16777,7 @@
                         {
                           "type": "frame",
                           "id": "X2INU5",
-                          "name": "bar 全站改版（Toybox）",
+                          "name": "bar 全站改版（Atlas）",
                           "width": "fill_container",
                           "height": 20,
                           "gap": 10,
@@ -16786,11 +16786,11 @@
                             {
                               "type": "text",
                               "id": "SPHUK",
-                              "name": "t 全站改版（Toybox）",
+                              "name": "t 全站改版（Atlas）",
                               "fill": "$muted-foreground",
                               "textGrowth": "fixed-width",
                               "width": 140,
-                              "content": "全站改版（Toybox）",
+                              "content": "全站改版（Atlas）",
                               "textAlign": "right",
                               "fontFamily": "Nunito",
                               "fontSize": 12,
@@ -16838,7 +16838,7 @@
                         {
                           "type": "frame",
                           "id": "x1SwR",
-                          "name": "bar 賽車美術＋可玩度",
+                          "name": "bar 示範任務 beacon",
                           "width": "fill_container",
                           "height": 20,
                           "gap": 10,
@@ -16847,11 +16847,11 @@
                             {
                               "type": "text",
                               "id": "CVT1j",
-                              "name": "t 賽車美術＋可玩度",
+                              "name": "t 示範任務 beacon",
                               "fill": "$muted-foreground",
                               "textGrowth": "fixed-width",
                               "width": 140,
-                              "content": "賽車美術＋可玩度",
+                              "content": "示範任務 beacon",
                               "textAlign": "right",
                               "fontFamily": "Nunito",
                               "fontSize": 12,
@@ -16899,7 +16899,7 @@
                         {
                           "type": "frame",
                           "id": "ScjP4",
-                          "name": "bar 坦克美術＋可玩度",
+                          "name": "bar 示範任務 cobalt",
                           "width": "fill_container",
                           "height": 20,
                           "gap": 10,
@@ -16908,11 +16908,11 @@
                             {
                               "type": "text",
                               "id": "j4CiSa",
-                              "name": "t 坦克美術＋可玩度",
+                              "name": "t 示範任務 cobalt",
                               "fill": "$muted-foreground",
                               "textGrowth": "fixed-width",
                               "width": 140,
-                              "content": "坦克美術＋可玩度",
+                              "content": "示範任務 cobalt",
                               "textAlign": "right",
                               "fontFamily": "Nunito",
                               "fontSize": 12,
@@ -17021,7 +17021,7 @@
                         {
                           "type": "frame",
                           "id": "V8x0mv",
-                          "name": "bar 廚師快手美術優化",
+                          "name": "bar 示範任務 delta",
                           "width": "fill_container",
                           "height": 20,
                           "gap": 10,
@@ -17030,11 +17030,11 @@
                             {
                               "type": "text",
                               "id": "d33je",
-                              "name": "t 廚師快手美術優化",
+                              "name": "t 示範任務 delta",
                               "fill": "$muted-foreground",
                               "textGrowth": "fixed-width",
                               "width": 140,
-                              "content": "廚師快手美術優化",
+                              "content": "示範任務 delta",
                               "textAlign": "right",
                               "fontFamily": "Nunito",
                               "fontSize": 12,
@@ -17326,7 +17326,7 @@
                         {
                           "type": "frame",
                           "id": "tvodV",
-                          "name": "bar 炸彈超人美術優化",
+                          "name": "bar 示範任務 ember",
                           "width": "fill_container",
                           "height": 20,
                           "gap": 10,
@@ -17335,11 +17335,11 @@
                             {
                               "type": "text",
                               "id": "MnHV1",
-                              "name": "t 炸彈超人美術優化",
+                              "name": "t 示範任務 ember",
                               "fill": "$muted-foreground",
                               "textGrowth": "fixed-width",
                               "width": 140,
-                              "content": "炸彈超人美術優化",
+                              "content": "示範任務 ember",
                               "textAlign": "right",
                               "fontFamily": "Nunito",
                               "fontSize": 12,
@@ -17387,7 +17387,7 @@
                         {
                           "type": "frame",
                           "id": "p33Fur",
-                          "name": "bar Babylon 深層匯入",
+                          "name": "bar 示範任務 flint",
                           "width": "fill_container",
                           "height": 20,
                           "gap": 10,
@@ -17396,11 +17396,11 @@
                             {
                               "type": "text",
                               "id": "W0nEU4",
-                              "name": "t Babylon 深層匯入",
+                              "name": "t 示範任務 flint",
                               "fill": "$muted-foreground",
                               "textGrowth": "fixed-width",
                               "width": 140,
-                              "content": "Babylon 深層匯入",
+                              "content": "示範任務 flint",
                               "textAlign": "right",
                               "fontFamily": "Nunito",
                               "fontSize": 12,
@@ -17509,7 +17509,7 @@
                         {
                           "type": "frame",
                           "id": "LBYP1",
-                          "name": "bar 糖果消消樂全面美化",
+                          "name": "bar 示範任務 garnet",
                           "width": "fill_container",
                           "height": 20,
                           "gap": 10,
@@ -17518,11 +17518,11 @@
                             {
                               "type": "text",
                               "id": "HrVCb",
-                              "name": "t 糖果消消樂全面美化",
+                              "name": "t 示範任務 garnet",
                               "fill": "$muted-foreground",
                               "textGrowth": "fixed-width",
                               "width": 140,
-                              "content": "糖果消消樂全面美化",
+                              "content": "示範任務 garnet",
                               "textAlign": "right",
                               "fontFamily": "Nunito",
                               "fontSize": 12,
@@ -18767,9 +18767,9 @@
                             {
                               "type": "text",
                               "id": "uBgCW",
-                              "name": "t 全站改版（DKBO Toybox",
+                              "name": "t 全站改版（示範主題 Atlas）",
                               "fill": "$foreground",
-                              "content": "全站改版（DKBO Toybox 玩具機風）",
+                              "content": "全站改版（示範主題 Atlas）",
                               "fontFamily": "Nunito",
                               "fontSize": 14,
                               "fontWeight": "600"
@@ -19060,9 +19060,9 @@
                             {
                               "type": "text",
                               "id": "lpM6N",
-                              "name": "t 賽車美術＋可玩度（A Toy R",
+                              "name": "t 美術與可玩度（示範 Beacon",
                               "fill": "$foreground",
-                              "content": "賽車美術＋可玩度（A Toy Racer）",
+                              "content": "美術與可玩度（示範 Beacon）",
                               "fontFamily": "Nunito",
                               "fontSize": 14,
                               "fontWeight": "600"
@@ -19353,9 +19353,9 @@
                             {
                               "type": "text",
                               "id": "LefOl",
-                              "name": "t 坦克美術＋可玩度（A Toy A",
+                              "name": "t 美術與可玩度（示範 Cobalt",
                               "fill": "$foreground",
-                              "content": "坦克美術＋可玩度（A Toy Army）",
+                              "content": "美術與可玩度（示範 Cobalt）",
                               "fontFamily": "Nunito",
                               "fontSize": 14,
                               "fontWeight": "600"
@@ -19940,9 +19940,9 @@
                             {
                               "type": "text",
                               "id": "fPCct",
-                              "name": "t 廚師快手美術優化（A Toy K",
+                              "name": "t 介面優化（示範 Delta）",
                               "fill": "$foreground",
-                              "content": "廚師快手美術優化（A Toy Kitchen）",
+                              "content": "介面優化（示範 Delta）",
                               "fontFamily": "Nunito",
                               "fontSize": 14,
                               "fontWeight": "600"
@@ -20779,7 +20779,7 @@
                             {
                               "type": "frame",
                               "id": "I47wy",
-                              "name": "Tag sport-frontend-panova",
+                              "name": "Tag sport-demo",
                               "height": 20,
                               "fill": "$muted",
                               "cornerRadius": 999,
@@ -20793,9 +20793,9 @@
                                 {
                                   "type": "text",
                                   "id": "MQed6",
-                                  "name": "t sport-frontend-p",
+                                  "name": "t sport-demo",
                                   "fill": "$muted-foreground",
-                                  "content": "sport-frontend-panova",
+                                  "content": "sport-demo",
                                   "fontFamily": "Nunito",
                                   "fontSize": 11,
                                   "fontWeight": "600"
@@ -20819,9 +20819,9 @@
                             {
                               "type": "text",
                               "id": "GZ8dw",
-                              "name": "t 投注單鍵盤與結算列合一",
+                              "name": "t 表單鍵盤與摘要列合一",
                               "fill": "$foreground",
-                              "content": "投注單鍵盤與結算列合一",
+                              "content": "表單鍵盤與摘要列合一",
                               "fontFamily": "Nunito",
                               "fontSize": 14,
                               "fontWeight": "600"
@@ -24589,7 +24589,7 @@
                     {
                       "type": "frame",
                       "id": "ydaxc",
-                      "name": "lg babylon（wD:p31）",
+                      "name": "lg engine（wD:p31）",
                       "gap": 6,
                       "alignItems": "center",
                       "children": [
@@ -24604,9 +24604,9 @@
                         {
                           "type": "text",
                           "id": "qvTJ1",
-                          "name": "t babylon（wD:p31）",
+                          "name": "t engine（wD:p31）",
                           "fill": "$muted-foreground",
-                          "content": "babylon（wD:p31）",
+                          "content": "engine（wD:p31）",
                           "fontFamily": "Nunito",
                           "fontSize": 12,
                           "fontWeight": "normal"
@@ -24616,7 +24616,7 @@
                     {
                       "type": "frame",
                       "id": "e2Gtu",
-                      "name": "lg designer（wD:p3H）",
+                      "name": "lg art（wD:p3H）",
                       "gap": 6,
                       "alignItems": "center",
                       "children": [
@@ -24631,9 +24631,9 @@
                         {
                           "type": "text",
                           "id": "A9uAw",
-                          "name": "t designer（wD:p3H）",
+                          "name": "t art（wD:p3H）",
                           "fill": "$muted-foreground",
-                          "content": "designer（wD:p3H）",
+                          "content": "art（wD:p3H）",
                           "fontFamily": "Nunito",
                           "fontSize": 12,
                           "fontWeight": "normal"
@@ -24643,7 +24643,7 @@
                     {
                       "type": "frame",
                       "id": "j7cxh2",
-                      "name": "lg babylon（wD:p2D）",
+                      "name": "lg engine（wD:p2D）",
                       "gap": 6,
                       "alignItems": "center",
                       "children": [
@@ -24658,9 +24658,9 @@
                         {
                           "type": "text",
                           "id": "XCr1L",
-                          "name": "t babylon（wD:p2D）",
+                          "name": "t engine（wD:p2D）",
                           "fill": "$muted-foreground",
-                          "content": "babylon（wD:p2D）",
+                          "content": "engine（wD:p2D）",
                           "fontFamily": "Nunito",
                           "fontSize": 12,
                           "fontWeight": "normal"
@@ -24697,7 +24697,7 @@
                     {
                       "type": "frame",
                       "id": "uLo5k",
-                      "name": "lg react-games",
+                      "name": "lg dev-a",
                       "gap": 6,
                       "alignItems": "center",
                       "children": [
@@ -24712,9 +24712,9 @@
                         {
                           "type": "text",
                           "id": "ktRQk",
-                          "name": "t react-games",
+                          "name": "t dev-a",
                           "fill": "$muted-foreground",
-                          "content": "react-games",
+                          "content": "dev-a",
                           "fontFamily": "Nunito",
                           "fontSize": 12,
                           "fontWeight": "normal"
@@ -24724,7 +24724,7 @@
                     {
                       "type": "frame",
                       "id": "DvFvF",
-                      "name": "lg toybox-designer",
+                      "name": "lg atlas-art",
                       "gap": 6,
                       "alignItems": "center",
                       "children": [
@@ -24739,9 +24739,9 @@
                         {
                           "type": "text",
                           "id": "tiYj0",
-                          "name": "t toybox-designer",
+                          "name": "t atlas-art",
                           "fill": "$muted-foreground",
-                          "content": "toybox-designer",
+                          "content": "atlas-art",
                           "fontFamily": "Nunito",
                           "fontSize": 12,
                           "fontWeight": "normal"
@@ -25131,7 +25131,7 @@
                         {
                           "type": "frame",
                           "id": "q34xK",
-                          "name": "lg sport-frontend-panova",
+                          "name": "lg sport-demo",
                           "gap": 6,
                           "alignItems": "center",
                           "children": [
@@ -25146,9 +25146,9 @@
                             {
                               "type": "text",
                               "id": "EedSR",
-                              "name": "t sport-frontend-p",
+                              "name": "t sport-demo",
                               "fill": "$muted-foreground",
-                              "content": "sport-frontend-panova",
+                              "content": "sport-demo",
                               "fontFamily": "Nunito",
                               "fontSize": 12,
                               "fontWeight": "normal"
@@ -25777,9 +25777,9 @@
                                     {
                                       "type": "text",
                                       "id": "hfeQr",
-                                      "name": "t babylon",
+                                      "name": "t engine",
                                       "fill": "$foreground",
-                                      "content": "babylon",
+                                      "content": "engine",
                                       "fontFamily": "Nunito",
                                       "fontSize": 14
                                     }
@@ -25972,9 +25972,9 @@
                                     {
                                       "type": "text",
                                       "id": "Z11Dm",
-                                      "name": "t react",
+                                      "name": "t dev",
                                       "fill": "$foreground",
-                                      "content": "react",
+                                      "content": "dev",
                                       "fontFamily": "Nunito",
                                       "fontSize": 14
                                     }
@@ -26037,9 +26037,9 @@
                                     {
                                       "type": "text",
                                       "id": "TmAS3",
-                                      "name": "t designer",
+                                      "name": "t art",
                                       "fill": "$foreground",
-                                      "content": "designer",
+                                      "content": "art",
                                       "fontFamily": "Nunito",
                                       "fontSize": 14
                                     }
@@ -26938,7 +26938,7 @@
                         {
                           "type": "frame",
                           "id": "wsbYD",
-                          "name": "SidebarItem panova2",
+                          "name": "SidebarItem demo2",
                           "width": "fill_container",
                           "cornerRadius": 14,
                           "gap": 10,
@@ -26972,9 +26972,9 @@
                                 {
                                   "type": "text",
                                   "id": "HY3dv",
-                                  "name": "t panova2",
+                                  "name": "t demo2",
                                   "fill": "$foreground",
-                                  "content": "panova2",
+                                  "content": "demo2",
                                   "fontFamily": "Nunito",
                                   "fontSize": 14,
                                   "fontWeight": "700"
@@ -27256,7 +27256,7 @@
                         {
                           "type": "frame",
                           "id": "P6bZIB",
-                          "name": "SidebarItem toybox-react-games",
+                          "name": "SidebarItem atlas-dev-a",
                           "width": "fill_container",
                           "fill": "$accent",
                           "cornerRadius": 14,
@@ -27286,9 +27286,9 @@
                                 {
                                   "type": "text",
                                   "id": "z8e9v",
-                                  "name": "t toybox-react-gam",
+                                  "name": "t atlas-dev-a",
                                   "fill": "$accent-foreground",
-                                  "content": "toybox-react-games",
+                                  "content": "atlas-dev-a",
                                   "fontFamily": "Nunito",
                                   "fontSize": 14,
                                   "fontWeight": "700"
@@ -27319,7 +27319,7 @@
                         {
                           "type": "frame",
                           "id": "H0p0q",
-                          "name": "SidebarItem toybox-designer",
+                          "name": "SidebarItem atlas-art",
                           "width": "fill_container",
                           "cornerRadius": 14,
                           "gap": 10,
@@ -27348,9 +27348,9 @@
                                 {
                                   "type": "text",
                                   "id": "e3XAGr",
-                                  "name": "t toybox-designer",
+                                  "name": "t atlas-art",
                                   "fill": "$foreground",
-                                  "content": "toybox-designer",
+                                  "content": "atlas-art",
                                   "fontFamily": "Nunito",
                                   "fontSize": 14,
                                   "fontWeight": "700"
@@ -27381,7 +27381,7 @@
                         {
                           "type": "frame",
                           "id": "FoP9y",
-                          "name": "SidebarItem toybox-react-pages",
+                          "name": "SidebarItem atlas-dev-b",
                           "width": "fill_container",
                           "cornerRadius": 14,
                           "gap": 10,
@@ -27410,9 +27410,9 @@
                                 {
                                   "type": "text",
                                   "id": "T1Rwk",
-                                  "name": "t toybox-react-pag",
+                                  "name": "t atlas-dev-b",
                                   "fill": "$foreground",
-                                  "content": "toybox-react-pages",
+                                  "content": "atlas-dev-b",
                                   "fontFamily": "Nunito",
                                   "fontSize": 14,
                                   "fontWeight": "700"
@@ -27551,9 +27551,9 @@
                                     {
                                       "type": "text",
                                       "id": "vMhnk",
-                                      "name": "t panova2 · 閒置",
+                                      "name": "t demo2 · 閒置",
                                       "fill": "$muted-foreground",
-                                      "content": "panova2 · 閒置",
+                                      "content": "demo2 · 閒置",
                                       "fontFamily": "Nunito",
                                       "fontSize": 12,
                                       "fontWeight": "normal"
@@ -27851,7 +27851,7 @@
                         {
                           "type": "frame",
                           "id": "o8V2tk",
-                          "name": "pane toybox-react-games",
+                          "name": "pane atlas-dev-a",
                           "width": "fill_container",
                           "height": "fill_container",
                           "stroke": "$status-danger",
@@ -27914,9 +27914,9 @@
                                 {
                                   "type": "text",
                                   "id": "ncPJd",
-                                  "name": "t toybox-react-gam",
+                                  "name": "t atlas-dev-a",
                                   "fill": "$terminal-fg",
-                                  "content": "toybox-react-games",
+                                  "content": "atlas-dev-a",
                                   "fontFamily": "Nunito",
                                   "fontSize": 12,
                                   "fontWeight": "700"
@@ -27995,7 +27995,7 @@
                                   "id": "O9o2D5",
                                   "name": "ln0",
                                   "fill": "$terminal-fg",
-                                  "content": "● Reading src/games/ToyCard.tsx",
+                                  "content": "● Reading src/cards/DemoCard.tsx",
                                   "lineHeight": 1.35,
                                   "fontFamily": "JetBrains Mono",
                                   "fontSize": 12,
@@ -28028,7 +28028,7 @@
                                   "id": "OQzDG",
                                   "name": "ln3",
                                   "fill": "$terminal-fg",
-                                  "content": "● Bash(pnpm -C apps/web test -- games)",
+                                  "content": "● Bash(pnpm -C apps/web test -- cards)",
                                   "lineHeight": 1.35,
                                   "fontFamily": "JetBrains Mono",
                                   "fontSize": 12,
@@ -28206,7 +28206,7 @@
                         {
                           "type": "frame",
                           "id": "FY0Y5",
-                          "name": "pane toybox-react-pages",
+                          "name": "pane atlas-dev-b",
                           "width": "fill_container",
                           "height": "fill_container",
                           "stroke": "$terminal-line",
@@ -28269,9 +28269,9 @@
                                 {
                                   "type": "text",
                                   "id": "ZHeua",
-                                  "name": "t toybox-react-pag",
+                                  "name": "t atlas-dev-b",
                                   "fill": "$terminal-fg",
-                                  "content": "toybox-react-pages",
+                                  "content": "atlas-dev-b",
                                   "fontFamily": "Nunito",
                                   "fontSize": 12,
                                   "fontWeight": "700"
@@ -28383,7 +28383,7 @@
                                   "id": "Cf3hW",
                                   "name": "ln3",
                                   "fill": "$terminal-fg",
-                                  "content": "● Write(src/pages/Games.tsx)",
+                                  "content": "● Write(src/pages/List.tsx)",
                                   "lineHeight": 1.35,
                                   "fontFamily": "JetBrains Mono",
                                   "fontSize": 12,
@@ -28449,7 +28449,7 @@
                                   "id": "RT5Lc",
                                   "name": "ln9",
                                   "fill": "$terminal-fg",
-                                  "content": "● 路由接好了，接著補 Games 頁的 e2e testid。",
+                                  "content": "● 路由接好了，接著補 List 頁的 e2e testid。",
                                   "lineHeight": 1.35,
                                   "fontFamily": "JetBrains Mono",
                                   "fontSize": 12,
@@ -29368,7 +29368,7 @@
                         {
                           "type": "frame",
                           "id": "BmdH1",
-                          "name": "SidebarItem sport-frontend-panova",
+                          "name": "SidebarItem sport-demo",
                           "width": "fill_container",
                           "cornerRadius": 14,
                           "gap": 10,
@@ -29389,9 +29389,9 @@
                                 {
                                   "type": "text",
                                   "id": "uIPq7",
-                                  "name": "t sport-frontend-p",
+                                  "name": "t sport-demo",
                                   "fill": "$foreground",
-                                  "content": "sport-frontend-panova",
+                                  "content": "sport-demo",
                                   "fontFamily": "Nunito",
                                   "fontSize": 14,
                                   "fontWeight": "700"
@@ -29406,9 +29406,9 @@
                                     {
                                       "type": "text",
                                       "id": "Fb2vT",
-                                      "name": "t 串接新API",
+                                      "name": "t demo-api",
                                       "fill": "$muted-foreground",
-                                      "content": "串接新API",
+                                      "content": "demo-api",
                                       "fontFamily": "JetBrains Mono",
                                       "fontSize": 12,
                                       "fontWeight": "normal"
