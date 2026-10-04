@@ -10,9 +10,9 @@
 - `/history`：歷史與分析。篩選在頁首工具列；dev vs 審查圖預設只畫最近 15 件，右上「顯示全部 N 件」切換；表格預設最近 10 件、底部「再顯示 30 件」，裁定／自主、minor 數、重審次數合成「審查」一欄（例 `9/6 · m5 · r1`，表頭 ⓘ 有說明）
 - `/trends`：花費與額度趨勢（額度與 ctx 曲線、撞額度預估、每日花費、依任務／角色／kind 的花費）；時間區間在頁首切換，沒資料的圖收成矮的空狀態卡；資料來源見下方「花費與額度趨勢」
 - `/herdr`：herdr 唯讀鏡像。spaces／tabs／分割版面／pane 畫面與 agent 狀態；鍵盤 ↑↓ 切 space、n/p/1-9 切 tab、h/j/k/l 切 pane、Tab 循環、z 放大、/ 搜尋所有 pane 的畫面（不分大小寫的純文字，點結果跳到那一行）、e 看捲動歷史（只有 herdr 有保留歷史的 pane 才有；Claude Code 這類全螢幕 TUI 沒有）。herdr 變動由 SSE `herdr.view` 即時推送（server 訂不到事件時網頁退回每 2 秒輪詢）。選擇只存在網址，不會 focus 真的 herdr，也不送任何按鍵或命令。版面是左側 spaces／agents 清單（agents 依卡住 → 工作中 → 閒置排序）＋主窗格卡（tab 列、搜尋、放大），鍵盤說明在頁首的 `?`；終端畫面亮暗主題都固定黑底與原 ANSI 色
-- `/git`：各專案的 git 唯讀檢視。上方切專案（顯示分支、改動數、ahead/behind、worktree 數；不是 git repo 或路徑不存在會標出）；工作樹狀態（分支、HEAD、upstream ↑↓、衝突／已暫存／未暫存／未追蹤檔案）；worktree 清單與各自的改動；歷史含所有分支與 tag 的分支圖（`--all --topo-order`，預設 200 筆、可載入更多到 1000 筆），點 commit 看作者、訊息與改動檔案（+/−，merge 對第一個 parent 比較），再點檔案在中欄看該檔的 diff（舊／新行號，超過 5000 行截斷；Esc 回歷史、再按一次關詳情）。lg 以上三欄滿版窗格卡、各欄自己捲：左欄專案、工作樹狀態、Worktree 三段（乾淨綠、有改動黃、衝突紅），中欄歷史（ref 標籤：HEAD 紫、分支灰、版本 tag 品牌色），右欄 commit 詳情選了才出現。每 10 秒更新，選的專案、commit 與檔案存在網址（`?p=&c=&f=`）。不 fetch，ahead/behind 以本機最後一次 fetch 為準
+- `/git`：各專案的 git 唯讀檢視。左欄清單切專案（每列顯示分支、狀態標籤（乾淨／N 改動／N 衝突）、ahead/behind；不是 git repo 或路徑不存在會標出）；工作樹狀態（分支、HEAD、upstream ↑↓、衝突／已暫存／未暫存／未追蹤檔案）；worktree 清單與各自的改動；歷史含所有分支與 tag 的分支圖（`--all --topo-order`，預設 200 筆、可載入更多到 1000 筆），點 commit 看作者、訊息與改動檔案（+/−，merge 對第一個 parent 比較），再點檔案在中欄看該檔的 diff（舊／新行號，超過 5000 行截斷；Esc 回歷史、再按一次關詳情）。lg 以上三欄滿版窗格卡、各欄自己捲：左欄專案、工作樹狀態、Worktree 三段（乾淨綠、有改動黃、衝突紅），中欄歷史（ref 標籤：HEAD 紫、分支灰、版本 tag 品牌色），右欄 commit 詳情選了才出現。每 10 秒更新，選的專案、commit 與檔案存在網址（`?p=&c=&f=`）。不 fetch，ahead/behind 以本機最後一次 fetch 為準
 - blocked 提醒（全站）：有 agent 卡住時分頁標題顯示 `(N)`、頂部列出現紅色膠囊（hover 列出、點了跳到 herdr 頁；頂部列另有熔斷膠囊、額度膠囊（≥ 80% 變黃、不會變紅）與 SSE／herdr 連線燈，放不下時收成 `+N`）；右上鈴鐺可開桌面通知，只在 agent「新變成」blocked 時通知
-- 任務 ↔ pane：任務詳情成員表與總覽膠囊的 hover 卡有「看畫面」跳到 herdr 頁；herdr 頁 pane 標頭顯示所屬任務與成員，點了回任務詳情
+- 任務 ↔ pane：任務詳情成員表的 herdr 欄是狀態膠囊＋旁邊的「看畫面」圖示鈕（跳到 herdr 頁），膠囊的 hover 卡只有 model／effort 與複製 focus 指令；總覽膠囊的 hover 卡有「在 herdr 頁看畫面」；herdr 頁 pane 標頭顯示所屬任務與成員，點了回任務詳情
 
 ## 需求
 - Node ≥ 24、pnpm 11

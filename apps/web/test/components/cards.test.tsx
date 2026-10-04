@@ -15,7 +15,7 @@ describe('SummaryTile', () => {
     ['warn', Gauge],
     ['danger', Siren],
     ['brand', Coins],
-  ] as const)('%s：漸層 grad-%s、shadow-pop、白字、裝飾圖示 alpha-12', (variant, icon) => {
+  ] as const)('%s：漸層 grad-%s、shadow-pop、on-color 字、裝飾圖示 on-color alpha-12', (variant, icon) => {
     render(<SummaryTile data-testid="t" variant={variant} icon={icon} label="標籤" value={3} />)
     const t = screen.getByTestId('t')
     expect(t).toHaveAttribute('data-variant', variant)
@@ -23,8 +23,10 @@ describe('SummaryTile', () => {
     expect(cls(t)).toContain(`to-(--grad-${variant}-to)`)
     expect(cls(t)).toContain('bg-linear-to-br')
     expect(cls(t)).toContain('shadow-pop')
-    expect(cls(t)).toContain('text-white')
+    expect(cls(t)).toContain('text-on-color')
+    expect(cls(t)).not.toMatch(/\bwhite\b|-white\//)
     const deco = t.querySelector('svg[aria-hidden="true"]')!
+    expect(cls(deco)).toContain('text-on-color')
     expect(cls(deco)).toContain('opacity-12')
     expect(cls(deco)).toContain('size-18')
     expect(cls(deco)).toContain('sm:size-28')
@@ -75,7 +77,8 @@ describe('SummaryTile', () => {
     expect(g).toHaveAttribute('href', '/herdr')
     expect(cls(g)).toContain('hover:-translate-y-0.5')
     expect(cls(g)).toContain('motion-reduce:hover:translate-y-0')
-    expect(cls(g)).toContain('focus-visible:ring-white/70')
+    expect(cls(g)).toContain('focus-visible:ring-on-color/70')
+    expect(cls(g)).not.toContain('ring-white')
     const q = screen.getByTestId('q')
     expect(cls(q)).toContain('focus-visible:ring-ring/50')
     expect(cls(q)).toContain('hover:bg-muted/40')

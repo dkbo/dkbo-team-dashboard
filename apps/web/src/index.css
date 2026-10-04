@@ -62,6 +62,7 @@
     --color-status-info-fg: var(--status-info-fg);
     --color-status-info-soft: var(--status-info-soft);
     /* 終端 → bg-terminal-bg、text-terminal-fg… */
+    --color-on-color: var(--on-color);
     --color-terminal-bg: var(--terminal-bg);
     --color-terminal-chrome: var(--terminal-chrome);
     --color-terminal-line: var(--terminal-line);

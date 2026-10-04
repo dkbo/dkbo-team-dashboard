@@ -5,7 +5,7 @@
 ## [Unreleased]
 
 ### 改版：全站設計統一（dkbo 任務 unify）
-- 設計系統：依 `design/unify/DESIGN-SYSTEM.md` 落地 token 與共用元件。狀態色收斂成五種語意 token（danger、warn、ok、idle、info，亮暗各一套、正文 ≥ 4.5:1），ESCALATE 一律 warn；另有終端、版面寬度（內容頁 `max-w-page` 1536px、`--topbar-h`、側欄／詳情欄寬）、圖表高度等 token。刪掉 cuteui 時覆寫的 Tailwind 舊色階（red／amber／emerald／sky／orange／yellow／violet），前端程式不再用色階 class、任意字級與圓角；元件（.tsx）裡剩下的 hex 只有圖表色盤（git 分支圖 lane、recharts 預設樣式選擇器）。
+- 設計系統：依 `design/unify/DESIGN-SYSTEM.md` 落地 token 與共用元件。狀態色收斂成五種語意 token（danger、warn、ok、idle、info，亮暗各一套、正文 ≥ 4.5:1），ESCALATE 一律 warn；漸層卡與終端內的白色前景走 `on-color` token；另有終端、版面寬度（內容頁 `max-w-page` 1536px、`--topbar-h`、側欄／詳情欄寬）、圖表高度等 token。刪掉 cuteui 時覆寫的 Tailwind 舊色階（red／amber／emerald／sky／orange／yellow／violet），前端程式不再用色階 class、任意字級與圓角；元件（.tsx）裡剩下的 hex 只有圖表色盤（git 分支圖 lane、recharts 預設樣式選擇器）。
 - 共用元件：PageHeader、Banner、EmptyState、SegmentedControl、SummaryTile、Tag、StatusDot、IconBlock、ProgressBar、SidebarList、PaneHeader、ChartCard、Breadcrumb；StatusPill 改吃狀態 tone（已結案任務 idle＋✓、agent done ok＋✓）。按鈕、標籤全圓角，表格支援 dense 密度。
 - 頂部列：高 3.5rem、內容寬對齊頁面；狀態依嚴重度排：卡住（紅、脈動）→ 熔斷（黃）→ 額度（任一 ≥ 80% 變黃、永不變紅），放不下收成 `+N` 彈出清單；新增 SSE／herdr 連線燈＋說明 Tooltip。
 - 總覽：四張摘要卡（新增「熔斷與額度」）；專案分「需要注意／活躍」與收合的「閒置專案」；縮圖只畫工作中／卡住的 pane、最後 10 行；活動欄依任務分組、加「全部｜需處理」切換（需處理＝ESCALATE、BUG、BLOCKED、LIMIT、TIMEOUT、STOP）；手機版順序改成摘要 → 活躍專案 → 活動（最新 5 則）→ 閒置專案。

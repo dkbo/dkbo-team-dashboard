@@ -117,7 +117,7 @@ export function StatusPill({
         sm ? 'h-5 gap-1 px-2 text-2xs font-semibold' : 'h-6 gap-1.5 px-2.5 text-xs font-semibold',
         TONE_CLASS[t],
         (dashed ?? look.dashed) && 'border-dashed',
-        terminal && 'dark bg-white/5',
+        terminal && 'dark bg-on-color/5',
         interactive && cn('cursor-pointer transition-colors duration-150 motion-reduce:transition-none', HOVER_CLASS[t]),
         className,
       )}

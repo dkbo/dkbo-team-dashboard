@@ -215,7 +215,7 @@ export function TopBar({ now }: { now: number }) {
             key: 'blocked',
             node: <BlockedBadge />,
             row: (
-              <Link to={herdrHref(blocked[0])} className="font-semibold text-status-danger-fg hover:underline">
+              <Link to={herdrHref(blocked[0])} className="rounded-md font-semibold text-status-danger-fg outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50">
                 {blocked.length} 個 agent 卡住
               </Link>
             ),

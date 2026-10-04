@@ -86,6 +86,7 @@ describe('index.css token（規格 §How to use C）', () => {
     for (const k of ['danger', 'warn', 'ok', 'idle', 'info'])
       for (const s of ['', '-fg', '-soft']) expect(has(theme, `--color-status-${k}${s}`, `var(--status-${k}${s})`), `${k}${s}`).toBe(true)
     for (const k of ['bg', 'chrome', 'line', 'fg', 'dim']) expect(has(theme, `--color-terminal-${k}`, `var(--terminal-${k})`)).toBe(true)
+    expect(has(theme, '--color-on-color', 'var(--on-color)')).toBe(true)
     expect(has(theme, '--text-2xs', '0.6875rem')).toBe(true)
     expect(has(theme, '--text-2xs--line-height', '1rem')).toBe(true)
     expect(has(theme, '--leading-terminal', '1.2')).toBe(true)

@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react'
 import { StatusDot } from '@/components/app/StatusDot'
 import { StatusPill, agentStatusPill, taskStatusPill } from '@/components/app/StatusPill'
 import { Tag } from '@/components/app/Tag'
+import { MismatchMark } from '@/components/app/MismatchMark'
 
 const cls = (el: Element | null) => el?.getAttribute('class') ?? ''
 const pill = (text: string) => screen.getByText(text).closest('[data-slot="status-pill"]')!
@@ -86,7 +87,8 @@ describe('StatusPill', () => {
   it('terminal：底 on-color/alpha-5、套 .dark 讓 token 走暗色版', () => {
     render(<StatusPill tone="ok" terminal label="t" />)
     expect(pill('t')).toHaveClass('dark')
-    expect(cls(pill('t'))).toContain('bg-white/5')
+    expect(cls(pill('t'))).toContain('bg-on-color/5')
+    expect(cls(pill('t'))).not.toContain('bg-white')
   })
 
   it('agent 狀態對照（Q11：done＝ok＋✓；blocked＝danger；unknown＝idle 虛線）', () => {
@@ -164,5 +166,16 @@ describe('Tag', () => {
     expect(cls(screen.getByText('abc1234'))).toContain('font-mono')
     expect(screen.queryByText(/ESCALATE/)).toBeNull()
     expect(screen.getByText(/BUG/)).toHaveTextContent('BUG 2')
+  })
+})
+
+describe('MismatchMark', () => {
+  it('可點的觸發鈕帶規格 focus-ring（不靠瀏覽器預設 outline）', () => {
+    render(<MismatchMark testId="mm" actual={{ model: 'opus', effort: 'high' }} configured={{ model: 'opus', effort: 'low' }} />)
+    const b = screen.getByTestId('mm')
+    expect(cls(b)).toContain('outline-none')
+    expect(cls(b)).toContain('focus-visible:ring-3')
+    expect(cls(b)).toContain('focus-visible:ring-ring/50')
+    expect(cls(b)).toContain('rounded-full')
   })
 })

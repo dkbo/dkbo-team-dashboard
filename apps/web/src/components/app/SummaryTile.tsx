@@ -31,11 +31,11 @@ export function SummaryTile({ variant, icon: Icon, label, value, children, href,
   const quiet = variant === 'quiet'
   const cls = cn(
     'relative flex min-h-28 flex-col gap-1 overflow-hidden rounded-xl p-4 sm:min-h-32 sm:p-5',
-    quiet ? 'bg-card text-card-foreground shadow-soft' : cn('bg-linear-to-br text-white shadow-pop', GRAD[variant]),
+    quiet ? 'bg-card text-card-foreground shadow-soft' : cn('bg-linear-to-br text-on-color shadow-pop', GRAD[variant]),
     href &&
       cn(
         'cursor-pointer outline-none transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-pop focus-visible:ring-3 motion-reduce:transition-none motion-reduce:hover:translate-y-0',
-        quiet ? 'hover:bg-muted/40 focus-visible:ring-ring/50' : 'focus-visible:ring-white/70',
+        quiet ? 'hover:bg-muted/40 focus-visible:ring-ring/50' : 'focus-visible:ring-on-color/70',
       ),
     className,
   )
@@ -43,7 +43,7 @@ export function SummaryTile({ variant, icon: Icon, label, value, children, href,
     <>
       <Icon
         aria-hidden
-        className={cn('pointer-events-none absolute -right-5 -bottom-6 size-18 -rotate-12 sm:size-28', quiet ? 'text-status-idle opacity-15' : 'text-white opacity-12')}
+        className={cn('pointer-events-none absolute -right-5 -bottom-6 size-18 -rotate-12 sm:size-28', quiet ? 'text-status-idle opacity-15' : 'text-on-color opacity-12')}
       />
       <span className={cn('relative text-sm font-bold', quiet && 'text-muted-foreground')}>{label}</span>
       <span className={cn('relative text-2xl font-extrabold tabular-nums sm:text-3xl', quiet && 'text-muted-foreground')}>{value}</span>

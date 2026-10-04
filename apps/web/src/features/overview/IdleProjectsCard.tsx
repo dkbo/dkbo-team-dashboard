@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { ChevronRight } from 'lucide-react'
 import type { ProjectView } from '@dash/shared'
 import { StatusDot } from '@/components/app/StatusDot'
@@ -20,7 +20,8 @@ function SessionDots({ project }: { project: ProjectView }) {
     <span className="flex shrink-0 items-center gap-1">
       {panes.slice(0, MAX_DOTS).map((p) => {
         const look = agentStatusPill(p.status)
-        return <StatusDot key={p.paneId} tone={look.tone} pulse={look.pulse} label={`${paneLabel(p)}：${look.label}`} />
+        // 點在整列按鈕裡：不給 label（aria-hidden），免得按鈕名稱串上每個 pane；狀態只放 title，其他 session 展開後有文字膠囊
+        return <StatusDot key={p.paneId} tone={look.tone} pulse={look.pulse} title={`${paneLabel(p)}：${look.label}`} />
       })}
       {panes.length > MAX_DOTS && <span className="text-xs font-medium text-muted-foreground">+{panes.length - MAX_DOTS}</span>}
     </span>
@@ -33,7 +34,7 @@ function IdleProjectRow({ project }: { project: ProjectView }) {
   const groups = project.list ? groupTasks(project.list.tasks) : null
   const closed = groups?.closed.length ?? 0
   const last = lastClosedAt(project)
-  const bodyId = `idle-${project.name}`
+  const bodyId = useId()
   return (
     <li className="flex flex-col">
       <button
