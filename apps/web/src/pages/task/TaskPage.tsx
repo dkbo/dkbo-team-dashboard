@@ -1,7 +1,9 @@
-import { Link, useParams } from 'react-router'
-import { ArrowLeft } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { useParams } from 'react-router'
+import { ArrowLeft, FileQuestion } from 'lucide-react'
+import { Banner, BannerAction } from '@/components/app/Banner'
+import { Breadcrumb } from '@/components/app/Breadcrumb'
+import { EmptyState } from '@/components/app/EmptyState'
+import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { TaskCostCard } from '@/features/task/TaskCostCard'
 import { TaskDetailView } from '@/features/task/TaskDetailView'
@@ -13,6 +15,12 @@ export default function TaskPage() {
   const { data, error, loading, notFound, reload } = useTaskDetail(project, dir)
   const { data: costs } = useCostsAll()
 
+  const banner = error && (
+    <Banner tone={data ? 'warn' : 'danger'} title={data ? '更新失敗，顯示的是舊資料' : '載入失敗'} action={<BannerAction onClick={reload}>重試</BannerAction>}>
+      <code className="font-mono text-xs break-all">{error}</code>
+    </Banner>
+  )
+
   let body
   if (data) {
     body = (
@@ -21,7 +29,8 @@ export default function TaskPage() {
         detail={data.detail}
         panes={data.panes}
         dispatch={data.dispatch}
-        afterMembers={
+        banner={banner}
+        aside={
           <TaskCostCard
             cost={taskCostFor(costs, data.project, data.detail.task.dir)}
             mismatchPanes={taskMismatchPanes(costs?.mismatch?.panes, data.project, data.detail.task.dir)}
@@ -32,49 +41,53 @@ export default function TaskPage() {
   } else if (notFound) {
     body = (
       <Card>
-        <CardContent className="py-8 text-center text-muted-foreground">
-          找不到任務 <code>{dir}</code>（專案 {project}）
-        </CardContent>
+        <EmptyState
+          size="page"
+          icon={FileQuestion}
+          title={
+            <>
+              找不到任務 <code className="font-mono">{dir}</code>（專案 {project}）
+            </>
+          }
+          hint="任務資料夾可能已改名或刪除"
+        />
       </Card>
     )
   } else if (error) {
-    body = null
+    body = banner
   } else if (loading) {
     body = (
-      <div data-testid="task-loading" className="flex flex-col gap-4">
-        <Skeleton className="h-36 w-full" />
-        <Skeleton className="h-48 w-full" />
-        <Skeleton className="h-40 w-full" />
+      <div data-testid="task-loading" className="flex flex-col gap-6">
+        <Skeleton className="h-12 w-96 max-w-full" />
+        <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-[minmax(0,1fr)_var(--aside-w)]">
+          <div className="flex flex-col gap-6">
+            <Skeleton className="h-(--chart-h-md) rounded-xl" />
+            <Skeleton className="h-(--chart-h-lg) rounded-xl" />
+          </div>
+          <Skeleton className="h-(--chart-h-md) rounded-xl" />
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 p-4">
-      <nav className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Link to="/" aria-label="回總覽" className="inline-flex items-center gap-1 hover:text-foreground">
-          <ArrowLeft className="size-4" />
-          總覽
-        </Link>
-        <span>/</span>
-        <span>{project}</span>
-        <span>/</span>
-        <span className="truncate font-mono">{dir}</span>
-      </nav>
-      {error && (
-        <div
-          role="alert"
-          className="flex items-center justify-between gap-3 rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-400"
-        >
-          <span>
-            {data ? '更新失敗，顯示的是舊資料：' : '載入失敗：'}
-            {error}
-          </span>
-          <Button size="sm" variant="outline" onClick={reload}>
-            重試
-          </Button>
-        </div>
-      )}
+    <div className="mx-auto flex w-full max-w-page flex-col gap-6 px-4 py-6 lg:px-6">
+      <Breadcrumb
+        className="-mb-4"
+        items={[
+          {
+            href: '/',
+            label: (
+              <span className="inline-flex items-center gap-1.5">
+                <ArrowLeft aria-hidden className="size-3.5" />
+                總覽
+              </span>
+            ),
+          },
+          { label: project },
+          { label: dir },
+        ]}
+      />
       {body}
     </div>
   )

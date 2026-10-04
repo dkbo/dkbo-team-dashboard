@@ -83,3 +83,26 @@ export function matchMemberPanes<P extends MemberPaneLive>(
   for (const { name } of task.members) out[name] = findMemberPane(task, task.panes, name, live).pane
   return out
 }
+
+const PANE_RANK: Record<string, number> = { blocked: 0, working: 1 }
+
+/** 頁首「看 herdr／複製 focus 指令」對準的 pane：成員 pane 中 blocked → working → 其他，同級取成員順序第一個 */
+export function primaryPane<P extends MemberPaneLive & { status?: string | null }>(matched: Record<string, P | null>, members: { name: string }[]): P | null {
+  let best: P | null = null
+  for (const { name } of members) {
+    const p = matched[name]
+    if (!p) continue
+    if (!best || (PANE_RANK[p.status ?? ''] ?? 2) < (PANE_RANK[best.status ?? ''] ?? 2)) best = p
+  }
+  return best
+}
+
+export type WavePhase = 'closed' | 'current' | 'open' | 'pending'
+
+/** 波的狀態：已關閉／進行中（task.current_wave）／開了沒關／未開始 */
+export function wavePhase(w: { wave: number; opened_at: Ts; closed_at: Ts }, currentWave: number | null): WavePhase {
+  if (w.closed_at) return 'closed'
+  if (currentWave === w.wave) return 'current'
+  if (w.opened_at) return 'open'
+  return 'pending'
+}

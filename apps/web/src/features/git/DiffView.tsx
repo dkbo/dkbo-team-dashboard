@@ -1,10 +1,11 @@
 import type { GitDiffLine, GitFileDiff } from '@dash/shared'
 import { GIT_DIFF_MAX_LINES } from '@dash/shared'
+import { EmptyState } from '@/components/app/EmptyState'
 import { cn } from '@/lib/utils'
 
 const ROW_CLASS: Record<GitDiffLine['kind'], string> = {
-  add: 'bg-emerald-500/10',
-  del: 'bg-red-500/10',
+  add: 'bg-status-ok-soft',
+  del: 'bg-status-danger-soft',
   ctx: '',
   note: 'text-muted-foreground italic',
 }
@@ -12,8 +13,8 @@ const ROW_CLASS: Record<GitDiffLine['kind'], string> = {
 const SIGN: Record<GitDiffLine['kind'], string> = { add: '+', del: '-', ctx: ' ', note: '' }
 
 const SIGN_CLASS: Record<GitDiffLine['kind'], string> = {
-  add: 'text-emerald-700 dark:text-emerald-400',
-  del: 'text-red-700 dark:text-red-400',
+  add: 'text-status-ok-fg',
+  del: 'text-status-danger-fg',
   ctx: 'text-muted-foreground',
   note: '',
 }
@@ -24,7 +25,7 @@ function Num({ n }: { n: number | null }) {
 
 /** 單一檔案的 unified diff：舊／新行號、+/- 與底色；長行在窗格內橫向捲動，不換行（保留縮排對齊） */
 export function DiffView({ diff }: { diff: GitFileDiff }) {
-  if (diff.binary) return <p className="p-6 text-center text-sm text-muted-foreground">二進位檔，不顯示 diff</p>
+  if (diff.binary) return <EmptyState title="二進位檔，不顯示 diff" />
   if (diff.hunks.length === 0)
     return (
       <p className="p-6 text-center text-sm text-muted-foreground">
@@ -36,7 +37,7 @@ export function DiffView({ diff }: { diff: GitFileDiff }) {
       {diff.hunks.map((h, i) => (
         <table key={i} className="w-full border-collapse">
           <tbody>
-            <tr className="bg-sky-500/10 text-sky-700 dark:text-sky-300">
+            <tr className="bg-status-info-soft text-status-info-fg">
               <td colSpan={4} className="sticky left-0 px-3 py-0.5">
                 @@ −{h.oldStart} +{h.newStart} @@ {h.header}
               </td>

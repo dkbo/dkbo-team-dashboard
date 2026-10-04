@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { filterHistory, weeklyClosed, weekStart } from '@/features/history/aggregate'
+import { filterHistory, weeklyClosed, weekStart, limitRecent, reviewParts } from '@/features/history/aggregate'
 
 const row = (project: string, closedAt: string | null) => ({ project, closedAt })
 
@@ -66,5 +66,25 @@ describe('devReviewData', () => {
       { key: 'a/2026-09-01-x', label: 'X 任務', project: 'a', dev: 30, review: 15 },
       { key: 'b/2026-09-02-y', label: '2026-09-02-y', project: 'b', dev: 0, review: 0 },
     ])
+  })
+})
+
+describe('reviewParts（審查欄 Q7）', () => {
+  it('裁定/自主 · m minor · r 重審，各段標記是否為 0', () => {
+    expect(reviewParts({ rulings: 9, autonomousRulings: 6, minors: 5, reReviews: 1 })).toEqual([
+      { key: 'rulings', text: '9/6', zero: false },
+      { key: 'minors', text: 'm5', zero: false },
+      { key: 'rereviews', text: 'r1', zero: false },
+    ])
+    expect(reviewParts({ rulings: 0, autonomousRulings: 0, minors: 0, reReviews: 0 }).map((p) => p.zero)).toEqual([true, true, true])
+  })
+})
+
+describe('limitRecent（15 件限制 Q8）', () => {
+  const xs = Array.from({ length: 20 }, (_, i) => i)
+  it('預設只取最前（最近）15 件；展開取全部；不足 15 件原樣', () => {
+    expect(limitRecent(xs, false)).toEqual(xs.slice(0, 15))
+    expect(limitRecent(xs, true)).toBe(xs)
+    expect(limitRecent(xs.slice(0, 3), false)).toEqual([0, 1, 2])
   })
 })

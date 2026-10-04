@@ -6,6 +6,8 @@ import {
   minutesBetween,
   skippedTotal,
   waveSteps,
+  primaryPane,
+  wavePhase,
 } from '@/features/task/model'
 
 describe('minutesBetween', () => {
@@ -114,5 +116,25 @@ describe('matchMemberPanes', () => {
       [live('p3', { member: 'qa', taskDir: '2026-09-25-dashv1' })],
     )
     expect(m.qa?.paneId).toBe('p3')
+  })
+})
+
+describe('primaryPane（頁首看 herdr／複製 focus 指令）', () => {
+  const p = (paneId: string, status: string) => ({ paneId, member: null, taskDir: null, status })
+  it('blocked → working → 其他，同級取成員順序第一個；都沒有給 null', () => {
+    const members = [{ name: 'a' }, { name: 'b' }, { name: 'c' }]
+    expect(primaryPane({ a: p('1', 'idle'), b: p('2', 'working'), c: p('3', 'blocked') }, members)?.paneId).toBe('3')
+    expect(primaryPane({ a: p('1', 'idle'), b: p('2', 'working'), c: p('3', 'working') }, members)?.paneId).toBe('2')
+    expect(primaryPane({ a: p('1', 'idle'), b: null, c: null }, members)?.paneId).toBe('1')
+    expect(primaryPane({ a: null, b: null, c: null }, members)).toBeNull()
+  })
+})
+
+describe('wavePhase（WaveRow §6.26）', () => {
+  it('已關閉／進行中／開了沒關／未開始', () => {
+    expect(wavePhase({ wave: 1, opened_at: 'x', closed_at: 'y' }, 1)).toBe('closed')
+    expect(wavePhase({ wave: 2, opened_at: 'x', closed_at: null }, 2)).toBe('current')
+    expect(wavePhase({ wave: 2, opened_at: 'x', closed_at: null }, 3)).toBe('open')
+    expect(wavePhase({ wave: 3, opened_at: null, closed_at: null }, 2)).toBe('pending')
   })
 })

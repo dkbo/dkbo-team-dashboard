@@ -10,10 +10,10 @@ describe('終端標頭裡的 StatusPill', () => {
   it('縮圖標頭在 .dark 範圍內', () => {
     render(
       <MemoryRouter>
-        <PaneThumbs panes={[pane({ paneId: 'P1', status: 'idle' })]} screens={{ P1: { lines: parseAnsi('x\r\n'), at: 1, error: null } }} />
+        <PaneThumbs panes={[pane({ paneId: 'P1', status: 'working' })]} screens={{ P1: { lines: parseAnsi('x\r\n'), at: 1, error: null } }} />
       </MemoryRouter>,
     )
-    const pill = within(screen.getByTestId('thumb-P1')).getByText('閒置').closest('[data-slot="status-pill"]')!
+    const pill = within(screen.getByTestId('thumb-P1')).getByText('工作中').closest('[data-slot="status-pill"]')!
     expect(pill.closest('.dark')).not.toBeNull()
     expect(screen.getByTestId('thumb-P1').querySelector('pre')!.closest('.dark')).toBeNull()
   })

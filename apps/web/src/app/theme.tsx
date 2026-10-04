@@ -68,7 +68,7 @@ export function ThemeToggle() {
     <Button
       type="button"
       variant="ghost"
-      size="icon-sm"
+      size="icon"
       aria-label={`主題：${LABEL[pref]}（按一下切換為${LABEL[next]}）`}
       title={`主題：${LABEL[pref]}`}
       onClick={() => setPref(next)}

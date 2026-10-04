@@ -29,7 +29,7 @@ export function PaneHover({ title, pane, paneId, extra, children }: PaneHoverPro
   return (
     <HoverCard openDelay={150} closeDelay={100}>
       <HoverCardTrigger asChild>
-        <button type="button" className="rounded-full focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
+        <button type="button" className="cursor-pointer rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
           {children}
         </button>
       </HoverCardTrigger>
@@ -37,7 +37,7 @@ export function PaneHover({ title, pane, paneId, extra, children }: PaneHoverPro
         <div className="text-sm font-semibold">{title}</div>
         {extra}
         {pane ? (
-          <dl className="grid grid-cols-[4.5rem_1fr] gap-x-2 gap-y-1">
+          <dl className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-1">
             <Row k="model" v={pane.model ?? '—'} />
             <Row k="effort" v={pane.effort ?? '—'} />
             <Row k="cost" v={formatCost(pane.cost)} />
@@ -47,7 +47,7 @@ export function PaneHover({ title, pane, paneId, extra, children }: PaneHoverPro
           <p className="text-muted-foreground">herdr 裡沒有這個成員的 pane。</p>
         )}
         {pane && (
-          <Link to={herdrHref(pane)} data-testid="watch-pane" className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground hover:underline">
+          <Link to={herdrHref(pane)} data-testid="watch-pane" className="inline-flex items-center gap-1 rounded-sm text-muted-foreground outline-none hover:text-foreground hover:underline focus-visible:ring-3 focus-visible:ring-ring/50">
             <MonitorPlay aria-hidden className="size-3.5" />
             在 herdr 頁看畫面
           </Link>

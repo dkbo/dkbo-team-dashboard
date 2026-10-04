@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { Search, X } from 'lucide-react'
 import type { HerdrSearchHit, HerdrSearchResponse, HerdrView } from '@dash/shared'
 import { api, errorText } from '@/api/client'
+import { Banner } from '@/components/app/Banner'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { findPane } from './model'
 
@@ -26,7 +28,7 @@ export function Highlighted({ text, q }: { text: string; q: string }) {
     <>
       {splitMatches(text, q).map((p, i) =>
         p.hit ? (
-          <mark key={i} className="rounded-sm bg-yellow-300 text-black">
+          <mark key={i} className="rounded-sm bg-status-warn-soft text-status-warn-fg">
             {p.text}
           </mark>
         ) : (
@@ -100,9 +102,9 @@ export function SearchPanel({ view, onClose, onPick, onQuery }: SearchPanelProps
   return (
     <div
       data-testid="herdr-search"
-      className="absolute top-2 right-2 z-30 flex max-h-[70%] w-[32rem] max-w-[calc(100%-1rem)] flex-col overflow-hidden rounded-lg border bg-popover text-popover-foreground shadow-lg"
+      className="absolute top-12 right-2 z-30 flex max-h-[70%] w-lg max-w-[calc(100%-1rem)] flex-col overflow-hidden rounded-xl bg-popover text-popover-foreground shadow-pop"
     >
-      <div className="flex items-center gap-2 border-b px-2 py-1.5">
+      <div className="flex h-10 items-center gap-2 border-b px-3">
         <Search aria-hidden className="size-4 text-muted-foreground" />
         <input
           ref={input}
@@ -127,11 +129,11 @@ export function SearchPanel({ view, onClose, onPick, onQuery }: SearchPanelProps
             {res.truncated && '+'} 筆
           </span>
         )}
-        <button type="button" onClick={onClose} aria-label="關閉搜尋" className="rounded p-0.5 text-muted-foreground hover:bg-muted">
-          <X className="size-4" />
-        </button>
+        <Button type="button" variant="ghost" size="icon-xs" onClick={onClose} aria-label="關閉搜尋">
+          <X />
+        </Button>
       </div>
-      {error && <div className="px-3 py-2 text-xs text-red-600 dark:text-red-400">搜尋失敗：{error}</div>}
+      {error && <Banner tone="danger" size="sm" title={`搜尋失敗：${error}`} className="m-2" />}
       {res && res.failed.length > 0 && <div className="px-3 py-1 text-xs text-muted-foreground">{res.failed.length} 個 pane 讀不到畫面</div>}
       {res && hits.length === 0 && !loading && <div className="px-3 py-2 text-sm text-muted-foreground">沒有符合的內容</div>}
       <ul ref={list} data-testid="herdr-search-hits" className="min-h-0 overflow-y-auto">
@@ -142,7 +144,7 @@ export function SearchPanel({ view, onClose, onPick, onQuery }: SearchPanelProps
               data-active={i === active || undefined}
               onMouseEnter={() => setActive(i)}
               onClick={() => onPick(h)}
-              className={cn('flex w-full flex-col gap-0.5 px-3 py-1 text-left', i === active && 'bg-muted')}
+              className={cn('flex w-full cursor-pointer flex-col gap-0.5 px-3 py-1.5 text-left outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset', i === active && 'bg-muted')}
             >
               <span className="text-xs text-muted-foreground">
                 {label(h)} · 第 {h.line + 1} 行{h.history && ' · 歷史'}

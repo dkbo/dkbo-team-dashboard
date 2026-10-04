@@ -161,7 +161,8 @@ describe('TrendsPage', () => {
     trendsFor = (r) => emptyTrends(r as never)
     costsFor = (r) => emptyCosts(r as never)
     renderAt('/trends?range=6h')
-    expect(await screen.findByText('尚無資料：dashboard 開著時每分鐘記錄一次')).toBeInTheDocument()
+    expect(await screen.findByText('還沒有趨勢資料')).toBeInTheDocument()
+    expect(screen.getByText('dashboard 開著時每分鐘記錄一次')).toBeInTheDocument()
     expect(screen.queryByTestId('usage-chart-claude')).toBeNull()
     expect(screen.getByText(/資料目錄：/)).toBeInTheDocument()
   })
@@ -241,5 +242,80 @@ describe('TrendsPage', () => {
     expect(await screen.findByTestId('cost-by-actual')).toHaveTextContent('$1.00')
     await user.click(screen.getByRole('button', { name: '7 天' }))
     await waitFor(() => expect(screen.getByTestId('cost-by-actual')).toHaveTextContent('$7.00'))
+  })
+})
+
+describe('TrendsPage unify（AC4）', () => {
+  it('內容頁骨架：max-w-page 容器、PageHeader h1＋副標＋區間 SegmentedControl（group／aria-pressed）', async () => {
+    const { container } = renderAt('/trends?range=24h')
+    await screen.findByTestId('usage-chart-claude')
+    expect(container.querySelector('.max-w-page')).not.toBeNull()
+    const header = container.querySelector('[data-slot="page-header"]') as HTMLElement
+    expect(within(header).getByRole('heading', { level: 1, name: '花費與額度趨勢' })).toBeInTheDocument()
+    expect(header).toHaveTextContent('dashboard 未開啟期間的花費可能遺漏')
+    const seg = within(header).getByRole('group', { name: '範圍' })
+    expect(seg).toHaveAttribute('data-slot', 'segmented-control')
+    expect(within(seg).getByRole('button', { name: '24 小時' })).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  it('有資料的圖是 ChartCard（ready）；全 null 的 kind 額度卡收成空狀態（min-h-36、chart-empty、說明文案）', async () => {
+    trendsFor = (r) =>
+      trends(r as never, {
+        usage: {
+          claude: trends().usage.claude,
+          agy: [{ t: NOW - 3_600_000, fiveHourPct: null, weekPct: null }],
+        },
+      })
+    renderAt('/trends?range=24h')
+    const claude = await screen.findByTestId('usage-chart-claude')
+    expect(claude).toHaveAttribute('data-state', 'ready')
+    expect(within(claude).queryByTestId('chart-empty')).toBeNull()
+    const agy = screen.getByTestId('usage-chart-agy')
+    expect(agy).toHaveAttribute('data-state', 'empty')
+    expect(agy.className).toContain('min-h-36')
+    expect(within(agy).getByTestId('chart-empty')).toHaveTextContent('這段期間沒有 agy 額度資料')
+    expect(within(agy).getByTestId('chart-empty')).toHaveTextContent('換個時間區間，或等 agy 下次回報')
+    // 同列另一張不被拉高：額度區 items-start
+    expect(agy.parentElement!.className).toContain('items-start')
+  })
+
+  it('ctx、每日花費沒有資料時是 ChartCard 空狀態', async () => {
+    trendsFor = (r) => trends(r as never, { ctx: [], costByDay: [] })
+    renderAt('/trends?range=24h')
+    const ctx = await screen.findByTestId('ctx-chart')
+    expect(within(ctx).getByTestId('chart-empty')).toHaveTextContent('這段期間沒有 ctx 資料')
+    expect(within(screen.getByTestId('cost-by-day-chart')).getByTestId('chart-empty')).toHaveTextContent('這段期間沒有花費')
+  })
+
+  it('全頁無資料：EmptyState page（📈 還沒有趨勢資料）', async () => {
+    trendsFor = (r) => emptyTrends(r as never)
+    costsFor = (r) => emptyCosts(r as never)
+    const { container } = renderAt('/trends?range=6h')
+    expect(await screen.findByText('還沒有趨勢資料')).toBeInTheDocument()
+    const empty = container.querySelector('[data-slot="empty-state"]')
+    expect(empty).toHaveAttribute('data-size', 'page')
+    expect(empty).toHaveTextContent('dashboard 開著時每分鐘記錄一次')
+  })
+
+  it('依 kind／依角色是 Table dense 兩欄清單；金額 0 顯示「—」且灰字', async () => {
+    trendsFor = (r) => trends(r as never, { costByKind: { claude: 3.25, agy: 0 } })
+    renderAt('/trends?range=24h')
+    const kind = await screen.findByTestId('kind-costs')
+    expect(within(kind).getByRole('table')).toHaveAttribute('data-density', 'dense')
+    expect(within(kind).getByRole('columnheader', { name: 'kind' })).toBeInTheDocument()
+    expect(within(kind).getByTestId('kind-cost-agy')).toHaveTextContent('—')
+    expect(within(within(kind).getByTestId('kind-cost-agy')).getByText('—').className).toContain('text-muted-foreground')
+    const role = screen.getByTestId('role-costs')
+    expect(within(role).getByRole('table')).toHaveAttribute('data-density', 'dense')
+    expect(within(role).getByRole('columnheader', { name: '角色' })).toBeInTheDocument()
+  })
+
+  it('錯誤用 Banner：無資料 danger「載入失敗」，有舊資料 warn「更新失敗，顯示的是舊資料」', async () => {
+    trendsFor = () => new Error('x')
+    renderAt('/trends?range=24h')
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveAttribute('data-slot', 'banner')
+    expect(alert).toHaveAttribute('data-tone', 'danger')
+    expect(alert).toHaveTextContent('載入失敗')
   })
 })

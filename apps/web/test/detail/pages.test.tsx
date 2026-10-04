@@ -49,7 +49,7 @@ describe('TaskPage', () => {
     expect(hooks.useTaskDetail).toHaveBeenCalledWith('demo proj', '2026-09-20-demo')
     expect(screen.getByRole('heading', { name: '示範任務' })).toBeInTheDocument()
     expect(screen.getByTestId('member-backend')).toHaveTextContent('工作中')
-    expect(screen.getByRole('link', { name: '回總覽' })).toHaveAttribute('href', '/')
+    expect(within(screen.getByRole('navigation', { name: '路徑' })).getByRole('link', { name: '總覽' })).toHaveAttribute('href', '/')
   })
 
   it('顯示本任務花費：總額＋依成員＋其他', () => {
@@ -170,7 +170,8 @@ describe('HistoryPage', () => {
     hooks.useCostsAll.mockReturnValue(costsAll([{ project: 'teamflow', taskDir: '2026-09-24-x', cost: 1.5, members: {}, unmatched: 0 }]))
     renderHistory()
     expect(screen.getByRole('heading', { name: '歷史與分析' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'X 任務' })).toBeInTheDocument()
+    // < md 另有卡片清單（jsdom 不套 CSS，兩份都在），連結查在表格內
+    expect(within(screen.getByTestId('history-table')).getByRole('link', { name: 'X 任務' })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: '花費' })).toBeInTheDocument()
     expect(within(screen.getByTestId('history-row-teamflow-2026-09-24-x')).getByTestId('col-cost')).toHaveTextContent('$1.50')
   })

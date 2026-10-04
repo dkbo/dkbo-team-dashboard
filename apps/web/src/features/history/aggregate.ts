@@ -85,3 +85,29 @@ export function devReviewData(
     review: r.perWave.reduce((s, w) => s + (w.reviewMin ?? 0), 0),
   }))
 }
+
+/** 表格預設顯示幾件、「再顯示」每次多幾件 */
+export const TABLE_INITIAL = 10
+export const TABLE_STEP = 30
+/** dev vs 審查圖預設只畫最近幾件（Q8） */
+export const RECENT_LIMIT = 15
+
+/** 列已依結案時間新到舊；預設只取最前 limit 件，展開取全部 */
+export function limitRecent<T>(rows: T[], expanded: boolean, limit: number = RECENT_LIMIT): T[] {
+  return expanded || rows.length <= limit ? rows : rows.slice(0, limit)
+}
+
+export interface ReviewPart {
+  key: 'rulings' | 'minors' | 'rereviews'
+  text: string
+  zero: boolean
+}
+
+/** 「審查」欄三段：裁定/自主 · m minor · r 重審（Q7） */
+export function reviewParts(r: { rulings: number; autonomousRulings: number; minors: number; reReviews: number }): ReviewPart[] {
+  return [
+    { key: 'rulings', text: `${r.rulings}/${r.autonomousRulings}`, zero: r.rulings === 0 && r.autonomousRulings === 0 },
+    { key: 'minors', text: `m${r.minors}`, zero: r.minors === 0 },
+    { key: 'rereviews', text: `r${r.reReviews}`, zero: r.reReviews === 0 },
+  ]
+}

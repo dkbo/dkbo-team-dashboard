@@ -1,8 +1,12 @@
 import { useEffect } from 'react'
 import { useSearchParams } from 'react-router'
-import { TREND_RANGES } from '@dash/shared'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { ChartLine } from 'lucide-react'
+import { TREND_RANGES, type TrendRange } from '@dash/shared'
+import { Banner, BannerAction } from '@/components/app/Banner'
+import { EmptyState } from '@/components/app/EmptyState'
+import { PageHeader } from '@/components/app/PageHeader'
+import { SegmentedControl } from '@/components/app/SegmentedControl'
+import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { KindCosts, RoleCosts, TaskCostTable } from '@/features/trends/CostTables'
 import { ActualCosts, ConfiguredCosts, MismatchCosts } from '@/features/trends/ModelCosts'
@@ -10,6 +14,8 @@ import { CostByDayChart, CtxChart, UsageChart } from '@/features/trends/TrendsCh
 import { DEFAULT_RANGE, isEmptyData, parseRange, RANGE_LABEL } from '@/features/trends/model'
 import { useTrendsData } from '@/features/trends/useTrendsData'
 import { useOverview } from '@/store'
+
+const RANGE_ITEMS = TREND_RANGES.map((r) => ({ value: r, label: RANGE_LABEL[r] }))
 
 export default function TrendsPage() {
   const [params, setParams] = useSearchParams()
@@ -37,53 +43,41 @@ export default function TrendsPage() {
   const skipped = Math.max(trends?.skipped ?? 0, costs?.skipped ?? 0)
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 p-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold tracking-tight">花費與額度趨勢</h1>
-        <div role="group" aria-label="範圍" className="flex gap-1">
-          {TREND_RANGES.map((r) => (
-            <Button
-              key={r}
-              size="sm"
-              variant={r === range ? 'secondary' : 'ghost'}
-              aria-pressed={r === range}
-              onClick={() =>
-                setParams((p) => {
-                  p.set('range', r)
-                  return p
-                })
-              }
-            >
-              {RANGE_LABEL[r]}
-            </Button>
-          ))}
-        </div>
-      </div>
-      <p className="text-sm text-muted-foreground">dashboard 未開啟期間的花費可能遺漏，或併入之後第一次記錄</p>
+    <div className="mx-auto flex w-full max-w-page flex-col gap-6 px-4 py-6 lg:px-6">
+      <PageHeader
+        icon={ChartLine}
+        title="花費與額度趨勢"
+        subtitle="dashboard 未開啟期間的花費可能遺漏，或併入之後第一次記錄"
+        actions={
+          <SegmentedControl<TrendRange>
+            kind="group"
+            aria-label="範圍"
+            items={RANGE_ITEMS}
+            value={range}
+            onChange={(r) =>
+              setParams((p) => {
+                p.set('range', r)
+                return p
+              })
+            }
+          />
+        }
+      />
 
       {error && (
-        <div
-          role="alert"
-          className="flex items-center justify-between gap-3 rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-400"
-        >
-          <span>
-            {data ? '更新失敗，顯示的是舊資料：' : '載入失敗：'}
-            {error}
-          </span>
-          <Button size="sm" variant="outline" onClick={reload}>
-            重試
-          </Button>
-        </div>
+        <Banner tone={data ? 'warn' : 'danger'} title={data ? '更新失敗，顯示的是舊資料' : '載入失敗'} action={<BannerAction onClick={reload}>重試</BannerAction>}>
+          <code className="font-mono text-xs break-all">{error}</code>
+        </Banner>
       )}
 
       {trends && costs ? (
         isEmptyData(trends, costs) ? (
           <Card>
-            <CardContent className="py-10 text-center text-muted-foreground">尚無資料：dashboard 開著時每分鐘記錄一次</CardContent>
+            <EmptyState size="page" icon="📈" title="還沒有趨勢資料" hint="dashboard 開著時每分鐘記錄一次" />
           </Card>
         ) : (
           <>
-            <section aria-label="額度" className="grid items-start gap-4 lg:grid-cols-2">
+            <section aria-label="額度" className="grid grid-cols-1 items-start gap-4 lg:grid-cols-2">
               {Object.entries(trends.usage)
                 .sort(([a], [b]) => a.localeCompare(b))
                 .map(([kind, points]) => (
@@ -100,16 +94,16 @@ export default function TrendsPage() {
                 ))}
             </section>
             <CtxChart ctx={trends.ctx} from={trends.from} to={trends.to} range={range} />
-            <div className="grid items-start gap-4 lg:grid-cols-3">
-              <div className="lg:col-span-2">
+            <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-12">
+              <div className="min-w-0 lg:col-span-8">
                 <CostByDayChart items={trends.costByDay} />
               </div>
-              <div className="flex flex-col gap-4">
+              <div className="flex min-w-0 flex-col gap-4 lg:col-span-4">
                 <KindCosts costByKind={trends.costByKind} />
                 <RoleCosts costs={costs} />
               </div>
             </div>
-            <div className="grid items-start gap-4 lg:grid-cols-2">
+            <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-2">
               <ActualCosts byActual={costs.byActual} />
               <ConfiguredCosts byConfigured={costs.byConfigured} />
             </div>
@@ -122,17 +116,17 @@ export default function TrendsPage() {
         !error && (
           <div data-testid="trends-loading" className="flex flex-col gap-4">
             <div className="grid gap-4 lg:grid-cols-2">
-              <Skeleton className="h-64" />
-              <Skeleton className="h-64" />
+              <Skeleton className="h-(--chart-h-lg) rounded-xl" />
+              <Skeleton className="h-(--chart-h-lg) rounded-xl" />
             </div>
-            <Skeleton className="h-64" />
-            <Skeleton className="h-48" />
+            <Skeleton className="h-(--chart-h-lg) rounded-xl" />
+            <Skeleton className="h-(--chart-h-md) rounded-xl" />
           </div>
         )
       )}
 
       {trends && (
-        <footer className="flex flex-wrap gap-x-4 text-xs text-muted-foreground">
+        <footer className="flex flex-wrap gap-x-4 text-xs font-medium text-muted-foreground">
           <span className="font-mono">資料目錄：{trends.dataDir}</span>
           {skipped > 0 && <span>略過 {skipped} 行無法解析的紀錄</span>}
         </footer>

@@ -222,7 +222,7 @@ describe('GitPage', () => {
     expect(within(d).getByText('@@ −4 +4 @@ export function f()')).toBeTruthy()
     expect(location).toContain('f=new.ts')
     expect(calls).toContain(`/api/git/alpha/commits/${H('b')}/diff?path=new.ts`)
-    expect(screen.getByTestId('git-history-scroll').closest('section')!.className).toContain('hidden')
+    expect(screen.getByTestId('git-history-scroll').closest('[data-slot=card]')!.className).toContain('hidden')
 
     await userEvent.keyboard('{Escape}')
     await waitFor(() => expect(screen.queryByTestId('git-diff')).toBeNull())
@@ -236,5 +236,47 @@ describe('GitPage', () => {
     renderPage(`/git?p=alpha&c=${H('b')}&f=img.png`)
     expect(await screen.findByText('二進位檔，不顯示 diff')).toBeTruthy()
     expect(screen.queryByTestId('git-diff')).toBeNull()
+  })
+
+  it('工具頁骨架：PageHeader compact 帶唯讀說明；左欄三段 SidebarList', async () => {
+    renderPage()
+    await screen.findByTestId('git-status')
+    const h1 = screen.getByRole('heading', { level: 1, name: 'git' })
+    expect(h1.closest('[data-slot=page-header]')).toHaveAttribute('data-size', 'compact')
+    expect(h1.closest('[data-slot=page-header]')).toHaveTextContent('唯讀')
+    const titles = [...document.querySelectorAll('[data-slot=sidebar-section-title]')].map((e) => e.textContent)
+    expect(titles).toEqual(['專案2', '工作樹狀態', 'Worktree2'])
+  })
+
+  it('專案項目：SidebarItem，狀態 Tag（改動 warn、乾淨 ok），錯誤專案顯示錯誤；點了寫網址', async () => {
+    renderPage()
+    await screen.findByTestId('git-status')
+    const alpha = screen.getByTestId('git-project-alpha')
+    expect(alpha).toHaveAttribute('data-slot', 'sidebar-item')
+    expect(alpha).toHaveAttribute('aria-current', 'true')
+    expect(within(alpha).getByText('2 改動').closest('[data-slot=tag]')).toHaveAttribute('data-variant', 'warn')
+    expect(within(screen.getByTestId('git-project-plain')).getByText('不是 git repo')).toBeTruthy()
+    const wt = screen.getByTestId('git-worktrees')
+    expect(within(wt).getByText('乾淨').closest('[data-slot=tag]')).toHaveAttribute('data-variant', 'ok')
+    await userEvent.click(screen.getByTestId('git-project-plain'))
+    expect(location).toContain('p=plain')
+  })
+
+  it('commit 列的 ref 用 Tag：HEAD info、遠端 neutral、版本 tag brand＋圖示', async () => {
+    renderPage()
+    const commits = await screen.findByTestId('git-commits')
+    const tag = (t: string) => within(commits).getByText(t).closest('[data-slot=tag]')!
+    expect(tag('HEAD → main')).toHaveAttribute('data-variant', 'info')
+    expect(tag('origin/main')).toHaveAttribute('data-variant', 'neutral')
+    expect(tag('v1')).toHaveAttribute('data-variant', 'brand')
+    expect(tag('v1').querySelector('svg')).toBeTruthy()
+  })
+
+  it('摘要讀取失敗用 Banner＋重試', async () => {
+    vi.mocked(fetch).mockImplementationOnce(async () => new Response('{}', { status: 500 }))
+    renderPage()
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveAttribute('data-slot', 'banner')
+    expect(within(alert).getByRole('button', { name: '重試' })).toBeTruthy()
   })
 })

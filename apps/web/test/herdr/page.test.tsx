@@ -43,7 +43,7 @@ function renderPage(path = '/herdr') {
   )
 }
 
-const selectedPane = () => document.querySelector('[data-selected]')?.getAttribute('data-testid')
+const selectedPane = () => document.querySelector('[data-testid^="herdr-pane-"][data-selected]')?.getAttribute('data-testid')
 
 describe('HerdrPage', () => {
   it('預設顯示 herdr focus 的 space／tab，畫出分割版面與畫面內容', async () => {
@@ -111,5 +111,62 @@ describe('HerdrPage', () => {
     expect(link).toHaveAttribute('href', '/p/teamflow/t/2026-09-23-ops')
     expect(link).toHaveTextContent('2026-09-23-ops · backend')
     expect(within(screen.getByTestId('herdr-pane-wB:p3')).queryByTestId('pane-task-link')).toBeNull()
+  })
+
+  it('工具頁骨架：PageHeader compact 帶唯讀說明，鍵盤說明在 ? popover', async () => {
+    renderPage()
+    await screen.findByTestId('herdr-pane-wB:p2')
+    const h1 = screen.getByRole('heading', { level: 1, name: 'herdr' })
+    expect(h1.closest('[data-slot=page-header]')).toHaveAttribute('data-size', 'compact')
+    expect(h1.closest('[data-slot=page-header]')).toHaveTextContent('唯讀鏡像')
+    expect(screen.queryByText(/Tab 循環/)).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: '鍵盤說明' }))
+    expect(await screen.findByText(/Tab 循環/)).toBeInTheDocument()
+  })
+
+  it('側欄是 SidebarList：agents 依 blocked → working → idle 排序；tab 列是 SegmentedControl sm', async () => {
+    renderPage()
+    await screen.findByTestId('herdr-pane-wB:p2')
+    const agents = within(screen.getByTestId('herdr-agents')).getAllByRole('button')
+    expect(agents.map((b) => b.getAttribute('data-pane'))).toEqual(['wB:p3', 'wB:p2', 'wA:p1', 'wB:p4'])
+    expect(agents[0]).toHaveAttribute('data-slot', 'sidebar-item')
+    const tabs = within(screen.getByTestId('herdr-tabs')).getByRole('tablist')
+    expect(tabs).toHaveAttribute('data-size', 'sm')
+    expect(within(tabs).getByRole('tab', { selected: true })).toHaveTextContent('split')
+    fireEvent.click(within(tabs).getByRole('tab', { name: /main/ }))
+    expect(selectedPane()).toBe('herdr-pane-wB:p1')
+  })
+
+  it('終端區固定 terminal-bg 黑底；錯誤用 Banner', async () => {
+    renderPage()
+    expect(await screen.findByTestId('herdr-layout')).toHaveClass('bg-terminal-bg')
+    fetchMock.mockClear()
+  })
+
+  it('herdr 讀不到時用 Banner danger', async () => {
+    fetchMock.mockImplementationOnce(async () => new Response('{}', { status: 503 }))
+    renderPage()
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveAttribute('data-slot', 'banner')
+    expect(alert).toHaveAttribute('data-tone', 'danger')
+  })
+
+  it('focus 在 tab 列按 →：只換 tab，不會再被頁面的 pane 導覽鍵處理一次', async () => {
+    renderPage('/herdr?w=wB&t=wB:t2&p=wB:p2')
+    await screen.findByTestId('herdr-pane-wB:p2')
+    const tab = within(screen.getByTestId('herdr-tabs')).getByRole('tab', { selected: true })
+    tab.focus()
+    act(() => void fireEvent.keyDown(tab, { key: 'ArrowRight' }))
+    expect(selectedPane()).toBe('herdr-pane-wB:p1')
+    expect(new URLSearchParams(search).get('t')).toBe('wB:t1')
+    expect(new URLSearchParams(search).get('p')).toBeNull()
+  })
+
+  it('鍵盤說明鈕是 ? 圖示，沒有寫著不存在快捷鍵的 title', async () => {
+    renderPage()
+    await screen.findByTestId('herdr-pane-wB:p2')
+    const btn = screen.getByRole('button', { name: '鍵盤說明' })
+    expect(btn).not.toHaveAttribute('title')
+    expect(btn.querySelector('svg.lucide-circle-question-mark, svg.lucide-circle-help')).toBeTruthy()
   })
 })

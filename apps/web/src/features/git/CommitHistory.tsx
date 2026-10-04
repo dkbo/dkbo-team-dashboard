@@ -1,10 +1,13 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { layoutGraph, type GitCommit, type GraphRow } from '@dash/shared'
-import { Badge } from '@/components/ui/badge'
+import { Tag as TagIcon } from 'lucide-react'
+import { Tag, type TagVariant } from '@/components/app/Tag'
+import { EmptyState } from '@/components/app/EmptyState'
 import { cn } from '@/lib/utils'
 import { formatAgo, formatDate, parseRef, shortHash, type RefKind } from './model'
 
-export const ROW_H = 28
+/** commit 列高 h-9（§README git） */
+export const ROW_H = 36
 const LANE_W = 14
 /** 線數超過這個只畫到這裡（極少見，避免圖把訊息擠掉） */
 const MAX_LANES = 16
@@ -63,12 +66,8 @@ function GraphCell({ row, width, merge }: { row: GraphRow; width: number; merge:
   )
 }
 
-const REF_CLASS: Record<RefKind, string> = {
-  head: 'border-sky-500/50 bg-sky-500/10 text-sky-700 dark:text-sky-300',
-  branch: 'border-emerald-500/50 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
-  remote: 'border-border text-muted-foreground',
-  tag: 'border-amber-500/50 bg-amber-500/10 text-amber-700 dark:text-amber-300',
-}
+/** ref → Tag（§6.4）：HEAD info、本機／遠端分支 neutral、版本 tag brand＋Tag 圖示 */
+const REF_VARIANT: Record<RefKind, TagVariant> = { head: 'info', branch: 'neutral', remote: 'neutral', tag: 'brand' }
 
 const REF_TITLE: Record<RefKind, string> = { head: '目前 HEAD', branch: '本機分支', remote: '遠端分支', tag: 'tag' }
 
@@ -76,9 +75,10 @@ export function RefBadges({ refs }: { refs: string[] }) {
   return (
     <>
       {refs.flatMap(parseRef).map((r) => (
-        <Badge key={`${r.kind}:${r.label}`} variant="outline" data-ref-kind={r.kind} title={REF_TITLE[r.kind]} className={cn('font-mono', REF_CLASS[r.kind])}>
+        <Tag key={`${r.kind}:${r.label}`} mono variant={REF_VARIANT[r.kind]} data-ref-kind={r.kind} title={REF_TITLE[r.kind]}>
+          {r.kind === 'tag' && <TagIcon aria-hidden />}
           {r.label}
-        </Badge>
+        </Tag>
       ))}
     </>
   )
@@ -105,7 +105,7 @@ export function CommitHistory({
   const lanes = Math.min(MAX_LANES, Math.max(1, ...rows.map((r) => r.width)))
   const width = lanes * LANE_W
 
-  if (commits.length === 0) return <p className="px-4 py-8 text-center text-sm text-muted-foreground">還沒有任何 commit</p>
+  if (commits.length === 0) return <EmptyState icon="🌱" title="還沒有任何 commit" hint="第一個 commit 進來後，這裡每 10 秒更新" />
 
   return (
     <ol ref={list} data-testid="git-commits" className="flex flex-col">
@@ -118,10 +118,9 @@ export function CommitHistory({
               data-testid={`git-commit-${c.hash.slice(0, 7)}`}
               aria-current={active ? 'true' : undefined}
               onClick={() => onSelect(c.hash)}
-              style={{ height: ROW_H }}
               className={cn(
-                'flex w-full items-center gap-3 px-3 text-left text-sm hover:bg-muted/60 focus-visible:bg-muted focus-visible:outline-none',
-                active && 'bg-muted',
+                'flex h-9 w-full cursor-pointer items-center gap-3 px-4 text-left text-sm transition-colors duration-150 outline-none hover:bg-muted/60 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset motion-reduce:transition-none',
+                active && 'bg-accent/60 font-semibold',
               )}
             >
               <GraphCell row={rows[i]} width={width} merge={c.parents.length > 1} />

@@ -68,9 +68,9 @@ describe('HistoryView', () => {
     const first = trs[0]
     expect(first).toHaveTextContent('測試可信度')
     expect(first).toHaveTextContent('2 小時 5 分')
-    expect(within(first).getByTestId('col-rulings')).toHaveTextContent('3 / 1')
-    expect(within(first).getByTestId('col-minors')).toHaveTextContent('7')
-    expect(within(first).getByTestId('col-rereviews')).toHaveTextContent('2')
+    expect(within(first).getByTestId('col-rulings')).toHaveTextContent('3/1')
+    expect(within(first).getByTestId('col-minors')).toHaveTextContent('m7')
+    expect(within(first).getByTestId('col-rereviews')).toHaveTextContent('r2')
     expect(within(first).getByTestId('col-waves')).toHaveTextContent('2')
     expect(within(first).getByRole('link', { name: '測試可信度' })).toHaveAttribute(
       'href',
@@ -208,5 +208,111 @@ describe('HistoryView', () => {
     expect(within(list).getAllByTestId(/^tier-analysis-card-/)).toHaveLength(2)
     await user.type(screen.getByLabelText('結案迄'), '2026-09-05')
     expect(screen.getByTestId('history-tier-analysis')).toHaveTextContent('沒有派工紀錄')
+  })
+})
+
+describe('HistoryView unify（AC5）', () => {
+  const many = (n: number) =>
+    Array.from({ length: n }, (_, i) =>
+      row({
+        dir: `2026-09-${String((i % 28) + 1).padStart(2, '0')}-t${i}`,
+        display: `任務 ${i}`,
+        closedAt: `2026-09-${String((i % 28) + 1).padStart(2, '0')}T${String(10 + Math.floor(i / 28)).padStart(2, '0')}:00`,
+        dispatch: [],
+      }),
+    )
+  const renderRows = (rs: unknown[]) =>
+    render(
+      <MemoryRouter>
+        <HistoryView rows={rs as never} />
+      </MemoryRouter>,
+    )
+
+  it('篩選在 PageHeader 工具列；標題、副標「共 N 件已結案」', () => {
+    const { container } = renderView()
+    const header = container.querySelector('[data-slot="page-header"]') as HTMLElement
+    expect(within(header).getByRole('heading', { level: 1, name: '歷史與分析' })).toBeInTheDocument()
+    expect(header).toHaveTextContent('共 3 件已結案')
+    expect(within(header).getByLabelText('專案')).toBeInTheDocument()
+    expect(within(header).getByLabelText('結案起')).toBeInTheDocument()
+    expect(within(header).getByLabelText('結案迄')).toBeInTheDocument()
+  })
+
+  it('「審查」一欄 `3/1 · m7 · r2`，表頭有說明；原三欄表頭不再出現；0 值灰字', () => {
+    renderView()
+    const table = screen.getByTestId('history-table')
+    expect(within(table).getByRole('columnheader', { name: /審查/ })).toBeInTheDocument()
+    expect(within(table).queryByRole('columnheader', { name: '裁定 / 自主' })).toBeNull()
+    expect(within(table).queryByRole('columnheader', { name: 'minor' })).toBeNull()
+    expect(within(table).queryByRole('columnheader', { name: '審查複看' })).toBeNull()
+    const [first, second] = bodyRows()
+    const review = within(first).getByTestId('col-review')
+    expect(review).toHaveTextContent('3/1 · m7 · r2')
+    expect(within(review).getByTestId('col-rulings')).toHaveTextContent('3/1')
+    expect(within(review).getByTestId('col-minors')).toHaveTextContent('m7')
+    expect(within(review).getByTestId('col-rereviews')).toHaveTextContent('r2')
+    expect(review.className).toContain('tabular-nums')
+    // 第二列 reReviews 0 → 灰
+    expect(within(second).getByTestId('col-rereviews').className).toContain('text-muted-foreground')
+    expect(within(first).getByTestId('col-rereviews').className).not.toContain('text-muted-foreground')
+  })
+
+  it('專案欄是 Tag、狀態是 StatusPill（已結案＝idle＋✓）', () => {
+    renderView()
+    const [first, second] = bodyRows()
+    expect(within(first).getByText('teamflow')).toHaveAttribute('data-slot', 'tag')
+    const pill = first.querySelector('[data-slot="status-pill"]')
+    expect(pill).toHaveAttribute('data-color', 'idle')
+    expect(pill).toHaveTextContent('已完成')
+    expect(second.querySelector('[data-slot="status-pill"]')).toHaveTextContent('已放棄')
+  })
+
+  it('表格預設 10 件，「再顯示 30 件」每按一次多 30 件，到底隱藏', async () => {
+    const user = userEvent.setup()
+    renderRows(many(45))
+    expect(bodyRows()).toHaveLength(10)
+    const more = screen.getByTestId('history-more')
+    expect(more).toHaveTextContent('再顯示 30 件')
+    await user.click(more)
+    expect(bodyRows()).toHaveLength(40)
+    await user.click(screen.getByTestId('history-more'))
+    expect(bodyRows()).toHaveLength(45)
+    expect(screen.queryByTestId('history-more')).toBeNull()
+  })
+
+  it('≤ 10 件時沒有「再顯示」', () => {
+    renderView()
+    expect(screen.queryByTestId('history-more')).toBeNull()
+  })
+
+  it('dev vs 審查圖預設最近 15 件，「顯示全部 N 件」切換', async () => {
+    const user = userEvent.setup()
+    renderRows(many(20))
+    const chart = screen.getByTestId('chart-dev-review')
+    expect(chart).toHaveAttribute('data-rows', '15')
+    const toggle = within(chart).getByTestId('history-chart-toggle')
+    expect(toggle).toHaveTextContent('顯示全部 20 件')
+    await user.click(toggle)
+    expect(chart).toHaveAttribute('data-rows', '20')
+    expect(within(chart).getByTestId('history-chart-toggle')).toHaveTextContent('只看最近 15 件')
+  })
+
+  it('≤ 15 件時沒有切換鈕', () => {
+    renderView()
+    expect(screen.queryByTestId('history-chart-toggle')).toBeNull()
+    expect(screen.getByTestId('chart-dev-review')).toHaveAttribute('data-rows', '3')
+  })
+
+  it('篩選後沒有資料：EmptyState 🔍＋清除篩選；圖表是 ChartCard 空狀態', async () => {
+    const user = userEvent.setup()
+    renderView()
+    await user.type(screen.getByLabelText('結案起'), '2026-10-01')
+    const table = screen.getByTestId('history-table')
+    const empty = table.querySelector('[data-slot="empty-state"]') as HTMLElement
+    expect(empty).toHaveTextContent('沒有符合條件的已結案任務')
+    expect(within(screen.getByTestId('chart-dev-review')).getByTestId('chart-empty')).toBeInTheDocument()
+    expect(within(screen.getByTestId('chart-weekly')).getByTestId('chart-empty')).toBeInTheDocument()
+    await user.click(within(empty).getByRole('button', { name: '清除篩選' }))
+    expect(bodyRows()).toHaveLength(3)
   })
 })

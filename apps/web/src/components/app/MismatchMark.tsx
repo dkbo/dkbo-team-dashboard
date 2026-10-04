@@ -13,7 +13,7 @@ export function MismatchMark({ actual, configured, testId }: { actual: ModelEffo
             type="button"
             data-testid={testId}
             aria-label={tip}
-            className="inline-flex shrink-0 cursor-help align-[-2px] text-amber-600 dark:text-amber-400"
+            className="inline-flex shrink-0 cursor-help rounded-full align-middle text-status-warn-fg outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             <TriangleAlert aria-hidden className="size-3.5" />
           </button>
