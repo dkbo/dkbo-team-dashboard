@@ -1,0 +1,24 @@
+const build=(name,x,dark,blocked)=>{
+const pg=page(name,x,0,1440,{dark});topbar(pg,0,{blocked,dark});const body=pageBody(pg);
+const acts=pageHeader(body,"layout-dashboard","總覽","4 個專案 · 1 個進行中任務 · 最後更新 12:56");btn(acts,"畫面縮圖","pressed",{icon:"monitor-play",size:"sm"});
+const g=row(body,{name:"OverviewGrid",width:"fill_container",alignItems:"start",gap:24});
+const main=col(g,{name:"Main",width:"fill_container",gap:24});
+const s=row(main,{name:"SummaryRow",width:"fill_container",gap:16});
+tile(s,"ok","rocket","進行中任務","1",["toybox · 波 3/4"]);
+tile(s,"brand","coins","今日花費","$124.03",["昨日 $198.63"]);
+if(blocked)tile(s,"danger","siren","卡住的 agent",String(blocked),["react-games（collect）"]);else tile(s,"quiet","siren","卡住的 agent","0",[["大家都很順 ✨","$status-ok-fg"]]);
+tile(s,"warn","gauge","熔斷與額度","2 熔斷",["agy、codex · 最短還剩 5 天 20 小時"],{fs:13});
+const sec=row(main,{name:"SectionTitle",gap:8});tx(sec,"活躍專案",{fontSize:18,fontWeight:"800"});tag(sec,"1");
+const pc=card(main,{name:"ProjectCard collect",stroke:blocked?"$status-danger":undefined,strokeWidth:blocked?2:undefined});
+const a=cardHead(pc,"collect",null,{after:t=>{tag(t,"v0.19.0","neutral",{mono:true})}});tx(a,"更新 12:56",{fontSize:12,fill:"$muted-foreground"});
+taskRow(pc,{name:"全站改版（DKBO Toybox 玩具機風）",alert:!!blocked});
+const th=row(pc,{name:"PaneThumbs",width:"fill_container",gap:12,alignItems:"start"});
+thumb(th,"toybox-react-games",blocked?"danger":"ok",blocked?"卡住":"工作中",blocked?T1:T3);thumb(th,"toybox-designer","ok","工作中",T2);
+const os=row(pc,{name:"OtherSessions",width:"fill_container",gap:8});tx(os,"其他 session",{fontSize:12,fontWeight:"600",fill:"$muted-foreground"});pill(os,"claude","idle");sp(os);const cl=row(os,{name:"closed",gap:4});tx(cl,"已結案 7 件",{fontSize:13,fontWeight:"600",fill:"$muted-foreground"});ic(cl,"chevron-right",14,"$muted-foreground");
+const ic2=card(main,{name:"IdleProjects",gap:4,padding:[16,12]});const ih=row(ic2,{name:"head",width:"fill_container",padding:[0,8,8,8],gap:8});tx(ih,"閒置專案",{fontSize:16,fontWeight:"700"});tag(ih,"3");tx(ih,"沒有進行中任務、也沒有警示",{fontSize:13,fill:"$muted-foreground"});
+idleRow(ic2,"dkbo-team-dashboard","v0.19.0",5,["ok","idle"],"10-03 10:39",{hover:true});idleRow(ic2,"teamflow","v0.19.0",10,["idle"],"09-25 13:45");idleRow(ic2,"sport-frontend-panova","v0.19.0",17,["idle"],"09-23 23:13");
+const rail=card(g,{name:"ActivityRail",width:320,padding:12,gap:12});const rh=row(rail,{name:"RailHead",width:"fill_container",padding:[4,6,0,6],gap:6});ic(rh,"sparkles",16,"$brand-violet");tx(rh,"活動動態",{fontSize:16,fontWeight:"700"});sp(rh);seg(rh,["全部","需處理|2"],0,{sm:true});
+ACT(blocked).forEach(([t,p,tm,it,more])=>actGroup(rail,t,p,tm,it,{more}));
+return pg};
+L=build("page-overview-light",0,false,1);D=build("page-overview-dark",1540,true,0);
+Export([L,D],"png","/tmp/claude-1000/-home-bal-project-dkbo-team-dashboard/85e723ff-705c-4afb-a4e5-ecccc232940e/scratchpad/pen/out",{scale:1});
