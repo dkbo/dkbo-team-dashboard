@@ -45,6 +45,34 @@
     --color-card: var(--card);
     --color-foreground: var(--foreground);
     --color-background: var(--background);
+    /* unify（DESIGN-SYSTEM §How to use B）：狀態色 → bg-status-ok、text-status-danger-fg、bg-status-warn-soft… */
+    --color-status-danger: var(--status-danger);
+    --color-status-danger-fg: var(--status-danger-fg);
+    --color-status-danger-soft: var(--status-danger-soft);
+    --color-status-warn: var(--status-warn);
+    --color-status-warn-fg: var(--status-warn-fg);
+    --color-status-warn-soft: var(--status-warn-soft);
+    --color-status-ok: var(--status-ok);
+    --color-status-ok-fg: var(--status-ok-fg);
+    --color-status-ok-soft: var(--status-ok-soft);
+    --color-status-idle: var(--status-idle);
+    --color-status-idle-fg: var(--status-idle-fg);
+    --color-status-idle-soft: var(--status-idle-soft);
+    --color-status-info: var(--status-info);
+    --color-status-info-fg: var(--status-info-fg);
+    --color-status-info-soft: var(--status-info-soft);
+    /* 終端 → bg-terminal-bg、text-terminal-fg… */
+    --color-terminal-bg: var(--terminal-bg);
+    --color-terminal-chrome: var(--terminal-chrome);
+    --color-terminal-line: var(--terminal-line);
+    --color-terminal-fg: var(--terminal-fg);
+    --color-terminal-dim: var(--terminal-dim);
+    /* 字級 → text-2xs（全站最小字級 micro）、leading-terminal */
+    --text-2xs: 0.6875rem;
+    --text-2xs--line-height: 1rem;
+    --leading-terminal: 1.2;
+    /* 版面 → max-w-page */
+    --container-page: 96rem;
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
     --radius-lg: var(--radius);
@@ -69,7 +97,7 @@
     --muted-foreground: #565b82;
     --accent: #ece8ff;
     --accent-foreground: #3d2c8a;
-    --destructive: #c62a44;
+    --destructive: var(--status-danger-fg);
     --border: #e2e5f5;
     --input: #d6daf0;
     --ring: #7b5cff;
@@ -98,6 +126,71 @@
     --sidebar-accent-foreground: #3d2c8a;
     --sidebar-border: #e2e5f5;
     --sidebar-ring: #7b5cff;
+    /* unify：狀態色（solid / fg / soft，規格 §1.3） */
+    --status-danger: #e0434f;
+    --status-danger-fg: #c62a44;
+    --status-danger-soft: #fbe5e6;
+    --status-warn: #b07800;
+    --status-warn-fg: #8a5300;
+    --status-warn-soft: #fcf2e0;
+    --status-ok: #1a9a74;
+    --status-ok-fg: #0f7a5a;
+    --status-ok-soft: #e1f5ef;
+    --status-idle: #7a7fa8;
+    --status-idle-fg: #565b82;
+    --status-idle-soft: #efeff5;
+    --status-info: #7b5cff;
+    --status-info-fg: #5b3fd9;
+    --status-info-soft: #ede8ff;
+    --on-color: #ffffff;
+    /* SummaryTile 漸層（亮暗共用）；danger／brand 是 coral／violet 的別名 */
+    --grad-ok-from: #157f5f;
+    --grad-ok-to: #0e6b50;
+    --grad-warn-from: #a05f00;
+    --grad-warn-to: #7a4400;
+    --grad-danger-from: var(--grad-coral-from);
+    --grad-danger-to: var(--grad-coral-to);
+    --grad-brand-from: var(--grad-violet-from);
+    --grad-brand-to: var(--grad-violet-to);
+    /* 終端（亮暗相同，固定黑底） */
+    --terminal-bg: #0b0b10;
+    --terminal-chrome: #17171f;
+    --terminal-line: #26262f;
+    --terminal-fg: #e4e4e7;
+    --terminal-dim: #8b8b96;
+    /* 語意 spacing、border（規格 §3） */
+    --page-x: 1rem;
+    --page-y: 1.5rem;
+    --section-gap: 1.5rem;
+    --grid-gap: 1rem;
+    --card-pad: 1.25rem;
+    --card-pad-sm: 1rem;
+    --card-gap: 1rem;
+    --card-gap-sm: 0.75rem;
+    --inner-pad: 0.75rem;
+    --tool-gutter: 0.75rem;
+    --cell-x: 0.75rem;
+    --border-w-hair: 1px;
+    --border-w-pill: 1.5px;
+    --border-w-strong: 2px;
+    --ring-w-focus: 3px;
+    /* 尺寸（非 Tailwind 刻度的） */
+    --chart-h-sm: 11rem;
+    --chart-h-md: 14rem;
+    --chart-h-lg: 16rem;
+    --step-line-h: 0.1875rem;
+    --thumb-lines: 10;
+    --thumb-h: calc(var(--thumb-lines) * var(--leading-terminal) * 1em + 0.5rem);
+    /* 版面（規格 §4.2）；--topbar-h 在 < lg 換行時由 TopBar 的 ResizeObserver 寫到 <html> 覆寫 */
+    --topbar-h: 3.5rem;
+    --rail-w: 20rem;
+    --aside-w: 22.5rem;
+    --sidebar-w: 16rem;
+    --detail-w: 22rem;
+    --tool-h: calc(100svh - var(--topbar-h));
+    --rail-top: calc(var(--topbar-h) + 1.5rem);
+    --rail-max-h: calc(100svh - var(--topbar-h) - 3rem);
+    --pane-max-h-sm: 70svh;
 }
 
 .dark {
@@ -115,7 +208,7 @@
     --muted-foreground: #aeb2dc;
     --accent: #3a3577;
     --accent-foreground: #e0d9ff;
-    --destructive: #ff6b7f;
+    --destructive: var(--status-danger-fg);
     --border: rgb(170 180 255 / 10%);
     --input: rgb(170 180 255 / 16%);
     --ring: #7b5cff;
@@ -133,6 +226,34 @@
     --sidebar-accent-foreground: #e0d9ff;
     --sidebar-border: rgb(170 180 255 / 10%);
     --sidebar-ring: #7b5cff;
+    --status-danger: #ff6b7f;
+    --status-danger-fg: #ff8a9a;
+    --status-danger-soft: #46345b;
+    --status-warn: #e9a520;
+    --status-warn-fg: #ffc76b;
+    --status-warn-soft: #433c4e;
+    --status-ok: #2cb68a;
+    --status-ok-fg: #5fdcae;
+    --status-ok-soft: #293e5c;
+    --status-idle: #7d82b0;
+    --status-idle-fg: #aeb2dc;
+    --status-idle-soft: #343762;
+    --status-info: #7b5cff;
+    --status-info-fg: #b9a8ff;
+    --status-info-soft: #34326d;
+}
+
+@media (min-width: 64rem) {
+    :root {
+        --page-x: 1.5rem;
+    }
+}
+
+@media (min-width: 80rem) {
+    :root {
+        --sidebar-w: 18rem;
+        --detail-w: 26rem;
+    }
 }
 
 /* 狀態色（emerald／red／amber／sky…）改成馬卡龍調：亮度大致沿用 Tailwind 預設，只降彩度、微調色相；

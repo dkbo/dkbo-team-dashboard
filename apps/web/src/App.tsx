@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react'
 import { BrowserRouter, Link, Route, Routes } from 'react-router'
 import { AppLayout } from '@/components/app/AppLayout'
+import { EmptyState } from '@/components/app/EmptyState'
+import { Button } from '@/components/ui/button'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import GitPage from '@/pages/git/GitPage'
 import HerdrPage from '@/pages/herdr/HerdrPage'
@@ -15,11 +17,18 @@ export function AppProviders({ children }: { children: ReactNode }) {
 
 function NotFound() {
   return (
-    <div className="mx-auto max-w-7xl p-8 text-center text-muted-foreground">
-      <p>找不到這個頁面</p>
-      <Link to="/" className="text-sm underline">
-        回總覽
-      </Link>
+    <div className="mx-auto w-full max-w-page px-4 py-6 lg:px-6">
+      <EmptyState
+        size="page"
+        icon="🧭"
+        title="找不到這個頁面"
+        hint="網址可能打錯了，或這個頁面已經搬走"
+        action={
+          <Button asChild variant="outline" size="sm">
+            <Link to="/">回總覽</Link>
+          </Button>
+        }
+      />
     </div>
   )
 }

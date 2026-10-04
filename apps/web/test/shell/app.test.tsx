@@ -78,5 +78,12 @@ describe('App 殼層', () => {
   it('未知路徑顯示找不到頁面', async () => {
     renderAt('/nope')
     expect(await screen.findByText('找不到這個頁面')).toBeInTheDocument()
+    // 用 EmptyState page、內容頁容器 max-w-page，「回總覽」是 Button outline sm
+    const empty = screen.getByText('找不到這個頁面').closest('[data-slot="empty-state"]')!
+    expect(empty).toHaveAttribute('data-size', 'page')
+    expect(empty.closest('.max-w-page')).not.toBeNull()
+    const back = screen.getByRole('link', { name: '回總覽' })
+    expect(back).toHaveAttribute('href', '/')
+    expect(back).toHaveAttribute('data-variant', 'outline')
   })
 })

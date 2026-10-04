@@ -3,7 +3,22 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+const DENSITY_CLASS = {
+  // 規格 §6.19：表頭列 bar（h-10）、列 row（h-11）；dense 兩者都 row-dense（h-9）
+  default: "[&_thead_tr]:h-10 [&_tbody_tr]:h-11",
+  dense: "[&_thead_tr]:h-9 [&_tbody_tr]:h-9",
+} as const
+
+/** density：default｜dense（§6.19）。flush：表格滿卡寬時首欄左、末欄右留 inset-control-lg（px-5） */
+function Table({
+  className,
+  density = "default",
+  flush = false,
+  ...props
+}: React.ComponentProps<"table"> & {
+  density?: "default" | "dense"
+  flush?: boolean
+}) {
   return (
     <div
       data-slot="table-container"
@@ -11,7 +26,13 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
     >
       <table
         data-slot="table"
-        className={cn("w-full caption-bottom text-sm", className)}
+        data-density={density}
+        className={cn(
+          "w-full caption-bottom text-sm",
+          DENSITY_CLASS[density],
+          flush && "[&_tr>*:first-child]:pl-5 [&_tr>*:last-child]:pr-5",
+          className
+        )}
         {...props}
       />
     </div>
@@ -22,7 +43,7 @@ function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
   return (
     <thead
       data-slot="table-header"
-      className={cn("[&_tr]:border-b", className)}
+      className={cn("[&_tr]:border-b dark:[&_tr]:border-b-2", className)}
       {...props}
     />
   )
@@ -56,7 +77,7 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
     <tr
       data-slot="table-row"
       className={cn(
-        "border-b transition-colors hover:bg-muted/50 has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
+        "border-b transition-colors duration-150 hover:bg-muted/60 has-aria-expanded:bg-muted/60 data-[state=selected]:bg-accent/60",
         className
       )}
       {...props}
@@ -69,7 +90,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
     <th
       data-slot="table-head"
       className={cn(
-        "h-10 px-2 text-left align-middle font-medium whitespace-nowrap text-foreground [&:has([role=checkbox])]:pr-0",
+        "px-3 text-left align-middle text-xs font-bold whitespace-nowrap text-muted-foreground [&:has([role=checkbox])]:pr-0",
         className
       )}
       {...props}
@@ -82,7 +103,7 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
     <td
       data-slot="table-cell"
       className={cn(
-        "p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0",
+        "px-3 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0",
         className
       )}
       {...props}

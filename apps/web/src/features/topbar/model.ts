@@ -16,3 +16,10 @@ export function usageRows(usage: Record<string, KindUsage>): (KindUsage & { kind
     .map(([kind, u]) => ({ kind, fiveHourPct: u.fiveHourPct, weekPct: u.weekPct }))
     .sort((a, b) => a.kind.localeCompare(b.kind))
 }
+
+/** 額度膠囊門檻（Q12）：任一值 ≥ 80% 變 warn；額度用完＝熔斷＝降級，永不變紅 */
+export const USAGE_WARN_PCT = 80
+
+export function usageTone(u: KindUsage): 'normal' | 'warn' {
+  return [u.fiveHourPct, u.weekPct].some((v) => v != null && v >= USAGE_WARN_PCT) ? 'warn' : 'normal'
+}
