@@ -4,8 +4,8 @@ import { cn } from '@/lib/utils'
 
 export function segStyle(s: AnsiStyle): CSSProperties | undefined {
   if (Object.keys(s).length === 0) return undefined
-  const fg = s.inverse ? (s.bg ?? '#09090b') : s.fg
-  const bg = s.inverse ? (s.fg ?? '#e4e4e7') : s.bg
+  const fg = s.inverse ? (s.bg ?? 'var(--terminal-bg)') : s.fg
+  const bg = s.inverse ? (s.fg ?? 'var(--terminal-fg)') : s.bg
   return {
     color: fg,
     backgroundColor: bg,
@@ -46,10 +46,10 @@ export function markSegments(segs: AnsiSegment[], q: string): (AnsiSegment & { h
 
 export function AnsiLine({ segs, highlight = '', focused = false }: { segs: AnsiSegment[]; highlight?: string; focused?: boolean }) {
   return (
-    <div data-focused={focused || undefined} className={cn('min-h-[1.2em]', focused && 'bg-yellow-500/25 outline outline-yellow-500/60')}>
+    <div data-focused={focused || undefined} className={cn('dark min-h-lh', focused && 'bg-status-warn-soft outline outline-status-warn')}>
       {markSegments(segs, highlight).map((s, i) =>
         s.hit ? (
-          <mark key={i} className="rounded-sm bg-yellow-300 text-black">
+          <mark key={i} className="rounded-sm bg-status-warn text-terminal-bg">
             {s.text}
           </mark>
         ) : (

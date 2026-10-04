@@ -2,26 +2,24 @@ import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from
 import { Link } from 'react-router'
 import { Eye, History, ListTree, Maximize2, Minimize2, Search } from 'lucide-react'
 import type { HerdrSearchHit, HerdrView, HerdrViewPane, HerdrViewTab, PaneStatus } from '@dash/shared'
-import { StatusPill } from '@/components/app/StatusPill'
+import { PaneBody, PaneHeader } from '@/components/app/PaneHeader'
+import { SegmentedControl } from '@/components/app/SegmentedControl'
+import { SidebarItem, SidebarList, SidebarSection } from '@/components/app/SidebarList'
+import { StatusDot, type Tone } from '@/components/app/StatusDot'
+import { agentStatusPill, StatusPill } from '@/components/app/StatusPill'
+import { Tag } from '@/components/app/Tag'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import { formatPct } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { useDashStore } from '@/store'
-import { agentPanes, type Resolved } from './model'
+import { agentPanes, sortAgents, type Resolved } from './model'
 import { AnsiLine } from './AnsiText'
 import { SearchPanel } from './SearchPanel'
 import type { ScreenState } from './useHerdr'
 
-const DOT: Record<PaneStatus, string> = {
-  working: 'bg-emerald-500 animate-pulse',
-  idle: 'bg-zinc-400',
-  blocked: 'bg-red-500',
-  done: 'bg-emerald-500',
-  unknown: 'bg-zinc-600',
-}
-
-function Dot({ status }: { status: PaneStatus }) {
-  return <span aria-hidden className={cn('inline-block size-2 shrink-0 rounded-full', DOT[status])} />
-}
+/** pane／space 狀態 → 狀態點語意色（§1.4） */
+const toneOf = (status: PaneStatus): Tone => agentStatusPill(status).tone
 
 export interface TaskLink {
   href: string
@@ -75,105 +73,95 @@ export interface HerdrMirrorProps {
 }
 
 export function HerdrMirror({ view, sel, zoomed, screens, historyId, onHistory, search, onSearch, onWorkspace, onTab, onPane, onJump, onZoom }: HerdrMirrorProps) {
-  const agents = agentPanes(view)
+  const agents = sortAgents(agentPanes(view))
   const links = useTaskLinks()
+  const tabs = sel.workspace?.tabs ?? []
+  const tabNo = sel.tab ? tabs.indexOf(sel.tab) + 1 : 0
   return (
-    <div className="flex min-h-0 flex-1">
-      <aside className="flex w-60 shrink-0 flex-col border-r bg-muted/30 text-sm">
-        <div className="px-3 pt-3 pb-1 text-xs font-medium text-muted-foreground">spaces</div>
-        <ul data-testid="herdr-spaces" className="flex flex-col gap-0.5 px-1.5">
-          {view.workspaces.map((w) => (
-            <li key={w.id}>
-              <button
-                type="button"
+    <div className="grid min-h-0 flex-1 gap-3 lg:grid-cols-[var(--sidebar-w)_minmax(0,1fr)]">
+      <Card variant="pane" className="max-lg:max-h-(--pane-max-h-sm)">
+        <SidebarList>
+          <SidebarSection title="spaces" count={<Tag count={view.workspaces.length} />} data-testid="herdr-spaces">
+            {view.workspaces.map((w) => (
+              <SidebarItem
+                key={w.id}
+                index={w.number}
+                title={w.label || w.id}
+                selected={w.id === sel.workspace?.id}
                 data-active={w.id === sel.workspace?.id || undefined}
                 onClick={() => onWorkspace(w.id)}
-                className={cn(
-                  'flex w-full items-center gap-2 rounded-md px-2 py-1 text-left',
-                  w.id === sel.workspace?.id ? 'bg-primary/10 font-medium' : 'hover:bg-muted',
-                )}
-              >
-                <span className="w-4 text-right text-xs text-muted-foreground tabular-nums">{w.number}</span>
-                <span className="min-w-0 flex-1 truncate">{w.label || w.id}</span>
-                {w.id === view.focused.workspaceId && <Eye aria-label="herdr 目前所在" className="size-3 text-muted-foreground" />}
-                <Dot status={w.status} />
-              </button>
-            </li>
-          ))}
-        </ul>
-        <div className="px-3 pt-4 pb-1 text-xs font-medium text-muted-foreground">agents</div>
-        <ul data-testid="herdr-agents" className="flex min-h-0 flex-col gap-0.5 overflow-y-auto px-1.5 pb-3">
-          {agents.length === 0 && <li className="px-2 text-xs text-muted-foreground">沒有 agent</li>}
-          {agents.map(({ workspace, pane }) => (
-            <li key={pane.paneId}>
-              <button
-                type="button"
-                onClick={() => onJump(pane.paneId)}
-                className={cn(
-                  'flex w-full items-center gap-2 rounded-md px-2 py-1 text-left',
-                  pane.paneId === sel.pane?.paneId ? 'bg-primary/10' : 'hover:bg-muted',
-                  pane.status === 'blocked' && 'bg-red-500/10 text-red-700 ring-1 ring-red-500/40 dark:text-red-300',
-                )}
-              >
-                <Dot status={pane.status} />
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate">{pane.name ?? pane.agent}</span>
-                  <span className="block truncate text-xs text-muted-foreground">
-                    {workspace.label} · {pane.status}
-                  </span>
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
-        <div className="mt-auto border-t px-3 py-2 text-[0.7rem] leading-relaxed text-muted-foreground">
-          唯讀鏡像：不會送任何按鍵或命令給 herdr。
-          <br />
-          ↑↓ space · n/p/1-9 tab · h/j/k/l pane · Tab 循環 · z 放大 · e 歷史 · / 搜尋
-        </div>
-      </aside>
+                trailing={
+                  <>
+                    {w.id === view.focused.workspaceId && <Eye aria-label="herdr 目前所在" />}
+                    {w.status !== 'idle' && <StatusDot tone={toneOf(w.status)} label={agentStatusPill(w.status).label} />}
+                  </>
+                }
+              />
+            ))}
+          </SidebarSection>
+          <SidebarSection title="agents" count={<Tag count={agents.length} />} data-testid="herdr-agents">
+            {agents.length === 0 && <p className="px-3 py-2 text-xs text-muted-foreground">沒有 agent</p>}
+            {agents.map(({ workspace, pane }) => {
+              const look = agentStatusPill(pane.status)
+              return (
+                <SidebarItem
+                  key={pane.paneId}
+                  data-pane={pane.paneId}
+                  title={pane.name ?? pane.agent}
+                  subtitle={`${workspace.label} · ${look.label}`}
+                  dot={look.tone}
+                  pulse={look.pulse}
+                  dotLabel={look.label}
+                  selected={pane.paneId === sel.pane?.paneId}
+                  onClick={() => onJump(pane.paneId)}
+                />
+              )
+            })}
+          </SidebarSection>
+        </SidebarList>
+      </Card>
 
-      <section className="relative flex min-w-0 flex-1 flex-col">
+      <Card variant="pane" className="relative max-lg:h-(--pane-max-h-sm)">
         {search && <SearchPanel view={view} onClose={search.onClose} onPick={search.onPick} onQuery={search.onQuery} />}
-        <div data-testid="herdr-tabs" className="flex items-center gap-1 border-b px-2 py-1.5">
-          {sel.workspace?.tabs.map((t, i) => (
-            <button
-              key={t.id}
-              type="button"
-              data-active={t.id === sel.tab?.id || undefined}
-              onClick={() => onTab(t.id)}
-              className={cn(
-                'inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-sm',
-                t.id === sel.tab?.id ? 'bg-muted font-medium' : 'text-muted-foreground hover:text-foreground',
+        <PaneHeader
+          data-testid="herdr-tabs"
+          className="pl-2"
+          title={
+            tabs.length > 0 && (
+              <SegmentedControl
+                size="sm"
+                aria-label="tab"
+                value={sel.tab?.id ?? ''}
+                onChange={onTab}
+                items={tabs.map((t, i) => ({
+                  value: t.id,
+                  label: (
+                    <span className="inline-flex items-center gap-1.5">
+                      <StatusDot tone={toneOf(t.status)} size="sm" />
+                      <span className="tabular-nums">{i + 1}</span>
+                      {t.label !== String(i + 1) && t.label}
+                    </span>
+                  ),
+                }))}
+              />
+            )
+          }
+          info={sel.workspace && tabNo > 0 && <span className="text-xs">{`${sel.workspace.label} · tab ${tabNo}`}</span>}
+          actions={
+            <>
+              <Button variant="ghost" size="sm" onClick={onSearch} data-testid="herdr-search-open" title="搜尋所有 pane（/）">
+                <Search aria-hidden />
+                搜尋
+              </Button>
+              {sel.pane && (
+                <Button variant="ghost" size="sm" onClick={() => onZoom(!zoomed)} aria-pressed={zoomed} title={zoomed ? '還原（z／Esc）' : '放大（z）'}>
+                  {zoomed ? <Minimize2 aria-hidden /> : <Maximize2 aria-hidden />}
+                  {zoomed ? '還原' : '放大'}
+                </Button>
               )}
-            >
-              <span className={cn('tabular-nums', t.label && t.label !== String(i + 1) && 'text-xs opacity-60')}>{i + 1}</span>
-              {t.label !== String(i + 1) && t.label}
-              <Dot status={t.status} />
-            </button>
-          ))}
-          <span className="flex-1" />
-          <button
-            type="button"
-            onClick={onSearch}
-            data-testid="herdr-search-open"
-            className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs text-muted-foreground hover:text-foreground"
-          >
-            <Search className="size-3.5" />
-            搜尋
-          </button>
-          {sel.pane && (
-            <button
-              type="button"
-              onClick={() => onZoom(!zoomed)}
-              aria-pressed={zoomed}
-              className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs text-muted-foreground hover:text-foreground"
-            >
-              {zoomed ? <Minimize2 className="size-3.5" /> : <Maximize2 className="size-3.5" />}
-              {zoomed ? '還原' : '放大'}
-            </button>
-          )}
-        </div>
+            </>
+          }
+        />
         {sel.tab ? (
           <TabLayout
             tab={sel.tab}
@@ -188,9 +176,9 @@ export function HerdrMirror({ view, sel, zoomed, screens, historyId, onHistory, 
             onPane={onPane}
           />
         ) : (
-          <div className="p-8 text-center text-sm text-muted-foreground">這個 space 沒有 tab</div>
+          <PaneBody className="bg-terminal-bg p-8 text-center text-sm text-terminal-dim">這個 space 沒有 tab</PaneBody>
         )}
-      </section>
+      </Card>
     </div>
   )
 }
@@ -235,7 +223,7 @@ function TabLayout({
   const shown = zoomed ? tab.panes.filter((p) => p.paneId === selectedId) : tab.panes
 
   return (
-    <div ref={ref} data-testid="herdr-layout" className="relative min-h-0 flex-1 bg-zinc-950" style={{ fontSize: font }}>
+    <div ref={ref} data-testid="herdr-layout" className="relative min-h-0 flex-1 bg-terminal-bg" style={{ fontSize: font }}>
       {shown.map((p) => {
         const style: CSSProperties = zoomed
           ? { inset: 0 }
@@ -261,7 +249,7 @@ function TabLayout({
           />
         )
       })}
-      {tab.panes.length === 0 && <div className="p-8 text-center text-sm text-zinc-500">這個 tab 沒有 pane</div>}
+      {tab.panes.length === 0 && <div className="p-8 text-center text-sm text-terminal-dim">這個 tab 沒有 pane</div>}
     </div>
   )
 }
@@ -294,44 +282,61 @@ function PaneBox({
       data-testid={`herdr-pane-${pane.paneId}`}
       data-selected={selected || undefined}
       onMouseDown={() => onSelect(pane.paneId)}
-      className={cn('absolute flex flex-col overflow-hidden border', selected ? 'z-10 border-emerald-500' : 'border-zinc-800')}
+      className={cn('@container absolute flex flex-col overflow-hidden border', selected ? 'z-10 border-brand-blue' : 'border-terminal-line')}
       style={style}
     >
-      {/* 標頭固定黑底：用 .dark 範圍讓透明底的狀態膠囊取深色 token */}
-      <div className="dark flex shrink-0 items-center gap-2 border-b border-zinc-800 bg-zinc-900 px-2 py-0.5 font-sans text-xs text-zinc-300">
-        <StatusPill status={pane.status} className="h-5 px-2 text-[0.7rem]" />
-        <span className="truncate font-medium">{pane.name ?? pane.agent ?? pane.paneId}</span>
-        {link && (
-          <Link
-            to={link.href}
-            data-testid="pane-task-link"
-            onMouseDown={(e) => e.stopPropagation()}
-            className="inline-flex min-w-0 shrink-0 items-center gap-1 rounded bg-zinc-800 px-1.5 text-sky-300 hover:bg-zinc-700"
-          >
-            <ListTree aria-hidden className="size-3" />
-            <span className="truncate">{link.label}</span>
-          </Link>
-        )}
-        {pane.title && <span className="min-w-0 truncate text-zinc-500">{pane.title}</span>}
-        <span className="flex-1" />
-        {pane.model && <span className="shrink-0 text-zinc-500">{pane.model}</span>}
-        {pane.ctxPct != null && <span className="shrink-0 text-zinc-500 tabular-nums">ctx {formatPct(pane.ctxPct)}</span>}
-        {pane.cost != null && <span className="shrink-0 text-zinc-500 tabular-nums">${pane.cost.toFixed(2)}</span>}
-        {pane.scrollback > 0 && (
-          <button
-            type="button"
-            data-testid="pane-history-toggle"
-            aria-pressed={history}
-            title={history ? '回到即時畫面（Esc）' : `看捲動歷史（${pane.scrollback} 行，e）`}
-            onMouseDown={(e) => e.stopPropagation()}
-            onClick={() => onHistory(pane.paneId)}
-            className={cn('inline-flex shrink-0 items-center gap-1 rounded px-1.5', history ? 'bg-sky-900 text-sky-200' : 'text-zinc-400 hover:bg-zinc-800')}
-          >
-            <History aria-hidden className="size-3" />
-            歷史
-          </button>
-        )}
-      </div>
+      <PaneHeader
+        variant="terminal"
+        title={
+          <span className="flex min-w-0 items-center gap-2">
+            <StatusPill status={pane.status} size="sm" terminal />
+            <span className="truncate">{pane.name ?? pane.agent ?? pane.paneId}</span>
+          </span>
+        }
+        info={
+          <span className="flex min-w-0 items-center gap-2">
+            {link && (
+              <Link
+                to={link.href}
+                data-testid="pane-task-link"
+                onMouseDown={(e) => e.stopPropagation()}
+                className="dark inline-flex min-w-0 shrink-0 items-center gap-1 rounded-sm bg-terminal-line px-1.5 text-status-info-fg outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
+              >
+                <ListTree aria-hidden className="size-3" />
+                <span className="truncate">{link.label}</span>
+              </Link>
+            )}
+            {pane.title && <span className="min-w-0 truncate font-medium">{pane.title}</span>}
+          </span>
+        }
+        actions={
+          <span className="flex items-center gap-2 font-medium text-terminal-dim tabular-nums">
+            {/* 窄 pane（< 32rem）收掉 model／ctx／花費，讓狀態膠囊與名稱不被擠扁；終端底列本身也有 ctx */}
+            <span data-testid="pane-meta" className="hidden items-center gap-2 @lg:flex">
+              {pane.model && <span>{pane.model}</span>}
+              {pane.ctxPct != null && <span>ctx {formatPct(pane.ctxPct)}</span>}
+              {pane.cost != null && <span>${pane.cost.toFixed(2)}</span>}
+            </span>
+            {pane.scrollback > 0 && (
+              <button
+                type="button"
+                data-testid="pane-history-toggle"
+                aria-pressed={history}
+                title={history ? '回到即時畫面（Esc）' : `看捲動歷史（${pane.scrollback} 行，e）`}
+                onMouseDown={(e) => e.stopPropagation()}
+                onClick={() => onHistory(pane.paneId)}
+                className={cn(
+                  'dark inline-flex cursor-pointer items-center gap-1 rounded-sm px-1.5 outline-none focus-visible:ring-3 focus-visible:ring-ring/50',
+                  history ? 'bg-status-info-soft text-status-info-fg' : 'text-terminal-dim hover:bg-terminal-line hover:text-terminal-fg',
+                )}
+              >
+                <History aria-hidden className="size-3" />
+                歷史
+              </button>
+            )}
+          </span>
+        }
+      />
       <Screen screen={screen} history={history} highlight={highlight} focusLine={focusLine} />
     </div>
   )
@@ -365,7 +370,7 @@ function Screen({
     stick.current = false
     ref.current?.children[focusLine]?.scrollIntoView?.({ block: 'center' })
   }, [focusLine, hasLines])
-  if (!screen) return <div className="p-2 font-sans text-xs text-zinc-500">讀取畫面中…</div>
+  if (!screen) return <div className="p-2 font-sans text-xs text-terminal-dim">讀取畫面中…</div>
   return (
     <div className="relative min-h-0 flex-1">
       <pre
@@ -376,13 +381,13 @@ function Screen({
           const el = e.currentTarget
           stick.current = el.scrollHeight - el.scrollTop - el.clientHeight < 4
         }}
-        className="h-full overflow-auto px-1 font-mono leading-[1.2] whitespace-pre text-zinc-200 select-text">
+        className="h-full overflow-auto px-1 font-mono leading-terminal whitespace-pre text-terminal-fg select-text">
         {screen.lines.map((l, i) => (
           <AnsiLine key={i} segs={l} highlight={highlight} focused={i === focusLine} />
         ))}
       </pre>
       {screen.error && (
-        <div className="absolute right-1 bottom-1 rounded bg-red-950/80 px-1.5 py-0.5 font-sans text-[0.7rem] text-red-300">畫面更新失敗</div>
+        <div className="dark absolute right-1 bottom-1 rounded-sm bg-status-danger-soft px-1.5 py-0.5 font-sans text-2xs font-semibold text-status-danger-fg">畫面更新失敗</div>
       )}
     </div>
   )

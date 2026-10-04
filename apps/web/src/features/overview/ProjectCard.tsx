@@ -1,30 +1,22 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router'
-import { AlertTriangle } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import type { ProjectErrorKind, ProjectView, TaskDetail, TaskSummary } from '@dash/shared'
-import { StatusPill } from '@/components/app/StatusPill'
-import { Badge } from '@/components/ui/badge'
+import { Banner } from '@/components/app/Banner'
+import { ProgressBar } from '@/components/app/ProgressBar'
+import { StatusPill, taskStatusPill } from '@/components/app/StatusPill'
+import { Tag } from '@/components/app/Tag'
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import type { ScreenState } from '@/features/herdr/useHerdr'
 import { formatMinutes, formatTs } from '@/lib/format'
 import { cn } from '@/lib/utils'
-import {
-  cardAlert,
-  groupTasks,
-  memberPills,
-  paneLabel,
-  projectPanes,
-  skippedLines,
-  staleMinutes,
-  taskAlert,
-  waveInfo,
-  type MemberPill,
-} from './model'
+import { projectSeverity } from './classify'
+import { groupTasks, memberPills, paneLabel, projectPanes, skippedLines, staleMinutes, waveInfo, type MemberPill } from './model'
 import { PaneThumbs } from './PaneThumbs'
 import { PaneHover } from './PaneHover'
 
-const ERROR_LABEL: Record<ProjectErrorKind, string> = {
+export const ERROR_LABEL: Record<ProjectErrorKind, string> = {
   missing: '路徑不存在',
   'no-dkbo': '沒有 .dkbo',
   exit: 'dk-status 非零結束',
@@ -33,18 +25,12 @@ const ERROR_LABEL: Record<ProjectErrorKind, string> = {
   schema: 'schema 版本不符',
 }
 
-const TASK_STATUS_LABEL: Record<TaskSummary['status'], string> = {
-  running: '進行中',
-  planning: '規劃中',
-  done: '已完成',
-  abandoned: '已放棄',
-  unknown: '狀態不明',
-}
-
 export const taskHref = (project: string, dir: string) =>
   `/p/${encodeURIComponent(project)}/t/${encodeURIComponent(dir)}`
 
 const taskName = (t: TaskSummary) => t.display ?? t.short
+
+const linkClass = 'min-w-0 truncate rounded-md outline-none hover:text-primary hover:underline underline-offset-4 focus-visible:ring-3 focus-visible:ring-ring/50'
 
 function MemberCapsule({ pill }: { pill: MemberPill }) {
   const stateText = pill.stateStatus ?? '—'
@@ -62,72 +48,48 @@ function MemberCapsule({ pill }: { pill: MemberPill }) {
     >
       <StatusPill
         status={pill.noPane ? 'unknown' : pill.pane?.status}
+        tone={pill.blocked ? 'danger' : undefined}
         label={pill.member}
         note={pill.noPane ? `${stateText} · 無 pane` : undefined}
-        className={cn(pill.blocked && 'ring-2 ring-red-500/60')}
+        interactive
       />
     </PaneHover>
   )
 }
 
-function Count({ label, n }: { label: string; n: number }) {
-  return (
-    <span
-      className={cn(
-        'rounded px-1.5 py-0.5 font-mono text-[0.7rem]',
-        n > 0 ? 'bg-orange-500/15 font-semibold text-orange-700 dark:text-orange-300' : 'text-muted-foreground',
-      )}
-    >
-      {label} {n}
-    </span>
-  )
-}
-
-function ActiveTaskRow({ project, task, detail, now }: { project: ProjectView; task: TaskSummary; detail?: TaskDetail; now: number }) {
+/** §6.24 TaskRow：muted 內層列；有 blocked 成員底 danger-soft、有計數底 warn-soft，列本身不加 ring */
+function TaskRow({ project, task, detail, now }: { project: ProjectView; task: TaskSummary; detail?: TaskDetail; now: number }) {
   const pills = memberPills(task, detail, projectPanes(project))
-  const alert = taskAlert(task, pills)
   const w = waveInfo(task, detail, now)
   const skipped = skippedLines(detail)
+  const severity = pills.some((p) => p.blocked) ? 'danger' : task.counts.escalations > 0 || task.counts.undelivered > 0 ? 'warn' : null
   return (
     <li
       data-testid={`task-${task.dir}`}
-      className={cn('space-y-2 rounded-xl bg-muted p-3 shadow-soft', alert && 'bg-orange-500/10 ring-2 ring-orange-500/70')}
+      className={cn(
+        'flex flex-col gap-2 rounded-lg p-3',
+        severity === 'danger' ? 'bg-status-danger-soft' : severity === 'warn' ? 'bg-status-warn-soft' : 'bg-muted',
+      )}
     >
       <div className="flex flex-wrap items-center gap-2">
-        <Link to={taskHref(project.name, task.dir)} className="min-w-0 truncate font-medium hover:underline">
+        <Link to={taskHref(project.name, task.dir)} className={cn(linkClass, 'text-sm font-semibold')}>
           {taskName(task)}
         </Link>
-        <Badge variant={task.status === 'running' ? 'default' : 'secondary'}>{TASK_STATUS_LABEL[task.status]}</Badge>
-        {skipped > 0 && (
-          <Badge variant="outline" className="text-amber-700 dark:text-amber-300">
-            {skipped} 行無法解析
-          </Badge>
-        )}
-        <span className="ml-auto flex gap-1">
-          <Count label="ESCALATE" n={task.counts.escalations} />
-          <Count label="UNDELIVERED" n={task.counts.undelivered} />
-        </span>
-      </div>
-      <div className="flex items-center gap-3 text-xs">
-        <div
-          role="progressbar"
-          aria-label="波進度"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={w.pct}
-          className="h-1.5 flex-1 overflow-hidden rounded-full bg-card"
-        >
-          <div className="h-full rounded-full bg-primary transition-[width]" style={{ width: `${w.pct}%` }} />
-        </div>
-        <span className="font-mono tabular-nums">
-          {w.closed}/{w.planned} 波
-        </span>
+        <StatusPill size="sm" {...taskStatusPill(task.status)} />
+        <Tag variant="warn" count={task.counts.escalations}>
+          ESCALATE
+        </Tag>
+        <Tag variant="warn" count={task.counts.undelivered}>
+          UNDELIVERED
+        </Tag>
+        {skipped > 0 && <Tag variant="warn">{skipped} 行無法解析</Tag>}
         {w.current != null && (
-          <span className="text-muted-foreground">
+          <span className="ml-auto text-xs font-medium text-muted-foreground">
             {w.currentMin != null ? `波 ${w.current} 進行中 · 已 ${formatMinutes(w.currentMin)}` : `波 ${w.current} 進行中`}
           </span>
         )}
       </div>
+      <ProgressBar value={w.closed} max={w.planned} label={`${w.closed}/${w.planned} 波`} aria-label="波進度" />
       {pills.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {pills.map((p) => (
@@ -139,112 +101,112 @@ function ActiveTaskRow({ project, task, detail, now }: { project: ProjectView; t
   )
 }
 
-function SimpleTaskRow({ project, task, tag }: { project: string; task: TaskSummary; tag?: string }) {
+/** 已結案／狀態不明任務的一列 */
+function SimpleTaskRow({ project, task, unknown }: { project: string; task: TaskSummary; unknown?: boolean }) {
+  const look = taskStatusPill(task.status)
   return (
-    <li data-testid={`task-${task.dir}`} className="flex items-center gap-2 rounded-xl bg-muted px-3 py-1.5 text-sm">
-      <Link to={taskHref(project, task.dir)} className="min-w-0 truncate hover:underline">
+    <li data-testid={`task-${task.dir}`} className="flex items-center gap-2 rounded-lg bg-muted px-3 py-2 text-sm">
+      <Link to={taskHref(project, task.dir)} className={linkClass}>
         {taskName(task)}
       </Link>
-      <Badge variant="outline" className="text-muted-foreground">
-        {tag ?? TASK_STATUS_LABEL[task.status]}
-      </Badge>
-      <span className="ml-auto shrink-0 font-mono text-xs text-muted-foreground">
-        {formatTs(task.closed_at ?? task.updated_at)}
-      </span>
+      <StatusPill size="sm" {...look} label={unknown ? '狀態不明' : look.label} />
+      <span className="ml-auto shrink-0 font-mono text-xs text-muted-foreground">{formatTs(task.closed_at ?? task.updated_at)}</span>
     </li>
   )
 }
 
-function OtherSessions({ project }: { project: ProjectView }) {
+export function OtherSessions({ project }: { project: ProjectView }) {
   if (project.otherPanes.length === 0) return null
   return (
-    <div data-testid="other-sessions" className="space-y-1.5">
-      <div className="text-xs font-medium text-muted-foreground">其他 session</div>
-      <div className="flex flex-wrap gap-1.5">
-        {project.otherPanes.map((p) => (
-          <PaneHover key={p.paneId} title={paneLabel(p)} pane={p} paneId={p.paneId} extra={<p className="truncate text-muted-foreground">{p.cwd}</p>}>
-            <StatusPill status={p.status} label={paneLabel(p)} />
-          </PaneHover>
-        ))}
-      </div>
+    <div data-testid="other-sessions" className="flex min-w-0 flex-wrap items-center gap-2">
+      <span className="text-xs font-semibold text-muted-foreground">其他 session</span>
+      {project.otherPanes.map((p) => (
+        <PaneHover key={p.paneId} title={paneLabel(p)} pane={p} paneId={p.paneId} extra={<p className="truncate text-muted-foreground">{p.cwd}</p>}>
+          <StatusPill status={p.status} label={paneLabel(p)} interactive />
+        </PaneHover>
+      ))}
     </div>
   )
 }
 
-export function ProjectCard({ project, now, thumbs }: { project: ProjectView; now: number; thumbs?: Record<string, ScreenState> }) {
+/** 已結案清單：右側「已結案 N 件」切換，展開在下方；`lead` 放同一列左側（其他 session） */
+export function ClosedTasks({ project, tasks, lead }: { project: string; tasks: TaskSummary[]; lead?: ReactNode }) {
   const [open, setOpen] = useState(false)
+  if (tasks.length === 0) return lead ? <>{lead}</> : null
+  return (
+    <Collapsible open={open} onOpenChange={setOpen} className="flex flex-col gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        {lead ?? <span />}
+        <CollapsibleTrigger className="ml-auto inline-flex cursor-pointer items-center gap-1 rounded-full text-sm font-semibold text-muted-foreground outline-none transition-colors duration-150 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 motion-reduce:transition-none">
+          已結案 {tasks.length} 件
+          <ChevronRight aria-hidden className={cn('size-4 transition-transform duration-150 motion-reduce:transition-none', open && 'rotate-90')} />
+        </CollapsibleTrigger>
+      </div>
+      <CollapsibleContent>
+        <TaskList project={project} tasks={tasks} />
+      </CollapsibleContent>
+    </Collapsible>
+  )
+}
+
+/** 已結案或狀態不明任務的清單 */
+export function TaskList({ project, tasks, unknown }: { project: string; tasks: TaskSummary[]; unknown?: boolean }) {
+  if (tasks.length === 0) return null
+  return (
+    <ul className="flex flex-col gap-1.5">
+      {tasks.map((t) => (
+        <SimpleTaskRow key={t.dir} project={project} task={t} unknown={unknown} />
+      ))}
+    </ul>
+  )
+}
+
+/** §6.28 活躍專案卡 */
+export function ProjectCard({ project, now, thumbs }: { project: ProjectView; now: number; thumbs?: Record<string, ScreenState> }) {
   const groups = project.list ? groupTasks(project.list.tasks) : null
   const stale = staleMinutes(project, now)
-  const alert = cardAlert(project)
+  const severity = projectSeverity(project)
+  const err = project.error
 
   return (
-    <Card
-      data-testid={`project-${project.name}`}
-      data-alert={String(alert)}
-      className={cn(alert && 'ring-2 ring-orange-500 dark:ring-orange-400', project.error && !alert && 'ring-destructive/40')}
-    >
+    <Card data-testid={`project-${project.name}`} data-alert={severity ?? undefined}>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle>
           <span className="truncate">{project.name}</span>
-          {project.dkboVersion && <span className="font-mono text-xs font-normal text-muted-foreground">v{project.dkboVersion}</span>}
+          {project.dkboVersion && <Tag mono>v{project.dkboVersion}</Tag>}
         </CardTitle>
-        <CardAction className="flex flex-wrap justify-end gap-1">
-          {project.mode === 'compat' && <Badge variant="secondary">相容模式</Badge>}
-          {project.error && <Badge variant="destructive">錯誤</Badge>}
-          {stale != null && (
-            <Badge variant="outline" className="text-amber-700 dark:text-amber-300">
-              過時 · {stale} 分鐘前
-            </Badge>
-          )}
+        <CardAction className="flex flex-wrap justify-end gap-1.5">
+          {project.mode === 'compat' && <Tag>相容模式</Tag>}
+          {stale != null && <Tag variant="warn">過時 · {stale} 分鐘前</Tag>}
         </CardAction>
       </CardHeader>
-      <CardContent className="space-y-3">
-        {project.error && (
-          <div role="alert" className="flex gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-2 text-sm text-destructive">
-            <AlertTriangle className="mt-0.5 size-4 shrink-0" />
-            <div className="min-w-0">
-              <div className="font-medium">{ERROR_LABEL[project.error.kind]}</div>
-              {project.error.message !== project.error.kind && <div className="font-mono text-xs break-all">{project.error.message}</div>}
-            </div>
-          </div>
+      <CardContent className="flex flex-col gap-3">
+        {err && (
+          <Banner
+            tone="danger"
+            size="sm"
+            title={
+              <>
+                {ERROR_LABEL[err.kind]}
+                {err.message !== err.kind && <span className="font-mono text-xs font-normal"> · {err.message}</span>}
+              </>
+            }
+          />
         )}
-        {!groups && !project.error && <p className="text-sm text-muted-foreground">尚無資料</p>}
-        {groups && (
-          <>
-            {groups.active.length === 0 ? (
-              <p className="text-sm text-muted-foreground">沒有進行中的任務</p>
-            ) : (
-              <ul className="space-y-2">
-                {groups.active.map((t) => (
-                  <ActiveTaskRow key={t.dir} project={project} task={t} detail={project.active[t.dir]} now={now} />
-                ))}
-              </ul>
-            )}
-            {groups.unknown.length > 0 && (
-              <ul className="space-y-1.5">
-                {groups.unknown.map((t) => (
-                  <SimpleTaskRow key={t.dir} project={project.name} task={t} tag="狀態不明" />
-                ))}
-              </ul>
-            )}
-            {groups.closed.length > 0 && (
-              <Collapsible open={open} onOpenChange={setOpen}>
-                <CollapsibleTrigger className="text-sm text-muted-foreground hover:text-foreground">
-                  已結案 {groups.closed.length} 件 {open ? '▾' : '▸'}
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <ul className="mt-1.5 space-y-1.5">
-                    {groups.closed.map((t) => (
-                      <SimpleTaskRow key={t.dir} project={project.name} task={t} />
-                    ))}
-                  </ul>
-                </CollapsibleContent>
-              </Collapsible>
-            )}
-          </>
-        )}
-        <OtherSessions project={project} />
+        {!groups && !err && <p className="text-sm text-muted-foreground">尚無資料</p>}
+        {groups &&
+          (groups.active.length === 0 ? (
+            <p className="text-sm text-muted-foreground">沒有進行中的任務</p>
+          ) : (
+            <ul className="flex flex-col gap-2">
+              {groups.active.map((t) => (
+                <TaskRow key={t.dir} project={project} task={t} detail={project.active[t.dir]} now={now} />
+              ))}
+            </ul>
+          ))}
+        {groups && <TaskList project={project.name} tasks={groups.unknown} unknown />}
         {thumbs && <PaneThumbs panes={projectPanes(project)} screens={thumbs} />}
+        <ClosedTasks project={project.name} tasks={groups?.closed ?? []} lead={<OtherSessions project={project} />} />
       </CardContent>
     </Card>
   )

@@ -29,7 +29,7 @@ export function PaneHover({ title, pane, paneId, extra, children }: PaneHoverPro
   return (
     <HoverCard openDelay={150} closeDelay={100}>
       <HoverCardTrigger asChild>
-        <button type="button" className="rounded-full focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
+        <button type="button" className="cursor-pointer rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
           {children}
         </button>
       </HoverCardTrigger>
@@ -37,7 +37,7 @@ export function PaneHover({ title, pane, paneId, extra, children }: PaneHoverPro
         <div className="text-sm font-semibold">{title}</div>
         {extra}
         {pane ? (
-          <dl className="grid grid-cols-[4.5rem_1fr] gap-x-2 gap-y-1">
+          <dl className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-1">
             <Row k="model" v={pane.model ?? '—'} />
             <Row k="effort" v={pane.effort ?? '—'} />
             <Row k="cost" v={formatCost(pane.cost)} />

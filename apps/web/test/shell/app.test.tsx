@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { AppProviders, AppRoutes } from '@/App'
 import { resetDashStore } from '@/store/store'
@@ -26,7 +26,12 @@ beforeEach(() => {
     'fetch',
     vi.fn(async (url: string) => {
       if (url === '/api/overview')
-        return Response.json(overview({ projects: [project({ name: 'teamflow' }), project({ name: 'collect', mode: 'compat' })] }))
+        return Response.json(
+          overview({
+            // teamflow 無 running／blocked／錯誤 → Q10 閒置；collect 有錯誤 → 活躍卡
+            projects: [project({ name: 'teamflow' }), project({ name: 'collect', mode: 'compat', error: { kind: 'exit', message: '讀取失敗' } })],
+          }),
+        )
       if (url.startsWith('/api/projects/'))
         return Response.json({
           project: 'teamflow',
@@ -51,23 +56,29 @@ function renderAt(path: string) {
 }
 
 describe('App 殼層', () => {
-  it('/ 顯示頂部列與每個專案一張卡，並開 SSE', async () => {
+  // 頂部列用主要導覽定位：PageHeader 也是 <header>（在 <main> 內，瀏覽器不算 banner，但 jsdom 的角色計算會算）
+  const topNav = () => screen.getByRole('navigation', { name: '主要導覽' })
+
+  it('/ 顯示頂部列、活躍專案卡與閒置專案列，並開 SSE', async () => {
     renderAt('/')
-    expect(await screen.findByTestId('project-teamflow')).toBeInTheDocument()
-    expect(screen.getByTestId('project-collect')).toBeInTheDocument()
-    expect(screen.getByRole('banner')).toBeInTheDocument()
+    expect(await screen.findByTestId('project-collect')).toBeInTheDocument()
+    expect(screen.queryByTestId('project-teamflow')).toBeNull()
+    expect(screen.getAllByTestId('idle-project-row').map((r) => r.dataset.project)).toEqual(['teamflow'])
+    expect(topNav()).toBeInTheDocument()
     expect(SilentES.instances.map((e) => e.url)).toEqual(['/api/stream'])
   })
 
   it('/p/:project/t/:dir 渲染任務詳情頁（殼層頂部列仍在）', async () => {
     renderAt('/p/teamflow/t/2026-09-23-ops')
     expect(await screen.findByText(/2026-09-23-ops/, {}, { timeout: 3000 })).toBeInTheDocument()
-    expect(within(screen.getByRole('banner')).getByRole('link', { name: '總覽' })).toBeInTheDocument()
+    expect(within(topNav()).getByRole('link', { name: '總覽' })).toBeInTheDocument()
   })
 
   it('/history 渲染歷史頁', async () => {
     renderAt('/history')
-    expect(await screen.findByRole('heading', { name: '歷史與分析' }, { timeout: 3000 })).toBeInTheDocument()
+    // 載入中與載入後各有一個 PageHeader，元素會被換掉：等到載入後的那個再斷言
+    await waitFor(() => expect(screen.queryByTestId('history-loading')).toBeNull(), { timeout: 3000 })
+    expect(screen.getByRole('heading', { name: '歷史與分析' })).toBeInTheDocument()
   })
 
   it('/trends 渲染趨勢頁', async () => {

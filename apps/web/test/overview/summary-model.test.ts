@@ -19,7 +19,7 @@ describe('runningSummary', () => {
       project({ name: 'c', list: null }),
     ])
     expect(r.count).toBe(3)
-    expect(r.top).toEqual(['two 波 —/3', 'four 波 1/2'])
+    expect(r.top).toEqual(['two · 波 —/3', 'four · 波 1/2'])
   })
 
   it('沒有進行中任務時 count 0、副行空', () => {

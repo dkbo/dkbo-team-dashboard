@@ -1,16 +1,16 @@
 import { useState } from 'react'
 import { CheckSquare, Square } from 'lucide-react'
 import type { TaskDetail } from '@dash/shared'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { EmptyState } from '@/components/app/EmptyState'
+import { SegmentedControl } from '@/components/app/SegmentedControl'
+import { Tag, activityTagVariant } from '@/components/app/Tag'
 import { Card, CardContent } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { fmtTs } from './format'
 import { ALL_TYPES, filterMessages, messageTypes } from './model'
 
 function Empty({ children }: { children: string }) {
-  return <p className="py-6 text-center text-sm text-muted-foreground">{children}</p>
+  return <EmptyState title={children} />
 }
 
 function Globs({ items }: { items: string[] }) {
@@ -18,7 +18,7 @@ function Globs({ items }: { items: string[] }) {
   return (
     <div className="flex flex-wrap gap-1">
       {items.map((g) => (
-        <code key={g} className="rounded bg-muted px-1.5 py-0.5 text-xs">
+        <code key={g} className="rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs">
           {g}
         </code>
       ))}
@@ -34,7 +34,7 @@ function AcceptancePanel({ task }: { task: TaskDetail }) {
       {items.map((a, i) => (
         <li key={i} className="flex gap-2">
           {a.checked ? (
-            <CheckSquare className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" aria-label="已勾選" />
+            <CheckSquare className="mt-0.5 size-4 shrink-0 text-status-ok-fg" aria-label="已勾選" />
           ) : (
             <Square className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-label="未勾選" />
           )}
@@ -51,7 +51,7 @@ function OwnersPanel({ task }: { task: TaskDetail }) {
   return (
     <Table>
       <TableHeader>
-        <TableRow>
+        <TableRow className="hover:bg-transparent">
           <TableHead>成員</TableHead>
           <TableHead>可改</TableHead>
           <TableHead>只讀</TableHead>
@@ -61,14 +61,14 @@ function OwnersPanel({ task }: { task: TaskDetail }) {
       <TableBody>
         {owners.map((o) => (
           <TableRow key={o.member} className="align-top">
-            <TableCell className="font-medium">{o.member}</TableCell>
-            <TableCell className="whitespace-normal">
+            <TableCell className="py-3 font-semibold">{o.member}</TableCell>
+            <TableCell className="py-3 whitespace-normal">
               <Globs items={o.writable} />
             </TableCell>
-            <TableCell className="whitespace-normal">
+            <TableCell className="py-3 whitespace-normal">
               <Globs items={o.readonly} />
             </TableCell>
-            <TableCell className="whitespace-normal">
+            <TableCell className="py-3 whitespace-normal">
               <Globs items={o.exclusive} />
             </TableCell>
           </TableRow>
@@ -89,9 +89,9 @@ function RulingsPanel({ task }: { task: TaskDetail }) {
           <span className="shrink-0 font-mono text-xs text-muted-foreground">{fmtTs(r.ts)}</span>
           <div className="min-w-0">
             {r.autonomous && (
-              <Badge variant="outline" className="mr-2 border-violet-500/50 text-violet-700 dark:text-violet-400">
+              <Tag variant="brand" className="mr-2 align-middle">
                 自主
-              </Badge>
+              </Tag>
             )}
             <span className="whitespace-pre-wrap break-words">{r.text.replace(AUTO_PREFIX, '')}</span>
           </div>
@@ -108,32 +108,20 @@ function MessagesPanel({ task }: { task: TaskDetail }) {
   if (task.messages.length === 0) return <Empty>沒有訊息</Empty>
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex flex-wrap gap-1" role="group" aria-label="依類型篩選">
-        <Button
-          size="xs"
-          variant={type === ALL_TYPES ? 'default' : 'outline'}
-          aria-pressed={type === ALL_TYPES}
-          onClick={() => setType(ALL_TYPES)}
-        >
-          全部 {task.messages.length}
-        </Button>
-        {types.map((t) => (
-          <Button
-            key={t.type}
-            size="xs"
-            variant={type === t.type ? 'default' : 'outline'}
-            aria-pressed={type === t.type}
-            onClick={() => setType(t.type)}
-          >
-            {t.type} {t.count}
-          </Button>
-        ))}
-      </div>
-      <ul data-testid="message-list" className="flex flex-col divide-y">
+      <SegmentedControl
+        kind="group"
+        size="sm"
+        aria-label="依類型篩選"
+        className="self-start"
+        value={type}
+        onChange={setType}
+        items={[{ value: ALL_TYPES, label: '全部', count: task.messages.length }, ...types.map((t) => ({ value: t.type, label: t.type, count: t.count }))]}
+      />
+      <ul data-testid="message-list" className="flex flex-col">
         {shown.map((m, i) => (
-          <li key={i} className="flex flex-wrap gap-x-3 gap-y-1 py-2">
+          <li key={i} className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b py-2 last:border-0">
             <span className="font-mono text-xs text-muted-foreground">{fmtTs(m.ts)}</span>
-            <Badge variant="secondary">{m.type}</Badge>
+            <Tag variant={activityTagVariant(m.type)}>{m.type}</Tag>
             <span className="font-mono text-xs">
               {m.from}
               {m.to && <> → {m.to}</>}
@@ -160,35 +148,35 @@ function EventsPanel({ task }: { task: TaskDetail }) {
   )
 }
 
+type TabKey = 'acceptance' | 'owners' | 'rulings' | 'messages' | 'events'
+
+const PANELS: Record<TabKey, (p: { task: TaskDetail }) => React.ReactNode> = {
+  acceptance: AcceptancePanel,
+  owners: OwnersPanel,
+  rulings: RulingsPanel,
+  messages: MessagesPanel,
+  events: EventsPanel,
+}
+
+/** 驗收標準／檔案所有權／裁定／訊息／事件原文：SegmentedControl（tablist）切換，內容放一張卡 */
 export function TaskTabs({ task }: { task: TaskDetail }) {
+  const [tab, setTab] = useState<TabKey>('acceptance')
+  const items: { value: TabKey; label: string; count?: number }[] = [
+    { value: 'acceptance', label: '驗收標準', count: task.brief.acceptance.length },
+    { value: 'owners', label: '檔案所有權' },
+    { value: 'rulings', label: '裁定', count: task.rulings.length },
+    { value: 'messages', label: '訊息', count: task.messages.length },
+    { value: 'events', label: '事件原文', count: task.events.length },
+  ]
+  const Panel = PANELS[tab]
   return (
-    <Tabs defaultValue="acceptance">
-      <TabsList className="flex-wrap">
-        <TabsTrigger value="acceptance">驗收標準 {task.brief.acceptance.length}</TabsTrigger>
-        <TabsTrigger value="owners">檔案所有權</TabsTrigger>
-        <TabsTrigger value="rulings">裁定 {task.rulings.length}</TabsTrigger>
-        <TabsTrigger value="messages">訊息 {task.messages.length}</TabsTrigger>
-        <TabsTrigger value="events">事件原文 {task.events.length}</TabsTrigger>
-      </TabsList>
+    <section aria-label="任務內容" className="flex flex-col gap-3">
+      <SegmentedControl<TabKey> aria-label="任務內容" items={items} value={tab} onChange={setTab} className="self-start" />
       <Card>
-        <CardContent>
-          <TabsContent value="acceptance">
-            <AcceptancePanel task={task} />
-          </TabsContent>
-          <TabsContent value="owners">
-            <OwnersPanel task={task} />
-          </TabsContent>
-          <TabsContent value="rulings">
-            <RulingsPanel task={task} />
-          </TabsContent>
-          <TabsContent value="messages">
-            <MessagesPanel task={task} />
-          </TabsContent>
-          <TabsContent value="events">
-            <EventsPanel task={task} />
-          </TabsContent>
+        <CardContent role="tabpanel" aria-label={items.find((i) => i.value === tab)?.label}>
+          <Panel key={tab} task={task} />
         </CardContent>
       </Card>
-    </Tabs>
+    </section>
   )
 }

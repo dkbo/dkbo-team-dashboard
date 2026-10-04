@@ -4,11 +4,12 @@ import { StatusPill } from '@/components/app/StatusPill'
 import { AnsiLine } from '@/features/herdr/AnsiText'
 import type { ScreenState } from '@/features/herdr/useHerdr'
 import type { AnsiSegment } from '@/lib/ansi'
+import { formatPct } from '@/lib/format'
 import { herdrHref } from '@/lib/herdr'
-import { cn } from '@/lib/utils'
 import { paneLabel } from './model'
 
-export const THUMB_LINES = 8
+/** thumb-lines（index.css --thumb-lines） */
+export const THUMB_LINES = 10
 
 /** 去掉尾端空行後的最後 n 行（Claude Code 的畫面底部常是空白與輸入框） */
 export function tailLines(lines: AnsiSegment[][], n: number): AnsiSegment[][] {
@@ -17,31 +18,33 @@ export function tailLines(lines: AnsiSegment[][], n: number): AnsiSegment[][] {
   return lines.slice(Math.max(0, end - n), end)
 }
 
-/** 專案卡上的 agent 畫面縮圖；點了到 herdr 頁的那個 pane */
+/** Q9：只有工作中／卡住的 agent pane 畫縮圖；閒置 pane 只留 StatusPill */
+export const thumbPanes = (panes: PaneLive[]): PaneLive[] => panes.filter((p) => p.agent && (p.status === 'working' || p.status === 'blocked'))
+
+/** §6.29 專案卡上的 agent 畫面縮圖（終端固定黑底）；點了到 herdr 頁的那個 pane */
 export function PaneThumbs({ panes, screens }: { panes: PaneLive[]; screens: Record<string, ScreenState> }) {
-  const agents = panes.filter((p) => p.agent)
+  const agents = thumbPanes(panes)
   if (agents.length === 0) return null
   return (
-    <div data-testid="pane-thumbs" className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+    <div data-testid="pane-thumbs" className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       {agents.map((p) => {
         const s = screens[p.paneId]
+        const info = [p.model, p.ctxPct != null ? `ctx ${formatPct(p.ctxPct)}` : null].filter(Boolean).join(' · ')
         return (
           <Link
             key={p.paneId}
             to={herdrHref(p)}
             data-testid={`thumb-${p.paneId}`}
-            className={cn(
-              'group flex flex-col overflow-hidden rounded-md border bg-zinc-950 hover:ring-2 hover:ring-ring',
-              p.status === 'blocked' && 'border-red-500 ring-1 ring-red-500/50',
-            )}
+            data-status={p.status}
+            className="flex min-w-0 flex-col overflow-hidden rounded-md bg-terminal-bg outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
           >
-            {/* 標頭固定黑底：用 .dark 範圍讓透明底的狀態膠囊取深色 token */}
-            <div className="dark flex items-center gap-1.5 border-b border-zinc-800 bg-zinc-900 px-1.5 py-0.5 text-xs text-zinc-300">
-              <StatusPill status={p.status} className="h-4 px-1.5 text-[0.65rem]" />
-              <span className="truncate">{p.member ?? paneLabel(p)}</span>
+            <div className="flex h-6 shrink-0 items-center gap-1.5 bg-terminal-chrome px-2 text-2xs font-semibold text-terminal-fg">
+              <StatusPill status={p.status} size="sm" terminal />
+              <span className="min-w-0 truncate">{p.member ?? paneLabel(p)}</span>
+              {info && <span className="ml-auto shrink-0 font-normal text-terminal-dim">{info}</span>}
             </div>
-            <pre className="h-[calc(8*1.2em+0.5rem)] overflow-hidden px-1 py-1 font-mono text-[9px] leading-[1.2] whitespace-pre text-zinc-200">
-              {s ? tailLines(s.lines, THUMB_LINES).map((l, i) => <AnsiLine key={i} segs={l} />) : <span className="text-zinc-500">讀取中…</span>}
+            <pre className="h-(--thumb-h) overflow-hidden px-2 py-1 font-mono text-2xs leading-terminal whitespace-pre text-terminal-fg">
+              {s ? tailLines(s.lines, THUMB_LINES).map((l, i) => <AnsiLine key={i} segs={l} />) : <span className="text-terminal-dim">讀取中…</span>}
             </pre>
           </Link>
         )

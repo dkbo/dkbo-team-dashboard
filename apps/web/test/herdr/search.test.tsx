@@ -82,7 +82,7 @@ describe('herdr 頁搜尋', () => {
 
     // Enter 跳第一筆
     fireEvent.keyDown(box, { key: 'Enter' })
-    await waitFor(() => expect(document.querySelector('[data-selected]')).toHaveAttribute('data-testid', 'herdr-pane-wB:p4'))
+    await waitFor(() => expect(document.querySelector('[data-testid^="herdr-pane-"][data-selected]')).toHaveAttribute('data-testid', 'herdr-pane-wB:p4'))
     expect(screen.getByTestId('herdr-pane-wB:p4').querySelector('[data-focused]')).toHaveTextContent(/^boom here$/)
 
     // 歷史裡的命中：跳到別的 space 並開歷史

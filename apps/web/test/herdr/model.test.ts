@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { agentPanes, cycle, cyclePane, findPane, neighborPane, resolveSelection } from '@/features/herdr/model'
+import { agentPanes, cycle, sortAgents, cyclePane, findPane, neighborPane, resolveSelection } from '@/features/herdr/model'
 import { view } from './fixture'
 
 const split = view.workspaces[1].tabs[1]
@@ -45,5 +45,11 @@ describe('pane 導覽', () => {
   it('agents 只列有 agent 的 pane；findPane 找回所在位置', () => {
     expect(agentPanes(view).map((a) => a.pane.paneId)).toEqual(['wA:p1', 'wB:p2', 'wB:p3', 'wB:p4'])
     expect(findPane(view, 'wB:p4')?.tab.id).toBe('wB:t2')
+  })
+})
+
+describe('sortAgents', () => {
+  it('agents 依 blocked → working → idle → 其他排序，同狀態依名稱', () => {
+    expect(sortAgents(agentPanes(view)).map((a) => a.pane.paneId)).toEqual(['wB:p3', 'wB:p2', 'wA:p1', 'wB:p4'])
   })
 })

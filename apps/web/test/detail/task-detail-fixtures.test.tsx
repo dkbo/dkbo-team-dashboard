@@ -1,7 +1,7 @@
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom/vitest'
 import { afterEach, describe, expect, it } from 'vitest'
-import { cleanup, render, screen, within } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import {
   collectDetailAtlas,
   collectDetailBeacon,
@@ -17,6 +17,8 @@ describe('TaskDetailView × shared fixtures', () => {
     render(<TaskDetailView project="edge" detail={edgeDetail} panes={[]} />, { wrapper: MemoryRouter })
     expect(screen.getByText('5 行無法解析')).toBeInTheDocument()
     const tl = screen.getByTestId('wave-timeline')
+    // 已關閉的波預設收合：全部點開再找審查結果
+    for (const b of within(tl).queryAllByRole('button', { expanded: false })) fireEvent.click(b)
     expect(within(tl).getByText(/^skipped: /)).toBeInTheDocument()
     const blocked = edgeDetail.task.members.find((m) => m.status === 'blocked')!
     expect(within(screen.getByTestId(`member-${blocked.name}`)).getByTestId('state-status')).toHaveTextContent('blocked')

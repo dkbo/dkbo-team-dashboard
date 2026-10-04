@@ -192,3 +192,17 @@ export function taskCostRows(tasks: TaskCost[], projects: ProjectLike[] | undefi
 export function taskCostFor(costs: Pick<CostsResponse, 'tasks'> | null | undefined, project: string, dir: string): TaskCost | null {
   return costs?.tasks.find((t) => t.project === project && t.taskDir === dir) ?? null
 }
+
+/** 額度圖有沒有任何一點有值（全 null 或沒有點＝空卡） */
+export function hasUsage(points: TrendsResponse['usage'][string]): boolean {
+  return points.some((p) => p.fiveHourPct != null || p.weekPct != null)
+}
+
+/** 最後一個非 null 的值（額度圖摘要列） */
+export function latestPct<K extends 'fiveHourPct' | 'weekPct'>(points: TrendsResponse['usage'][string], key: K): number | null {
+  for (let i = points.length - 1; i >= 0; i--) {
+    const v = points[i][key]
+    if (v != null) return v
+  }
+  return null
+}

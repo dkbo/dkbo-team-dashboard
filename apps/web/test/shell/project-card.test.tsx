@@ -44,16 +44,35 @@ function activeProject(over: Partial<ProjectView> = {}): ProjectView {
 }
 
 describe('ProjectCard', () => {
-  it('進行中任務：顯示名、波進度、「波 N 進行中 · 已 M 分」、無法解析行數、計數', () => {
+  it('進行中任務：顯示名、狀態膠囊、波進度、「波 N 進行中 · 已 M 分」、無法解析行數；計數 0 不顯示', () => {
     renderCard(activeProject())
     const row = screen.getByTestId('task-2026-09-25-x')
     expect(within(row).getByRole('link', { name: '做 X' })).toHaveAttribute('href', '/p/teamflow/t/2026-09-25-x')
-    expect(within(row).getByRole('progressbar')).toHaveAttribute('aria-valuenow', '25')
+    expect(within(row).getByText('進行中').closest('[data-slot="status-pill"]')).toHaveAttribute('data-color', 'ok')
+    expect(within(row).getByRole('progressbar')).toHaveAttribute('aria-valuenow', '1')
+    expect(within(row).getByRole('progressbar')).toHaveAttribute('aria-valuemax', '4')
     expect(within(row).getByText('1/4 波')).toBeInTheDocument()
     expect(within(row).getByText('波 2 進行中 · 已 30 分')).toBeInTheDocument()
     expect(within(row).getByText('3 行無法解析')).toBeInTheDocument()
-    expect(within(row).getByText('ESCALATE 0')).toBeInTheDocument()
-    expect(within(row).getByText('UNDELIVERED 0')).toBeInTheDocument()
+    expect(within(row).queryByText(/ESCALATE/)).toBeNull()
+    expect(within(row).queryByText(/UNDELIVERED/)).toBeNull()
+  })
+
+  it('計數 > 0 顯示成 warn Tag，任務列底 warn-soft；有 blocked 成員列底 danger-soft、膠囊 danger', () => {
+    const p = activeProject()
+    const t = p.list!.tasks.at(-1)!
+    const esc = { ...t, counts: { ...t.counts, escalations: 2, undelivered: 1 } }
+    const { unmount } = renderCard({ ...p, list: { ...p.list!, tasks: [...p.list!.tasks.slice(0, -1), esc] } })
+    const row = screen.getByTestId('task-2026-09-25-x')
+    expect(within(row).getByText('ESCALATE 2')).toHaveAttribute('data-variant', 'warn')
+    expect(within(row).getByText('UNDELIVERED 1')).toHaveAttribute('data-variant', 'warn')
+    expect(row).toHaveClass('bg-status-warn-soft')
+    unmount()
+    const d = p.active['2026-09-25-x']
+    renderCard({ ...p, active: { [d.dir]: { ...d, members: [member('backend', 'blocked'), member('qa', 'working')] } } })
+    const row2 = screen.getByTestId('task-2026-09-25-x')
+    expect(row2).toHaveClass('bg-status-danger-soft')
+    expect(within(row2).getByText('backend').closest('[data-slot="status-pill"]')).toHaveAttribute('data-color', 'danger')
   })
 
   it('波進行超過一小時時用 formatMinutes 顯示（300 分）', () => {
@@ -86,25 +105,31 @@ describe('ProjectCard', () => {
     expect(within(other).getByText('claude')).toBeInTheDocument()
   })
 
-  it('狀態不明任務帶標籤；已結案摺疊為「已結案 N 件 ▸」可展開', async () => {
+  it('狀態不明任務帶標籤；已結案摺疊為「已結案 N 件」可展開', async () => {
     const user = userEvent.setup()
     renderCard(activeProject())
     expect(screen.getByText('狀態不明')).toBeInTheDocument()
     const toggle = screen.getByRole('button', { name: /已結案 10 件/ })
-    expect(toggle).toHaveTextContent('▸')
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
     expect(screen.queryByTestId('task-2026-09-23-ops')).not.toBeInTheDocument()
     await user.click(toggle)
+    expect(toggle).toHaveAttribute('aria-expanded', 'true')
     expect(screen.getByTestId('task-2026-09-23-ops')).toBeInTheDocument()
   })
 
-  it('一般情況不警示；成員 state blocked、ESCALATE、UNDELIVERED 任一成立時橘框', () => {
+  it('外框依最高嚴重度：一般無；只有 ESCALATE → warn；有 blocked → danger', () => {
     const { unmount } = renderCard(activeProject())
-    expect(screen.getByTestId('project-teamflow')).toHaveAttribute('data-alert', 'false')
+    expect(screen.getByTestId('project-teamflow')).not.toHaveAttribute('data-alert')
     unmount()
     const p = activeProject()
+    const t = p.list!.tasks.at(-1)!
+    const esc = { ...t, counts: { ...t.counts, escalations: 1 } }
+    const r2 = renderCard({ ...p, list: { ...p.list!, tasks: [...p.list!.tasks.slice(0, -1), esc] } })
+    expect(screen.getByTestId('project-teamflow')).toHaveAttribute('data-alert', 'warn')
+    r2.unmount()
     const d = p.active['2026-09-25-x']
     renderCard({ ...p, active: { [d.dir]: { ...d, members: [member('backend', 'working'), member('qa', 'blocked')] } } })
-    expect(screen.getByTestId('project-teamflow')).toHaveAttribute('data-alert', 'true')
+    expect(screen.getByTestId('project-teamflow')).toHaveAttribute('data-alert', 'danger')
   })
 
   it('相容模式標籤出錯時也保留；錯誤態顯示訊息；有舊資料標「過時 · N 分鐘前」', () => {
@@ -118,8 +143,11 @@ describe('ProjectCard', () => {
       }),
     )
     expect(screen.getByText('相容模式')).toBeInTheDocument()
+    expect(screen.getByTestId('project-collect')).toHaveAttribute('data-alert', 'danger')
+    expect(screen.getByRole('alert')).toHaveAttribute('data-tone', 'danger')
+    expect(screen.getByRole('alert')).toHaveTextContent('dk-status 非零結束')
     expect(screen.getByRole('alert')).toHaveTextContent('dk: boom')
-    expect(screen.getByText('過時 · 7 分鐘前')).toBeInTheDocument()
+    expect(screen.getByText('過時 · 7 分鐘前')).toHaveAttribute('data-variant', 'warn')
     expect(screen.getByRole('button', { name: /已結案 10 件/ })).toBeInTheDocument()
   })
 

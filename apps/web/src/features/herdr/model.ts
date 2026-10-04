@@ -85,3 +85,12 @@ export function findPane(view: HerdrView | null, paneId: string): { workspace: H
     for (const tab of workspace.tabs) if (tab.panes.some((p) => p.paneId === paneId)) return { workspace, tab }
   return null
 }
+
+const AGENT_ORDER: Record<string, number> = { blocked: 0, working: 1, idle: 2 }
+
+/** 側欄 agents 段排序（§6.20）：blocked → working → idle → 其他，同狀態依名稱 */
+export function sortAgents<T extends { pane: HerdrViewPane }>(agents: T[]): T[] {
+  const rank = (p: HerdrViewPane) => AGENT_ORDER[p.status] ?? 3
+  const name = (p: HerdrViewPane) => p.name ?? p.agent ?? p.paneId
+  return [...agents].sort((a, b) => rank(a.pane) - rank(b.pane) || name(a.pane).localeCompare(name(b.pane)))
+}

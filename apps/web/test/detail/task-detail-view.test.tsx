@@ -18,16 +18,18 @@ describe('TaskDetailView 頁首', () => {
     expect(screen.getByRole('heading', { name: '示範任務' })).toBeInTheDocument()
     const header = screen.getByTestId('task-header')
     expect(within(header).getByText('進行中')).toBeInTheDocument()
-    expect(within(header).getByText('dk/demo')).toBeInTheDocument()
-    expect(within(header).getByText(/把示範功能做完/)).toBeInTheDocument()
-    expect(within(header).getByText('09-20 08:30')).toBeInTheDocument()
+    // 分支在頁首副標；目標與關卡①時間移到右欄任務資訊卡
+    expect(header).toHaveTextContent('dk/demo')
+    const info = screen.getByTestId('task-info')
+    expect(within(info).getByText(/把示範功能做完/)).toBeInTheDocument()
+    expect(within(info).getByText('09-20 08:30')).toBeInTheDocument()
   })
 
   it('結案時顯示結案結果', () => {
     view({ status: 'done', closed_at: '2026-09-21T12:00', close_result: 'merged 82bd82b' })
     const header = screen.getByTestId('task-header')
     expect(within(header).getByText('已完成')).toBeInTheDocument()
-    expect(within(header).getByText('merged 82bd82b')).toBeInTheDocument()
+    expect(within(screen.getByTestId('task-info')).getByText('merged 82bd82b')).toBeInTheDocument()
   })
 
   it('skipped_lines 加總 > 0 顯示「N 行無法解析」，0 則不顯示', () => {
@@ -40,10 +42,12 @@ describe('TaskDetailView 頁首', () => {
 })
 
 describe('波次時間軸', () => {
-  it('每波五段、tests 結果與 commit sha', () => {
+  it('每波五段、tests 結果與 commit sha', async () => {
     view()
     const tl = screen.getByTestId('wave-timeline')
     const w1 = within(tl).getByTestId('wave-1')
+    // 已關閉的波預設收成一行，點開才有五段
+    await userEvent.setup().click(within(w1).getByRole('button', { expanded: false }))
     for (const label of ['開波', 'dev 完成', '送審', '裁定', '關閉']) {
       expect(within(w1).getByText(label)).toBeInTheDocument()
     }
@@ -56,20 +60,22 @@ describe('波次時間軸', () => {
 })
 
 describe('波次時間軸：時間倒序', () => {
-  it('送審早於 dev 完成時不顯示負分鐘或 +0 分', () => {
+  it('送審早於 dev 完成時不顯示負分鐘或 +0 分', async () => {
     const doc = makeDetailDoc()
     const waves = doc.task.waves.map((w) =>
       w.wave === 1 ? { ...w, dev_done_at: '2026-09-20T09:21', review_spawned_at: '2026-09-20T09:14' } : w,
     )
     render(<TaskDetailView project="p" detail={makeDetailDoc({ waves }) as never} panes={[]} />, { wrapper: MemoryRouter })
     const w1 = screen.getByTestId('wave-1')
+    await userEvent.setup().click(within(w1).getByRole('button', { expanded: false }))
     const review = within(w1).getByTestId('step-review')
     expect(review).not.toHaveTextContent('+')
   })
 })
 
 describe('成員表', () => {
-  it('state 欄位＋herdr 即時狀態與 cost；對不到 pane 註「無 pane」', () => {
+  it('state 欄位＋herdr 即時狀態與 cost；對不到 pane 註「無 pane」', async () => {
+    const user = userEvent.setup()
     view()
     const table = screen.getByTestId('member-table')
     const backend = within(table).getByTestId('member-backend')
@@ -78,7 +84,9 @@ describe('成員表', () => {
     expect(within(backend).getByTestId('state-status')).toHaveTextContent('working')
     const herdr = within(backend).getByTestId('herdr-status')
     expect(herdr.querySelector('[data-slot="status-pill"]')).toHaveAttribute('data-tone', 'working')
-    expect(within(backend).getByText('herdr agent focus w1-p2')).toBeInTheDocument()
+    // 複製指令收進 StatusPill 的 hover
+    await user.hover(herdr.querySelector('[data-slot="status-pill"]')!)
+    expect(await screen.findByText('herdr agent focus w1-p2')).toBeInTheDocument()
     expect(within(backend).getByTestId('watch-pane').getAttribute('href')).toContain('p=w1-p2')
     expect(backend).toHaveTextContent('$1.25')
     expect(backend).toHaveTextContent('42%')
