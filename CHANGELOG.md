@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-04
+
 ### 改版：全站設計統一（dkbo 任務 unify）
 - 設計系統：依 `design/unify/DESIGN-SYSTEM.md` 落地 token 與共用元件。狀態色收斂成五種語意 token（danger、warn、ok、idle、info，亮暗各一套、正文 ≥ 4.5:1），ESCALATE 一律 warn；漸層卡與終端內的白色前景走 `on-color` token；另有終端、版面寬度（內容頁 `max-w-page` 1536px、`--topbar-h`、側欄／詳情欄寬）、圖表高度等 token。刪掉 cuteui 時覆寫的 Tailwind 舊色階（red／amber／emerald／sky／orange／yellow／violet），前端程式不再用色階 class、任意字級與圓角；元件（.tsx）裡剩下的 hex 只有圖表色盤（git 分支圖 lane、recharts 預設樣式選擇器）。
 - 共用元件：PageHeader、Banner、EmptyState、SegmentedControl、SummaryTile、Tag、StatusDot、IconBlock、ProgressBar、SidebarList、PaneHeader、ChartCard、Breadcrumb；StatusPill 改吃狀態 tone（已結案任務 idle＋✓、agent done ok＋✓）。按鈕、標籤全圓角，表格支援 dense 密度。
@@ -85,5 +87,7 @@
 - 花費只算得到 dashboard 開著期間記錄的差額；「cost 在 session 重開後變小」是未實測的假設（見 README）。
 - Claude Code 是全螢幕 TUI，herdr 不保留其捲動歷史，歷史模式對 Claude pane 無作用。
 
+[0.4.0]: https://github.com/dkbo/dkbo-team-dashboard/releases/tag/v0.4.0
+[0.3.0]: https://github.com/dkbo/dkbo-team-dashboard/releases/tag/v0.3.0
 [0.2.0]: https://github.com/dkbo/dkbo-team-dashboard/releases/tag/v0.2.0
 [0.1.0]: https://github.com/dkbo/dkbo-team-dashboard/releases/tag/v0.1.0
