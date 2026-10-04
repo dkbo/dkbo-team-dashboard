@@ -42,7 +42,7 @@ server 的測試整輪跑在一個私有暫存目錄（`$TMPDIR/dash-vitest-*`�
 - `apps/server`：Hono server（入口 `src/index.ts`）
 - `apps/web`：Vite + React + shadcn/ui + Tailwind v4 + Zustand（入口 `src/main.tsx`）
 - `packages/shared`：`@dash/shared`，共用型別與計算（直接吃 TS，不 build）
-- `vendor/dkbo-status`：dkbo 0.19.0 的 dk-status（bin/lib/VERSION，未修改），給沒有 dk-status 的舊專案用相容模式
+- `vendor/dkbo-status`：dkbo 0.20.0 的 dk-status（bin/lib/VERSION，未修改），給沒有 dk-status 的舊專案用相容模式
 
 ## 環境變數
 | 變數 | 預設 | 說明 |
