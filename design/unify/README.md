@@ -11,13 +11,13 @@
 |---|---|
 | [`DESIGN-SYSTEM.md`](DESIGN-SYSTEM.md) | **Design System Spec**：How to use（CSS variables、Tailwind v4 @theme、index.css 改動與落地順序）→ 1 Color Tokens（含[狀態色規則](DESIGN-SYSTEM.md#14-狀態色使用規則)）→ 2 Typography → 3 Spacing／圓角／Border → 4 Desktop Grid 與 Layout（含[兩種頁面骨架與各頁欄格](DESIGN-SYSTEM.md#4-desktop-grid-與-layout-結構)）→ 5 元件清單與組合 → 6 每個元件的尺寸、padding、文字層級與狀態 |
 | [`tokens.json`](tokens.json) | DESIGN-SYSTEM 的機器可讀版（名字與值一致） |
-| [`open-questions.md`](open-questions.md) | 要人裁決的選擇題，每題附建議；規格照 ★ 寫 |
+| [`decisions.md`](decisions.md) | 已定案的 13 題設計題（題目＋定案＋理由）；DESIGN-SYSTEM 照定案寫 |
 | `page-*.webp` | 1440 寬設計稿：overview（亮＋暗）、task、history、trends、herdr、git；另 overview-390 |
 | `unify.pen` | 所有稿的原始檔（pen.dev），frame 名與 webp 同名 |
 | `.src/` | 產生 `unify.pen` 與 webp 的 pen 腳本（見文末「重畫稿」） |
 
 > 稿上的資料是照 10/04 實機（四個專案、cuteui 已結案）改寫的示意值，不是規格。
-> 主題分配：總覽亮暗各一張（亮版示範「卡住 1」的 danger 卡、暗版示範 0 值收斂的 quiet 卡）；任務、歷史、git 為亮色，趨勢、herdr 為暗色。另一個主題只換 token，版面相同。
+> 主題分配：總覽亮暗各一張（亮版示範「卡住 1」的 danger 卡、暗版示範 0 值收斂的 quiet 卡，以及只有 ESCALATE、沒有 blocked 的專案卡用 `ring-alert-warn` 琥珀框）；任務、歷史、git 為亮色，趨勢、herdr 為暗色。另一個主題只換 token，版面相同。
 > 字型：pen 沒有 Huninn，稿上中文是系統黑體 fallback，Latin 為 Nunito；實作照 index.css 的 Nunito＋Huninn。
 > **稿與 DESIGN-SYSTEM.md 衝突時以 DESIGN-SYSTEM.md 為準。**
 
@@ -77,8 +77,8 @@
 ### 2.3 歷史（`page-history.webp`）
 
 - 篩選移到 PageHeader 工具列。
-- 圖表：dev vs 審查圖預設只畫**最近 15 件**，ChartCard 右上「顯示全部 39 件」（open-questions Q8）。
-- 表格「太密」修正：列高 44（`h-11`）、儲存格 `px-3`、表頭 `h-10 text-xs font-bold text-muted-foreground`、數字欄 `tabular-nums`、0 值灰；專案欄改成 Tag；「裁定/自主、minor、審查複看」三欄合成一欄「審查」：`9/6 · m5 · r1`（裁定/自主 · minor · 重審；表頭 Tooltip 解釋；open-questions Q7）。表格預設顯示最近 10 件，底部「再顯示 30 件」。
+- 圖表：dev vs 審查圖預設只畫**最近 15 件**，ChartCard 右上「顯示全部 39 件」（decisions Q8）。
+- 表格「太密」修正：列高 44（`h-11`）、儲存格 `px-3`、表頭 `h-10 text-xs font-bold text-muted-foreground`、數字欄 `tabular-nums`、0 值灰；專案欄改成 Tag；「裁定/自主、minor、審查複看」三欄合成一欄「審查」：`9/6 · m5 · r1`（裁定/自主 · minor · 重審；表頭 Tooltip 解釋；decisions Q7）。表格預設顯示最近 10 件，底部「再顯示 30 件」。
 
 ### 2.4 趨勢（`page-trends.webp`）
 

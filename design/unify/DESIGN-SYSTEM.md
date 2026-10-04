@@ -3,7 +3,7 @@
 一份交給 artifacts 與前端工程師的規格。延續 10/03 cuteui 的深靛可愛主題（`apps/web/src/index.css`），套用到總覽 `/`、任務詳情 `/p/:project/t/:dir`、歷史 `/history`、趨勢 `/trends`、herdr `/herdr`、git `/git` 與頂部列。
 
 - **機器可讀版**：`tokens.json`（與本檔同一套 token，值與名字必須一致；改一邊就改兩邊）。
-- **設計原則、各頁重點、稿的索引**：`README.md`。**待裁決的選擇題**：`open-questions.md`（本檔照每題的 ★ 建議寫；裁決改了，照該題「影響」欄改本檔）。
+- **設計原則、各頁重點、稿的索引**：`README.md`。**已定案的設計題**：`decisions.md`（Q1–Q13 的定案與理由；本檔已照定案寫成確定規格）。
 - **稿與本檔衝突時以本檔為準。** 稿（`page-*.webp`）是 pen 畫的，中文字是系統黑體、少數字級是 13px 近似值；實作照本檔。
 - 字型沿用 Nunito Variable＋Huninn（粉圓），不引入新套件；圖示只用 lucide-react。
 
@@ -262,7 +262,7 @@
 | 語意 | token 前綴 | 意思 | 一句話判準 |
 |---|---|---|---|
 | **danger 紅** | `status-danger` | 需要人**立刻**處理 | 不處理，事情就停在那裡 |
-| **warn 琥珀** | `status-warn` | **降級／熔斷**／過時／部分失敗，系統還在跑 | 會自己好，或可以晚點處理 |
+| **warn 琥珀** | `status-warn` | **降級／熔斷**／過時／部分失敗／ESCALATE（交給領導處理），系統還在跑 | 會自己好，或可以晚點處理 |
 | **ok 綠** | `status-ok` | **運作中**、剛成功 | 正在動、或這一步過了 |
 | **idle 灰** | `status-idle` | 閒置、已結束、未知 | 沒有在動，也不需要你 |
 | info 紫 | `status-info` | 中性事件（spawn、review、wave-open…）、規劃中 | 只是告知 |
@@ -272,17 +272,17 @@
 | 東西 | 現況 | 新 |
 |---|---|---|
 | agent `blocked`（卡住） | 紅 | **danger** |
-| 訊息 ESCALATE、BUG、BLOCKED、STOP；測試失敗；git 衝突；頁面載入失敗（無資料可顯示） | 紅 | **danger** |
+| 訊息 BUG、BLOCKED、STOP；測試失敗；git 衝突；頁面載入失敗（無資料可顯示） | 紅 | **danger** |
 | kind 熔斷（agy／codex 熔斷 N 天） | **紅** | **warn**（長期、已自動降級） |
-| LIMIT、TIMEOUT、UNDELIVERED、額度 ≥ 80%、資料過時（stale）、「更新失敗，顯示舊資料」、無法解析的行、herdr polling、git 有未提交改動、detached HEAD | 紅／橘／琥珀混用 | **warn** |
+| 訊息 ESCALATE（交給領導處理，不是要人立刻動手）、LIMIT、TIMEOUT、UNDELIVERED、額度 ≥ 80%（不變紅）、資料過時（stale）、「更新失敗，顯示舊資料」、無法解析的行、herdr polling、git 有未提交改動、detached HEAD | 紅／橘／琥珀混用 | **warn** |
 | agent `working`、任務 running、SSE／herdr 連線正常、DONE、FIXED、wave-close、gate3、task-close、測試通過、git 乾淨 | 綠 | **ok** |
 | agent `idle`、未知、無 pane、任務 done／abandoned（已結案） | 灰／綠混用 | **idle**（done 加 ✓ 圖示、abandoned 加刪除線） |
 | 任務 planning、event spawn／review／wave-open／ruling／gate1、DECISION | 藍／紫 | **info** |
 | 專案卡「有警示」的外框 | 橘 ring | 依最高嚴重度：有 blocked → `ring-alert-danger`；只有 escalation／undelivered → `ring-alert-warn`（§3.7） |
 
-> 來源原文如此：此表把 ESCALATE「訊息」列為 danger，但計數 Tag（下方）與活動 type（§6.4）把 ESCALATE 列為 warn。本次整併不改設計決定，已回報領導待裁決；實作前先照各元件段落。
+ESCALATE 一律 warn：訊息、計數 Tag、活動 type、專案卡外框都一樣；danger 只留給 blocked、BUG、STOP、測試失敗、git 衝突、頁面載入失敗這類要人立刻處理的事。
 
-**SummaryTile 依狀態變色、0 值收斂：**
+**SummaryTile 四張（順序固定），依狀態變色、0 值收斂：**
 
 | 卡 | 條件 | variant |
 |---|---|---|
@@ -292,8 +292,8 @@
 |  | 無資料 | `quiet`（值 `—`） |
 | 卡住的 agent | > 0 | `danger`（珊瑚漸層），名字最多 3 個 |
 |  | = 0 | `quiet`，副行用 `status-ok-fg`「大家都很順 ✨」 |
-| 熔斷與額度（open-questions Q1） | 有 kind 熔斷或任一額度 ≥ 80% | `warn`（琥珀漸層），列 kind 與剩餘時間 |
-|  | 都正常 | `quiet`，副行「額度都健康」＋最高用量 |
+| 熔斷與額度 | 有 kind 熔斷或任一額度 ≥ 80% | `warn`（琥珀漸層），列 kind 與剩餘時間 |
+|  | 都正常 | `quiet`，副行「額度都健康 · 最高 claude 5h 37%」（最高用量的 kind、窗口、百分比） |
 
 規則：**漸層卡＝要看一眼的事；quiet 卡＝沒事。** 一列同時出現兩張紅／琥珀漸層卡是正常的。
 
@@ -612,7 +612,7 @@ Tailwind 預設，不改：sm 640／md 768／**lg 1024**／**xl 1280**／2xl 153
 
 | token | CSS 變數 | Tailwind | 值 | 狀態 | 用途 |
 |---|---|---|---|---|---|
-| `container-page` | `--container-page` | `max-w-page` | 96rem（1536） | new | 內容頁與 TopBar 內容寬（取代 `max-w-7xl`／`max-w-screen-2xl` 混用；open-questions Q3） |
+| `container-page` | `--container-page` | `max-w-page` | 96rem（1536） | new | 內容頁與 TopBar 內容寬（取代 `max-w-7xl`／`max-w-screen-2xl` 混用；總覽、任務、歷史、趨勢四頁統一此寬） |
 | `grid-cols` | — | `grid-cols-12` | 12 | new | 內容頁區塊層欄數 |
 | `grid-gutter` | `--grid-gap` | `gap-4` | 16 | alias（＝ `grid-gap`） | 12 欄的 gutter |
 | `page-margin` | `--page-x` | `px-4 lg:px-6` | 16／24 | alias（＝ `page-x`） | 內容頁外邊距 |
@@ -687,7 +687,7 @@ Tailwind 預設，不改：sm 640／md 768／**lg 1024**／**xl 1280**／2xl 153
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-- 滿版寬；四周與窗格之間 `tool-gutter`（open-questions Q4：卡片化窗格，取代貼邊＋`divide-x`）。
+- 滿版寬；四周與窗格之間 `tool-gutter`；窗格一律卡片化（`radius-xl` 卡＋`shadow-soft`，取代貼邊＋`divide-x`）。
 - 每個窗格是 `Card variant="pane"`（§6.13）。
 - ≥ lg body 不捲；< lg 改單欄直排、body 捲動、各窗格 `pane-max-h-sm`。
 - 唯讀說明在 PageHeader 副標（不放側欄底）；終端區是窗格內的 `terminal-bg`，圓角跟著窗格，內部不再加圓角。
@@ -847,7 +847,7 @@ Card variant=pane ─ PaneHeader · SidebarList(StatusDot · Tag) | Table(Tag ·
 |---|---|
 | 尺寸 | 高 `control`（工具列內 sm 同高） |
 | Padding | `inset-control-sm` |
-| 圓角 | `radius-lg`（不用 full：日期輸入兩端會擠到原生圖示；open-questions Q5） |
+| 圓角 | `radius-lg`（輸入框／Select 一律 `radius-lg`、不用 full：日期輸入兩端會擠到原生圖示；按鈕、SegmentedControl、Tag、Pill 一律 `radius-full`） |
 | 底／框 | `bg card`；`border-w-hair` `input` |
 | 文字層級 | 值 `body`；placeholder `body` `muted-foreground`；label（在上方）`caption-strong` `muted-foreground`，與欄位 `stack-xs`；工具列內不顯示 label，用 `aria-label` |
 | default | 如上 |
@@ -1006,7 +1006,7 @@ Card 的變體，除下表外照 §6.10。
 |---|---|
 | Header | CardTitle＋CardDescription；CardAction 放圖例切換或「顯示全部 N 件」Button ghost sm |
 | 摘要列（可選） | header 下一行，各項間距 `card-gap`；`body`，關鍵數字 `body-bold` `+num` |
-| 圖區高 | `chart-h-md`（預設）；小圖 `chart-h-sm`、大圖 `chart-h-lg`；水平長條圖見 `chart-bar-*`（§3.3），超過 15 列顯示「顯示全部」 |
+| 圖區高 | `chart-h-md`（預設）；小圖 `chart-h-sm`、大圖 `chart-h-lg`；水平長條圖見 `chart-bar-*`（§3.3）；資料超過 15 列時預設只畫最近 15 列，CardAction「顯示全部 N 件」切換（再按回「只看最近 15 件」） |
 | 圖例 | 圖區下方，欄距 `card-gap`、列距 `stack-2xs`；`caption` `muted-foreground`；色塊 `swatch` `radius-full` |
 | 軸 | 不畫 tick 線與軸線；字 `caption` 字級、`muted-foreground`；格線 `border` 虛線 |
 | Bar | 末端 `chart-bar-radius` |
@@ -1093,7 +1093,7 @@ Card 的變體，除下表外照 §6.10。
 | NavLink | 高 `control`、`inset-control`、`radius-full`、`body-strong` |
 | NavLink 狀態 | default `muted-foreground`；hover `hover-fill`＋`hover-text`；active（選中）`selected-solid`；focus-visible `focus-ring` |
 | 狀態群 | 填滿中間、`stack-sm`、超出收成 Tag `+N`（hover／focus 出 HoverCard 列全部）；依嚴重度：卡住（StatusPill danger＋數字，連 herdr）→ 熔斷（StatusPill warn）→ UsageChip |
-| UsageChip | 高 `pill`、`inset-pill`、`radius-full`、框 `border-w-pill`；kind `caption-strong`＋百分比 `caption` `+num` `muted-foreground`；正常框 `brand-blue / alpha-70`；任一值 ≥ 80% 框 `status-warn`、字 `status-warn-fg`（open-questions Q12） |
+| UsageChip | 高 `pill`、`inset-pill`、`radius-full`、框 `border-w-pill`；kind `caption-strong`＋百分比 `caption` `+num` `muted-foreground`；正常框 `brand-blue / alpha-70`；任一值 ≥ 80% 框 `status-warn`、字 `status-warn-fg`；**不會變紅**（額度用完＝熔斷＝降級，不是要人立刻處理） |
 | ConnectionChip | 高 `pill`、`inset-pill`、`radius-full`、`bg muted`；兩個 `dot`（SSE、herdr：ok／warn=polling／danger=斷／idle=未知）＋`caption`「SSE · herdr」；Tooltip 說明 |
 | 最後更新 | `caption` `+num` `muted-foreground`；< xl 隱藏，進 ConnectionChip Tooltip |
 | 通知、主題 | Button ghost icon-only（`control`） |
@@ -1179,7 +1179,9 @@ Card 的變體，除下表外照 §6.10。
 | < md | 寬表改卡片清單：每列 `radius-lg` `bg muted` `inner-pad`，內容兩欄 dl、`caption` | — |
 | 亮暗差異 | 暗色表頭下線改 `border-w-strong`（`border` 10% 白偏淡） | 同 |
 
-歷史表欄位（open-questions Q7）：專案（Tag neutral）｜任務（主名稱）｜狀態（StatusPill sm）｜結案（mono）｜耗時｜波數｜檔位（Tag brand mono）｜審查（`9/6 · m5 · r1`＝裁定/自主 · minor · 重審，`+num`，表頭 Tooltip 解釋）｜花費。
+歷史表欄位（9 欄）：專案（Tag neutral）｜任務（主名稱）｜狀態（StatusPill sm）｜結案（mono）｜耗時｜波數｜檔位（Tag brand mono）｜審查（`9/6 · m5 · r1`＝裁定/自主 · minor · 重審，`+num`，表頭 Tooltip 解釋；儲存格 hover 出 Tooltip 列三個數字的完整說明）｜花費。原「裁定/自主」「minor」「審查複看」三欄已合併成「審查」一欄。
+
+testid：合併後的儲存格 `data-testid="col-review"`；格內三段各包一個 span，沿用 `col-rulings`（`9/6`）、`col-minors`（`m5`）、`col-rereviews`（`r1`）。現有測試（`apps/web/test/detail/history-view.test.tsx` 的 `3 / 1`、`7`、`2`）斷言要改成新文字格式（`3/1`、`m7`、`r2`），實作者在 report 列出改了哪些斷言。
 
 ### 6.20 SidebarList＋SidebarItem
 
@@ -1211,7 +1213,7 @@ herdr agents 段排序：blocked → working → idle → 其他，同狀態依�
 |---|---|
 | 容器 | 寬 `rail-w`；`radius-xl` `bg card` `shadow-soft`；padding `inner-pad`；組之間 `stack-lg` |
 | ≥ lg | sticky `top-(--rail-top)`、`max-h-(--rail-max-h)`、自捲 |
-| 標題列 | padding 左右 `space-2`、上 `space-1`、下 `space-2`；Sparkles `icon-sm` `brand-violet`＋`title-sm`；右側 SegmentedControl sm「全部｜需處理」（open-questions Q6） |
+| 標題列 | padding 左右 `space-2`、上 `space-1`、下 `space-2`；Sparkles `icon-sm` `brand-violet`＋`title-sm`；右側 SegmentedControl sm「全部｜需處理」，預設「全部」；「需處理」只留 ESCALATE、BUG、BLOCKED、LIMIT、TIMEOUT、STOP（danger／warn 類），純前端過濾、不改 API；過濾後空時 EmptyState inline「沒有要處理的事 ✨」 |
 | loading | 3 組 Skeleton：組頭一條 `skeleton-label`＋兩條高 `bar`、`radius-lg` |
 | 失敗 | Banner warn sm「暫時拿不到活動」＋重試 |
 | 空 | EmptyState inline 🍵 |
@@ -1293,6 +1295,7 @@ herdr agents 段排序：blocked → working → idle → 其他，同狀態依�
 
 | 項目 | 規格 |
 |---|---|
+| 閒置判定 | 專案同時符合：沒有 running／planning 任務、沒有 blocked agent、沒有錯誤／過時。任一不符就留在活躍區畫 ProjectCard（有錯誤的專案不得收進閒置卡） |
 | IdleProjectsCard | Card；區段標題 `title-sm`＋Tag 計數＋說明 `body` `muted-foreground` |
 | 列 尺寸 | 高 `row` |
 | 列 Padding | `inset-control-sm` |
@@ -1314,7 +1317,7 @@ herdr agents 段排序：blocked → working → idle → 其他，同狀態依�
 | 容器 | Card default（§6.10）；依最高嚴重度 `ring-alert-danger`／`ring-alert-warn` |
 | Header | CardTitle（專案名）＋Tag（版本）＋CardAction（計數 Tag，0 不顯示） |
 | 任務 | TaskRow ×n，`stack-sm` |
-| 縮圖 | 只畫 working／blocked pane（open-questions Q9）：PaneThumb 格 `grid-cols-1 sm:grid-cols-2`、`stack-lg`；閒置 pane 只留 StatusPill（hover 出 PaneHover） |
+| 縮圖 | 只畫 working／blocked pane（`mono-terminal` 11px、最後 `thumb-lines` 10 行，寬跟卡片）：PaneThumb 格 `grid-cols-1 sm:grid-cols-2`、`stack-lg`；閒置 pane 只留 StatusPill（hover 出 PaneHover） |
 | 其他 session | `caption-strong` `muted-foreground` 標籤＋StatusPill，`stack-sm`；右側「已結案 N 件」連結 `hover-text` |
 | 錯誤 | Banner danger sm（在 Header 下） |
 | 狀態 | 卡本身不可點 |

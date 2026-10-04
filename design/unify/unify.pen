@@ -5195,6 +5195,8 @@
                       "width": "fill_container",
                       "fill": "$card",
                       "cornerRadius": 20,
+                      "stroke": "$status-warn",
+                      "strokeWidth": 2,
                       "effect": [
                         {
                           "type": "shadow",

@@ -9,7 +9,7 @@ tile(s,"brand","coins","今日花費","$124.03",["昨日 $198.63"]);
 if(blocked)tile(s,"danger","siren","卡住的 agent",String(blocked),["react-games（collect）"]);else tile(s,"quiet","siren","卡住的 agent","0",[["大家都很順 ✨","$status-ok-fg"]]);
 tile(s,"warn","gauge","熔斷與額度","2 熔斷",["agy、codex · 最短還剩 5 天 20 小時"],{fs:13});
 const sec=row(main,{name:"SectionTitle",gap:8});tx(sec,"活躍專案",{fontSize:18,fontWeight:"800"});tag(sec,"1");
-const pc=card(main,{name:"ProjectCard collect",stroke:blocked?"$status-danger":undefined,strokeWidth:blocked?2:undefined});
+const pc=card(main,{name:"ProjectCard collect",stroke:blocked?"$status-danger":"$status-warn",strokeWidth:2});
 const a=cardHead(pc,"collect",null,{after:t=>{tag(t,"v0.19.0","neutral",{mono:true})}});tx(a,"更新 12:56",{fontSize:12,fill:"$muted-foreground"});
 taskRow(pc,{name:"全站改版（DKBO Toybox 玩具機風）",alert:!!blocked});
 const th=row(pc,{name:"PaneThumbs",width:"fill_container",gap:12,alignItems:"start"});
