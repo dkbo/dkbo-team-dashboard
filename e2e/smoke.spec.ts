@@ -18,15 +18,21 @@ test('總覽列出專案，點進任務詳情看得到波次時間軸', async ({
   await expect(page.getByTestId('wave-timeline')).toBeVisible()
   await expect(page.getByTestId('wave-1')).toBeVisible()
 
-  await page.getByRole('link', { name: '回總覽' }).click()
+  // 回總覽改由 Breadcrumb 第一段
+  await page.getByRole('navigation', { name: '路徑' }).getByRole('link', { name: '總覽' }).click()
   await expect(page.getByTestId('project-teamflow')).toBeVisible()
 })
 
-// AC3／AC4：相容模式標籤、壞路徑錯誤態不影響其他專案
+// AC3／AC4：相容模式標籤、壞路徑錯誤態不影響其他專案；unify Q10 後相容模式的 collect 沒有進行中任務 → 收進閒置專案一列（列上帶「相容模式」Tag）
 test('相容模式與壞路徑錯誤態', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByTestId('project-collect').getByText('相容模式')).toBeVisible()
-  await expect(page.getByTestId('project-missing-project').getByText('路徑不存在')).toBeVisible()
+  const missing = page.getByTestId('project-missing-project')
+  await expect(missing.getByText('路徑不存在')).toBeVisible()
+  await expect(missing).toHaveAttribute('data-alert', 'danger')
+  const collect = page.getByTestId('idle-projects').locator('[data-testid=idle-project-row][data-project=collect]')
+  await expect(collect).toBeVisible()
+  await expect(collect.getByText('相容模式')).toBeVisible()
+  await expect(page.getByTestId('project-collect')).toHaveCount(0)
   await expect(page.getByTestId('project-teamflow').getByText(/已結案 \d+ 件/)).toBeVisible()
 })
 

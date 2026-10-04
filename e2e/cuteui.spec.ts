@@ -1,36 +1,24 @@
 import { readFileSync, writeFileSync } from 'node:fs'
-import { expect, test, type Locator, type Page } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 import type { ActivityResponse } from '../packages/shared/src/index.ts'
 import { snapshotFile } from './fixtures/paths'
 import { CLOSED_DIR, RUNNING_DIR } from './fixtures/projects'
 
-// 可愛風改版（cuteui AC9）：總覽三張摘要卡、活動欄（順序／連結／版面）、各頁深淺色截圖、herdr 終端維持黑底。
+// 可愛風改版（cuteui AC9）：總覽摘要卡、活動欄（順序／連結／版面）。各頁截圖與 herdr 黑底在 unify.spec.ts。
 // 活動內容由 e2e/fixtures/projects.ts 以 now 相對寫進假 teamflow（backend notes 定義），期望的前 5 筆寫在 TOP5。
 // 截圖存在每條測試的 outputPath。
 
 const shotPath = (name: string) => test.info().outputPath(`${name}.png`)
 
-// 前 5 筆活動（backend notes）：actor 顯示去掉「<任務短名>-」前綴，event 的 actor 為 null 顯示 leader；
+// 前 5 筆活動（backend notes）：actor 顯示去掉「<任務短名>-」前綴；event 的 actor 為 null（leader），unify 後不再重複頭像與名字（actor: null）；
 // 都在 teamflow 的 e2erun（−5 DONE、−10 review、−20 DONE 先於同分鐘 dev-done、−25 ESCALATE；−15 ACK、−30 minor 略過）
 const TOP5 = [
   { type: 'DONE', actor: 'backend', text: '後端完成' },
-  { type: 'review', actor: 'leader', text: 'review 2 spawned' },
+  { type: 'review', actor: null, text: 'review 2 spawned' },
   { type: 'DONE', actor: 'frontend-shell', text: '前端完成' },
-  { type: 'dev-done', actor: 'leader', text: 'dev-done wave 2' },
+  { type: 'dev-done', actor: null, text: 'dev-done wave 2' },
   { type: 'ESCALATE', actor: 'backend', text: '要動 apps/web 的檔' },
 ]
-
-/** 顏色字串（含 oklch）經 canvas 轉成 sRGB 後算相對亮度（0–1） */
-const luminance = (el: Locator, prop: string) =>
-  el.evaluate((node, p) => {
-    const c = getComputedStyle(node).getPropertyValue(p)
-    const ctx = document.createElement('canvas').getContext('2d')!
-    ctx.fillStyle = c
-    ctx.fillRect(0, 0, 1, 1)
-    const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data
-    const lin = (v: number) => ((v /= 255) <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)
-    return { color: c, l: 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b) }
-  }, prop)
 
 const openOverview = async (page: Page) => {
   await page.goto('/')
@@ -38,20 +26,27 @@ const openOverview = async (page: Page) => {
   await expect(page.getByTestId('activity-item').first()).toBeVisible()
 }
 
-test('總覽出現三張摘要卡與活動欄', async ({ page }) => {
+test('總覽出現四張摘要卡與活動欄', async ({ page }) => {
   await openOverview(page)
-  for (const id of ['summary-running', 'summary-spend', 'summary-blocked', 'activity-rail']) await expect(page.getByTestId(id)).toBeVisible()
+  for (const id of ['summary-running', 'summary-spend', 'summary-blocked', 'summary-quota', 'activity-rail']) await expect(page.getByTestId(id)).toBeVisible()
 })
 
 test('活動前 5 筆順序與內容符合 backend notes', async ({ page }) => {
   await openOverview(page)
+  // unify：同任務收成一組，組內超過 4 則收成「再看 N 則」；先全部展開
+  const rail = page.getByTestId('activity-rail')
+  for (const more of await rail.getByRole('button', { name: /^再看 \d+ 則$/ }).all()) await more.click()
   const items = page.getByTestId('activity-item')
   for (const [i, exp] of TOP5.entries()) {
     const it = items.nth(i)
     await expect(it, `#${i + 1}`).toHaveAttribute('data-type', exp.type)
     await expect(it).toHaveAttribute('data-project', 'teamflow')
     await expect(it).toHaveAttribute('data-task', RUNNING_DIR)
-    await expect(it).toContainText(exp.actor)
+    if (exp.actor) await expect(it).toContainText(exp.actor)
+    else {
+      await expect(it).not.toContainText('leader')
+      await expect(it.getByTestId('activity-avatar')).toHaveCount(0)
+    }
     await expect(it).toContainText(exp.text)
   }
   // ACK 與 minor 不收
@@ -143,12 +138,15 @@ test('活動欄失敗顯示錯誤與重試、空清單顯示喝茶文案', async
   await page.getByTestId('activity-rail').screenshot({ path: shotPath('activity-error') })
   mode = 'empty'
   await page.getByTestId('activity-retry').click()
-  await expect(page.getByTestId('activity-empty')).toHaveText('還沒有新動態，喝口茶吧 🍵')
+  // unify：🍵 是 EmptyState 的圖示圓，排在標題前
+  await expect(page.getByTestId('activity-empty')).toContainText('還沒有新動態，喝口茶吧')
+  await expect(page.getByTestId('activity-empty')).toContainText('🍵')
   await page.getByTestId('activity-rail').screenshot({ path: shotPath('activity-empty') })
 })
 
-test('1440×900：活動欄在主欄右側、寬 300–340、sticky、內容超出自身可捲', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 })
+test('1440 寬：活動欄在主欄右側、寬 300–340、sticky、內容超出自身可捲', async ({ page }) => {
+  // unify 後 1440×900 的總覽只比視窗高一點點；用 600 高讓頁面捲得夠遠，才分得出 sticky 與一般捲動
+  await page.setViewportSize({ width: 1440, height: 600 })
   await openOverview(page)
   const rail = page.getByTestId('activity-rail')
   const r = (await rail.boundingBox())!
@@ -162,14 +160,29 @@ test('1440×900：活動欄在主欄右側、寬 300–340、sticky、內容超�
   expect(r.width).toBeGreaterThanOrEqual(300)
   expect(r.width).toBeLessThanOrEqual(340)
 
-  // sticky：滑鼠停在主欄（不在 rail 上）捲動頁面，rail 的 top 不變
-  await page.mouse.move(200, 600)
-  await page.mouse.wheel(0, 600)
-  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0)
+  // sticky：rail 起始在 PageHeader 下方；捲過 (起始 top − sticky top) 之後 rail 黏在 sticky top，不跟著頁面往上走
+  // （滑鼠停在主欄、不在 rail 上）
+  const stickyTop = await rail.evaluate((el) => parseFloat(getComputedStyle(el).top))
+  const travel = r.y - stickyTop
+  await page.mouse.move(200, 500)
+  await page.mouse.wheel(0, 2000)
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(travel + 50)
   const r2 = (await rail.boundingBox())!
-  expect(Math.abs(r2.y - r.y), `rail top ${r.y} → ${r2.y}`).toBeLessThan(1)
+  expect(Math.abs(r2.y - stickyTop), `rail top ${r.y} → ${r2.y}（sticky ${stickyTop}）`).toBeLessThan(1)
+  await page.mouse.wheel(0, -2000)
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0)
 
-  // rail 本身是捲動容器：內容超出時捲 rail，頁面不動
+  // rail 本身是捲動容器：內容超出時捲 rail，頁面不動。unify 分組收合後假資料塞不滿 rail，
+  // 這段改用 12 個任務各 3 則的活動清單（從真回應的第一則複製）
+  await page.route('**/api/activity?*', async (route) => {
+    const res = await route.fetch()
+    const body = (await res.json()) as ActivityResponse
+    const base = body.items[0]
+    const items = Array.from({ length: 36 }, (_, i) => ({ ...base, taskDir: `${base.taskDir}-${Math.floor(i / 3)}`, taskShort: `t${Math.floor(i / 3)}`, at: base.at - i * 60_000 }))
+    await route.fulfill({ response: res, json: { ...body, items } })
+  })
+  await page.reload()
+  await expect(rail.getByTestId('activity-group')).toHaveCount(12)
   const st = await rail.evaluate((el) => ({ sh: el.scrollHeight, ch: el.clientHeight, oy: getComputedStyle(el).overflowY }))
   expect(st.sh, 'rail 內容超出').toBeGreaterThan(st.ch)
   expect(['auto', 'scroll']).toContain(st.oy)
@@ -196,51 +209,4 @@ test('390×844：活動欄排在最後一張專案卡之後、無橫向捲動', 
   expect(sw).toBeLessThanOrEqual(cw)
 })
 
-test('herdr 頁終端區塊在深淺色都維持黑底', async ({ page }) => {
-  for (const scheme of ['light', 'dark'] as const) {
-    await page.emulateMedia({ colorScheme: scheme })
-    await page.goto('/herdr')
-    const layout = page.getByTestId('herdr-layout')
-    await expect(page.getByTestId('herdr-pane-wE:p1').getByText('fake screen wE:p1')).toBeVisible()
-    const { color, l } = await luminance(layout, 'background-color')
-    expect(l, `${scheme} herdr-layout ${color}`).toBeLessThan(0.01)
-  }
-})
-
-// 各頁就緒條件一律等具體元素（SSE 長連線讓 networkidle 不可靠）；git 頁點進 teamflow 讓畫面有內容
-const PAGES: { name: string; url: string; ready: (p: Page) => Promise<void> }[] = [
-  { name: 'overview', url: '/', ready: async (p) => void (await expect(p.getByTestId('activity-item').first()).toBeVisible()) },
-  { name: 'task', url: '/p/teamflow/t/2026-09-23-ops', ready: async (p) => void (await expect(p.getByTestId('wave-timeline')).toBeVisible()) },
-  { name: 'history', url: '/history', ready: async (p) => void (await expect(p.getByTestId('history-table')).toBeVisible()) },
-  { name: 'trends', url: '/trends', ready: async (p) => void (await expect(p.getByTestId('cost-by-day-chart')).toBeVisible()) },
-  { name: 'herdr', url: '/herdr', ready: async (p) => void (await expect(p.getByText('fake screen wE:p1')).toBeVisible()) },
-  {
-    name: 'git',
-    url: '/git',
-    ready: async (p) => {
-      await p.getByTestId('git-project-teamflow').click()
-      await expect(p.getByTestId('git-commits')).toBeVisible()
-    },
-  },
-]
-
-for (const scheme of ['light', 'dark'] as const) {
-  for (const pg of PAGES) {
-    test(`截圖 1440 ${scheme}：${pg.name}`, async ({ page }) => {
-      await page.setViewportSize({ width: 1440, height: 900 })
-      await page.emulateMedia({ colorScheme: scheme })
-      await page.goto(pg.url)
-      await pg.ready(page)
-      // recharts 進場動畫約 1.5 秒（淡入、長條長高），截太早圖表幾乎是空的
-      await page.waitForTimeout(2_000)
-      await page.screenshot({ path: shotPath(`${pg.name}-1440-${scheme}`), fullPage: true })
-    })
-  }
-
-  test(`截圖 390 ${scheme}：總覽`, async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 844 })
-    await page.emulateMedia({ colorScheme: scheme })
-    await openOverview(page)
-    await page.screenshot({ path: shotPath(`overview-390-${scheme}`), fullPage: true })
-  })
-}
+// herdr 終端黑底與各頁 1440／390 亮暗截圖已搬到 unify.spec.ts（AC12）

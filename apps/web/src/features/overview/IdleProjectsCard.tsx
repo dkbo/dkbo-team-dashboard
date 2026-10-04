@@ -48,6 +48,7 @@ function IdleProjectRow({ project }: { project: ProjectView }) {
         <ChevronRight aria-hidden className={cn('size-4 shrink-0 text-muted-foreground transition-transform duration-150 motion-reduce:transition-none', open && 'rotate-90')} />
         <span className="min-w-0 truncate text-sm font-semibold">{project.name}</span>
         {project.dkboVersion && <Tag mono>v{project.dkboVersion}</Tag>}
+        {project.mode === 'compat' && <Tag>相容模式</Tag>}
         {closed > 0 && <span className="shrink-0 text-xs font-medium text-muted-foreground max-sm:hidden">已結案 {closed}</span>}
         <SessionDots project={project} />
         {last && <span className="ml-auto shrink-0 font-mono text-xs text-muted-foreground">{formatTs(last)}</span>}

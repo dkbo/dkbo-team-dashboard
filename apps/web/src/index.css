@@ -256,43 +256,6 @@
     }
 }
 
-/* 狀態色（emerald／red／amber／sky…）改成馬卡龍調：亮度大致沿用 Tailwind 預設，只降彩度、微調色相；
-   red-400、orange-700、amber-600／700、emerald-600、sky-600 另調過亮度，對新底色（含 /10、/15 疊色）仍有 4.5:1 */
-@theme {
-    --color-emerald-300: oklch(0.845 0.11 168);
-    --color-emerald-400: oklch(0.765 0.135 168);
-    --color-emerald-500: oklch(0.7 0.13 168);
-    --color-emerald-600: oklch(0.55 0.105 168);
-    --color-emerald-700: oklch(0.508 0.095 170);
-    --color-red-300: oklch(0.808 0.095 20);
-    --color-red-400: oklch(0.73 0.15 20);
-    --color-red-500: oklch(0.64 0.185 22);
-    --color-red-600: oklch(0.577 0.19 24);
-    --color-red-700: oklch(0.505 0.17 25);
-    --color-red-950: oklch(0.258 0.075 25);
-    --color-amber-300: oklch(0.879 0.13 88);
-    --color-amber-400: oklch(0.828 0.145 82);
-    --color-amber-500: oklch(0.769 0.15 72);
-    --color-amber-600: oklch(0.575 0.135 60);
-    --color-amber-700: oklch(0.53 0.125 55);
-    --color-sky-200: oklch(0.901 0.05 240);
-    --color-sky-300: oklch(0.828 0.095 242);
-    --color-sky-400: oklch(0.746 0.125 245);
-    --color-sky-500: oklch(0.685 0.135 247);
-    --color-sky-600: oklch(0.565 0.13 249);
-    --color-sky-700: oklch(0.5 0.11 250);
-    --color-sky-900: oklch(0.391 0.075 250);
-    --color-orange-300: oklch(0.837 0.105 60);
-    --color-orange-400: oklch(0.75 0.145 52);
-    --color-orange-500: oklch(0.705 0.165 45);
-    --color-orange-700: oklch(0.52 0.15 40);
-    --color-yellow-300: oklch(0.905 0.14 96);
-    --color-yellow-500: oklch(0.795 0.15 86);
-    --color-violet-400: oklch(0.702 0.15 293);
-    --color-violet-500: oklch(0.62 0.18 292);
-    --color-violet-700: oklch(0.491 0.19 292);
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;

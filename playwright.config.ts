@@ -42,6 +42,8 @@ const env: Record<string, string> = {
 
 export default defineConfig({
   testDir: './e2e',
+  // 截圖與失敗 trace 的落點；DASH_E2E_OUT 可指到 repo 外（qa 驗收時放 scratchpad），預設照舊 test-results/
+  outputDir: process.env.DASH_E2E_OUT || 'test-results',
   globalTeardown: './e2e/global-teardown.ts',
   timeout: 30_000,
   expect: { timeout: 10_000 },

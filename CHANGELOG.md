@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+### 改版：全站設計統一（dkbo 任務 unify）
+- 設計系統：依 `design/unify/DESIGN-SYSTEM.md` 落地 token 與共用元件。狀態色收斂成五種語意 token（danger、warn、ok、idle、info，亮暗各一套、正文 ≥ 4.5:1），ESCALATE 一律 warn；另有終端、版面寬度（內容頁 `max-w-page` 1536px、`--topbar-h`、側欄／詳情欄寬）、圖表高度等 token。刪掉 cuteui 時覆寫的 Tailwind 舊色階（red／amber／emerald／sky／orange／yellow／violet），前端程式不再用色階 class、任意字級與圓角；元件（.tsx）裡剩下的 hex 只有圖表色盤（git 分支圖 lane、recharts 預設樣式選擇器）。
+- 共用元件：PageHeader、Banner、EmptyState、SegmentedControl、SummaryTile、Tag、StatusDot、IconBlock、ProgressBar、SidebarList、PaneHeader、ChartCard、Breadcrumb；StatusPill 改吃狀態 tone（已結案任務 idle＋✓、agent done ok＋✓）。按鈕、標籤全圓角，表格支援 dense 密度。
+- 頂部列：高 3.5rem、內容寬對齊頁面；狀態依嚴重度排：卡住（紅、脈動）→ 熔斷（黃）→ 額度（任一 ≥ 80% 變黃、永不變紅），放不下收成 `+N` 彈出清單；新增 SSE／herdr 連線燈＋說明 Tooltip。
+- 總覽：四張摘要卡（新增「熔斷與額度」）；專案分「需要注意／活躍」與收合的「閒置專案」；縮圖只畫工作中／卡住的 pane、最後 10 行；活動欄依任務分組、加「全部｜需處理」切換（需處理＝ESCALATE、BUG、BLOCKED、LIMIT、TIMEOUT、STOP）；手機版順序改成摘要 → 活躍專案 → 活動（最新 5 則）→ 閒置專案。
+- 任務詳情：麵包屑＋頁首工具列（看 herdr、複製 focus 指令）；寬螢幕右欄任務資訊與花費；波次時間軸只展開進行中的波；成員表精簡 herdr 欄；分頁改 SegmentedControl。
+- 歷史：篩選移到頁首；dev vs 審查圖預設最近 15 件、可切「顯示全部」；表格預設 10 件、「再顯示 30 件」；三欄審查數字合成「審查」一欄（`9/6 · m5 · r1`）。
+- 趨勢：時間區間移到頁首；圖表改 ChartCard，沒資料的圖收成矮的空狀態卡；kind／角色清單改 dense 表格。
+- herdr、git：工具頁滿版窗格卡；herdr 左側 spaces／agents 清單（agents 依卡住 → 工作中 → 閒置）、鍵盤說明移到頁首 `?`；git 左欄三段清單、ref 改標籤、commit 詳情選了才出現。鍵盤、網址（`?p=&c=&f=`）、Esc 行為不變；終端畫面亮暗都固定黑底。
+- 各頁自寫的錯誤條全換成 Banner（沒資料紅、有舊資料黃＋重試）。API、server 與 SSE 事件未改。
+
 ### 改版：深靛可愛風主題、總覽摘要卡與活動欄（dkbo 任務 cuteui）
 - 主題：全站換成深靛遊戲風（參考 Dribbble 深色 dashboard），深淺兩套都留、主題切換照舊。深色底 `#1e2142`、卡片 `#282b55`；淺色底 `#eef0fb`、白卡；強調色電光藍 `#5b8cff`、紫 `#7b5cff`、珊瑚 `#ff5a6e`。卡片改無邊框＋柔和陰影、圓角約 20px；沿用 Nunito＋粉圓與馬卡龍狀態色（卡住＝紅系、工作中＝綠系）。
 - 狀態膠囊與頂部列膠囊（卡住、熔斷、額度）改成彩色外框、透明底。
