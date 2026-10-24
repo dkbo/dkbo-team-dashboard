@@ -5,6 +5,7 @@ import type { OfficeSession } from '@dash/shared'
 import { CAMERA } from './camera'
 import type { TaskInfo } from './layout'
 import { AgentHoverCard, EdgeAlertChip } from './Marker'
+import { useLingerId } from './hover'
 import { loadManifest, type OfficeManifest } from './model-map'
 import { SlimCanvas } from './SlimCanvas'
 import { SceneRoot, type HoverCardAnchor, type OffscreenAlert } from './SceneRoot'
@@ -59,6 +60,8 @@ export default function OfficeScene(props: OfficeSceneProps) {
   const [offscreen, setOffscreen] = useState<OffscreenAlert[]>([])
   const [card, setCard] = useState<HoverCardAnchor | null>(null)
   const [localFocus, setLocalFocus] = useState<{ id: string; nonce: number } | null>(null)
+  // 卡片收起看 DOM 層的 hoveredId，不等 r3f 根收到新 props（見 hover.ts／report）
+  const lingerId = useLingerId(props.hoveredId)
   const fallback = useRef(props.onFallback)
   fallback.current = props.onFallback
 
@@ -80,7 +83,7 @@ export default function OfficeScene(props: OfficeSceneProps) {
   // 頁面給的 focus 與畫面外 chip 的 focus，取 nonce 較新的那個
   const focus = localFocus && (!props.focusRequest || localFocus.nonce > props.focusRequest.nonce) ? localFocus : props.focusRequest
   const waiting = props.sessions.filter((s) => s.substate === 'waiting')
-  const hovered = card ? props.sessions.find((s) => s.id === card.id) ?? null : null
+  const hovered = card && card.id === lingerId ? props.sessions.find((s) => s.id === card.id) ?? null : null
 
   return (
     <div data-slot="office-scene" className="relative size-full overflow-hidden">

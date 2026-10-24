@@ -33,7 +33,7 @@ function SceneLoading({ onList }: { onList(): void }) {
         <p className="text-sm font-bold">載入辦公室 3D 場景…</p>
         <p className="text-xs text-muted-foreground">
           等待期間可切到
-          <button type="button" onClick={onList} className="cursor-pointer rounded-sm font-semibold text-primary outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50">
+          <button type="button" onClick={onList} className="cursor-pointer rounded-sm font-semibold text-link-fg outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50">
             清單
           </button>
         </p>

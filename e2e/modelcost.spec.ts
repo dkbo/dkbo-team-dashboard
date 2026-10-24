@@ -126,7 +126,7 @@ test('/trends：實際／設定兩張卡、不一致區塊、成員檔位與不�
     const c = await loaded
     if (c.tasks.length === 0 && c.unattributed === 0) {
       // 本地中午前 6h 沒有樣本：既有的空狀態，新卡片跟著不顯示
-      await expect(page.getByText('尚無資料：dashboard 開著時每分鐘記錄一次')).toBeVisible()
+      await expect(page.getByText('還沒有趨勢資料')).toBeVisible()
       await expect(page.getByTestId('cost-by-actual')).toHaveCount(0)
       continue
     }

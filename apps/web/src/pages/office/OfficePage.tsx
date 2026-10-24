@@ -133,7 +133,8 @@ export default function OfficePage() {
   const canvasWrap = useRef<HTMLDivElement>(null)
   const projectBtn = useRef<HTMLButtonElement>(null)
 
-  const onFallback = useCallback((reason: FallbackReason) => setFallback(reason), [])
+  // 先到的原因才是根因：落到清單後 canvas 卸載會補報 context-lost，不能蓋掉 assets
+  const onFallback = useCallback((reason: FallbackReason) => setFallback((prev) => prev ?? reason), [])
   const zoom = (dir: 1 | -1) => {
     // OrbitControls 聽 canvas 的 wheel；用同一條路徑縮放，不必擴充場景契約
     canvasWrap.current
@@ -273,7 +274,7 @@ export default function OfficePage() {
         <EmptyState
           title={`「${emptyFilter.label}」目前沒有人`}
           action={
-            <button type="button" onClick={emptyFilter.onClear} className="cursor-pointer text-sm font-semibold text-primary hover:underline">
+            <button type="button" onClick={emptyFilter.onClear} className="cursor-pointer text-sm font-semibold text-link-fg hover:underline">
               清除篩選
             </button>
           }

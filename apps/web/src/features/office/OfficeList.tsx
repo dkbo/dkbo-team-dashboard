@@ -131,7 +131,7 @@ export function OfficeList({ sessions, offDuty, tasks, panes, selectedId, onSele
                   <button
                     type="button"
                     onClick={() => setMoreWorking(true)}
-                    className="cursor-pointer self-start rounded-md px-2 py-1 text-xs font-semibold text-primary outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
+                    className="cursor-pointer self-start rounded-md px-2 py-1 text-xs font-semibold text-link-fg outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
                   >
                     再顯示 {list.length - MOBILE_WORKING_MAX} 位
                   </button>

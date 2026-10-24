@@ -2,14 +2,17 @@ import { mkdirSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { defineConfig, devices } from '@playwright/test'
 import { makeSampleFixture } from './packages/shared/src/index.ts'
-import { configFile, dataDir, fixturesDir, gitBinFile, herdrLogFile, runtimeDir, snapshotFile, snapshotSeedFile, socketFile } from './e2e/fixtures/paths'
+import { claudeDir, codexDir, configFile, dataDir, fixturesDir, gitBinFile, herdrLogFile, runtimeDir, snapshotFile, snapshotSeedFile, socketFile } from './e2e/fixtures/paths'
 import { setupProjects } from './e2e/fixtures/projects'
+import { setupSessions } from './e2e/fixtures/sessions'
 
 // 執行期目錄（paths.ts 以 mkdtemp 建立）裡的假專案、dashboard config、herdr 快照 seed 與趨勢樣本。
 // 必須在 config 載入時寫：Playwright 先起 webServer 才跑 globalSetup。只在主行程寫一次，worker 重新載入 config 時不重寫。
 if (!process.env.DASH_E2E_PREPARED) {
   process.env.DASH_E2E_PREPARED = '1'
   setupProjects()
+  // 辦公室用的去識別化 Claude／Codex session JSONL：事件時間與 mtime 都以現在為基準
+  setupSessions(Date.now())
   const samplesDir = path.join(dataDir, 'samples')
   mkdirSync(samplesDir, { recursive: true })
   for (const [day, samples] of Object.entries(makeSampleFixture(Date.now()))) {
@@ -31,6 +34,9 @@ const env: Record<string, string> = {
   FAKE_HERDR_SNAPSHOT: snapshotFile,
   FAKE_HERDR_LOG: herdrLogFile,
   DASH_DATA_DIR: dataDir,
+  // session JSONL 一律讀執行期目錄的 fixture，不碰真實 ~/.claude、~/.codex
+  DASH_CLAUDE_DIR: claudeDir,
+  DASH_CODEX_DIR: codexDir,
   // git 換成記錄參數的包裝（底下仍是真 git），e2e 斷言只跑唯讀指令
   DASH_GIT_BIN: gitBinFile,
   // 一小時取一次：取樣器啟動時只做保留清理、第一次取樣在 sampleMs 之後，所以 e2e 期間不會混入假 herdr 樣本

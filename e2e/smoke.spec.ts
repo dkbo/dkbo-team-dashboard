@@ -63,13 +63,15 @@ test('herdr 鏡像頁顯示 space 與 pane 畫面，且只做唯讀呼叫', asyn
   await expect(page.getByTestId('herdr-spaces').getByText('teamflow')).toBeVisible()
   const pane = page.getByTestId('herdr-pane-wE:p1')
   await expect(pane.getByText('fake screen wE:p1')).toBeVisible()
-  await expect(pane.locator('[data-slot=status-pill]')).toHaveAttribute('data-tone', 'working')
+  // 標題列的膠囊改顯示細狀態（辦公室任務 AC12）：p1 的 session 是「執行工具」→ substate running、tone ok
+  await expect(pane.locator('[data-slot=status-pill]')).toHaveAttribute('data-substate', 'running')
+  await expect(pane.locator('[data-slot=status-pill]')).toHaveAttribute('data-tone', 'ok')
   await page.keyboard.press('z')
   await expect(page).toHaveURL(/z=1/)
 
   const calls = readFileSync(herdrLogFile, 'utf8').trim().split('\n').map((l) => l.replace(/^\d+ /, ''))
   expect(calls.length).toBeGreaterThan(0)
-  for (const c of calls) expect(c).toMatch(/^(api snapshot|pane read wE:p[1-3] --source visible --format ansi|socket events\.subscribe)$/)
+  for (const c of calls) expect(c).toMatch(/^(api snapshot|pane read wE:p[1-5] --source visible --format ansi|socket events\.subscribe)$/)
 })
 
 // 進行中任務的波次時間用 formatMinutes（假 teamflow 的 e2erun 波 2 在 setup 時已開 300 分鐘 → 「5 小時 N 分」）

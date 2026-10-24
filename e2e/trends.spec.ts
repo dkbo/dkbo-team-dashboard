@@ -91,7 +91,7 @@ test('/trends 範圍切換寫進網址、數字跟著變；不合法值回落 24
     const c = await loaded
     if (c.tasks.length === 0 && c.unattributed === 0) {
       // 6h 在本地中午前沒有樣本 → 空狀態
-      await expect(page.getByText('尚無資料：dashboard 開著時每分鐘記錄一次')).toBeVisible()
+      await expect(page.getByText('還沒有趨勢資料')).toBeVisible()
     } else {
       await expect(page.getByTestId('role-cost-unknown')).toContainText(money(c.unknownRole))
       await expect(page.getByTestId('task-cost-unattributed')).toContainText(money(c.unattributed))

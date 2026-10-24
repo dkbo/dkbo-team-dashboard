@@ -85,6 +85,10 @@
     --height-marker: var(--marker-h);
     --height-marker-alert: var(--marker-alert-h);
     --width-finder: var(--finder-w);
+    /* office 對比度（波 3）：警示標記底／字、清單連結字；不動共用 status-danger／primary */
+    --color-marker-alert-bg: var(--marker-alert-bg);
+    --color-marker-alert-fg: var(--marker-alert-fg);
+    --color-link-fg: var(--link-fg);
     --animate-alert-pulse: alert-pulse 1.6s ease-out infinite;
     --animate-think-dots: think-dots 1.2s ease-in-out infinite;
     --radius-sm: calc(var(--radius) * 0.6);
@@ -218,6 +222,8 @@
     --light-hemi-sky: #ffffff; --light-hemi-ground: var(--scene-floor); --light-key: #fff4e5;
     --rank-senior: #3f3a9e; --rank-mid: #5b8cff; --rank-junior: #a9d8f5; --rank-visitor: #cfd2dd;
     --hovercard-w: 17.5rem; --marker-h: 1.5rem; --marker-alert-h: 1.75rem; --finder-w: 19rem;
+    /* 對比度：警示標記（等你／錯誤）白字 5.5:1、清單連結字 ≥ 5.2:1（對 background／card／muted…） */
+    --marker-alert-bg: #c62a44; --marker-alert-fg: #ffffff; --link-fg: #2f55d4;
 }
 
 .dark {
@@ -278,6 +284,7 @@
     --scene-cork: #6b5a73; --scene-lamp-off: #3a3e66;
     --light-hemi-sky: #8fa8ff; --light-hemi-ground: #1a1d3d; --light-key: #b9c6ff;
     --rank-senior: #5a52d0; --rank-mid: #6f9bff; --rank-junior: #b4dcf8; --rank-visitor: #d6d8e2;
+    --marker-alert-bg: #ff6b7f; --marker-alert-fg: #0f1433; --link-fg: #8fb0ff;
 }
 
 @media (min-width: 64rem) {

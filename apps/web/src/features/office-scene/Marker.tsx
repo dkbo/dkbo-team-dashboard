@@ -77,9 +77,9 @@ export function AgentMarker({ session, substate, now, scale, focused, reducedMot
   let pill
   if (meta.marker === 'alert') {
     pill = (
-      <span className="relative inline-flex h-marker-alert items-center gap-1 rounded-full bg-status-danger px-3 text-sm font-bold text-on-color shadow-pop">
+      <span className="relative inline-flex h-marker-alert items-center gap-1 rounded-full bg-marker-alert-bg px-3 text-sm font-bold text-marker-alert-fg shadow-pop">
         {!reducedMotion && meta.pulse && (
-          <span aria-hidden className="absolute inset-0 animate-alert-pulse rounded-full bg-status-danger motion-reduce:animate-none" />
+          <span aria-hidden className="absolute inset-0 animate-alert-pulse rounded-full bg-marker-alert-bg motion-reduce:animate-none" />
         )}
         {Icon && <Icon aria-hidden className="relative size-3.5" />}
         <span className="relative">{substateLabel(substate)}</span>
@@ -126,6 +126,9 @@ export function AgentMarker({ session, substate, now, scale, focused, reducedMot
       data-substate={substate}
       className="flex -translate-x-1/2 -translate-y-full flex-col items-center whitespace-nowrap"
       style={style}
+      // hover 以整個標記為界（含 effort 星、皇冠）：hover 時多出的星會把膠囊往上推，指標會落在星上
+      onPointerEnter={hidden ? undefined : () => onHover(session.id)}
+      onPointerLeave={hidden ? undefined : () => onHover(null)}
     >
       {hidden ? null : (
         <button
@@ -135,8 +138,6 @@ export function AgentMarker({ session, substate, now, scale, focused, reducedMot
             e.stopPropagation()
             onSelect(session.id)
           }}
-          onPointerEnter={() => onHover(session.id)}
-          onPointerLeave={() => onHover(null)}
           onFocus={() => onHover(session.id)}
           onBlur={() => onHover(null)}
           className="flex cursor-pointer flex-col items-center rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
@@ -152,7 +153,7 @@ export function AgentMarker({ session, substate, now, scale, focused, reducedMot
                   <span className="size-1 rounded-full border-(length:--border-w-pill) border-status-ok bg-popover" />
                 </span>
               ) : (
-                <Pointer className={alert ? 'fill-status-danger stroke-status-danger' : meta.marker === 'line' ? 'fill-popover stroke-status-ok' : cn('fill-current', POINTER[meta.tone])} />
+                <Pointer className={alert ? 'fill-marker-alert-bg stroke-marker-alert-bg' : meta.marker === 'line' ? 'fill-popover stroke-status-ok' : cn('fill-current', POINTER[meta.tone])} />
               )}
             </>
           )}
@@ -262,7 +263,7 @@ export function EdgeAlertChip({ name, onClick, style }: { name: string; onClick(
       data-slot="edge-alert"
       onClick={onClick}
       style={style}
-      className="absolute inline-flex h-marker-alert cursor-pointer items-center gap-1 rounded-full bg-status-danger px-3 text-sm font-bold text-on-color shadow-pop outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+      className="absolute inline-flex h-marker-alert cursor-pointer items-center gap-1 rounded-full bg-marker-alert-bg px-3 text-sm font-bold text-marker-alert-fg shadow-pop outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
     >
       <Hand aria-hidden className="size-3.5" />
       {name}

@@ -196,6 +196,19 @@ describe('/office 3D 視圖', () => {
     expect(screen.queryByTestId('office-fallback-banner')).toBeNull()
   })
 
+  it('落到清單後場景卸載才補報的 context-lost 不覆蓋先到的 assets，再試 3D 後可重新記錄', async () => {
+    await renderOffice()
+    await screen.findByTestId('fake-scene')
+    const onFallback = h.props!.onFallback
+    act(() => onFallback('assets'))
+    act(() => onFallback('context-lost'))
+    expect(screen.getByTestId('office-fallback-banner')).toHaveAttribute('data-reason', 'assets')
+    await userEvent.click(screen.getByRole('button', { name: /再試 3D/ }))
+    await screen.findByTestId('fake-scene')
+    act(() => h.props!.onFallback('context-lost'))
+    expect(screen.getByTestId('office-fallback-banner')).toHaveAttribute('data-reason', 'context-lost')
+  })
+
   it('使用者動過鏡頭後「重設視角」變提醒色，按下送 resetRequest', async () => {
     await renderOffice()
     await screen.findByTestId('fake-scene')

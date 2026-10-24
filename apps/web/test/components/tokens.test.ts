@@ -186,3 +186,71 @@ describe('index.css office token（office 規格 How to use A／B）', () => {
     expect(has(dark, '--status-ok-fg', '#5fdcae')).toBe(true)
   })
 })
+
+// 波 3（qa ESCALATE 對比度）：office 專用 token，不改共用 --status-danger／--primary
+describe('index.css 對比度 token（警示標記、清單連結字）', () => {
+  const root = block(':root')
+  const dark = block('.dark')
+  const theme = block('@theme inline')
+
+  const value = (src: string, name: string): string => {
+    const m = src.match(new RegExp(`${name.replace(/-/g, '\\-')}\\s*:\\s*([^;]+);`))
+    return m ? m[1].trim() : ''
+  }
+  const lum = (hex: string): number => {
+    const c = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4))
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]
+  }
+  const ratio = (a: string, b: string): number => {
+    const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x)
+    return (hi + 0.05) / (lo + 0.05)
+  }
+  const HEX = /^#[0-9a-f]{6}$/i
+
+  it('--marker-alert-bg／--marker-alert-fg、--link-fg 亮暗各一個 hex，不依賴別的變數', () => {
+    for (const [mode, src] of [['light', root], ['dark', dark]] as const) {
+      for (const n of ['--marker-alert-bg', '--marker-alert-fg', '--link-fg']) {
+        expect(value(src, n), `${mode} ${n}`).toMatch(HEX)
+      }
+    }
+  })
+
+  it('@theme inline 對映：bg-marker-alert-bg、text-marker-alert-fg、text-link-fg', () => {
+    expect(has(theme, '--color-marker-alert-bg', 'var(--marker-alert-bg)')).toBe(true)
+    expect(has(theme, '--color-marker-alert-fg', 'var(--marker-alert-fg)')).toBe(true)
+    expect(has(theme, '--color-link-fg', 'var(--link-fg)')).toBe(true)
+  })
+
+  it('警示標記字 on 底 ≥ 4.5:1（亮暗各算）', () => {
+    for (const [mode, src] of [['light', root], ['dark', dark]] as const) {
+      const r = ratio(value(src, '--marker-alert-fg'), value(src, '--marker-alert-bg'))
+      expect(r, `${mode} marker-alert fg/bg = ${r.toFixed(2)}`).toBeGreaterThanOrEqual(4.5)
+    }
+  })
+
+  it('警示標記底對場景天空／地板 ≥ 3:1（有意義的圖形，亮暗各算）', () => {
+    for (const [mode, src] of [['light', root], ['dark', dark]] as const) {
+      for (const s of ['--scene-sky', '--scene-floor']) {
+        const r = ratio(value(src, '--marker-alert-bg'), value(src, s))
+        expect(r, `${mode} marker-alert-bg vs ${s} = ${r.toFixed(2)}`).toBeGreaterThanOrEqual(3)
+      }
+    }
+  })
+
+  it('清單連結字 --link-fg 對各表面 ≥ 4.5:1（亮暗各算）', () => {
+    const surfaces = ['--background', '--card', '--popover', '--muted', '--secondary', '--accent']
+    for (const [mode, src] of [['light', root], ['dark', dark]] as const) {
+      for (const s of surfaces) {
+        const r = ratio(value(src, '--link-fg'), value(src, s))
+        expect(r, `${mode} link-fg vs ${s} = ${r.toFixed(2)}`).toBeGreaterThanOrEqual(4.5)
+      }
+    }
+  })
+
+  it('不改共用 --status-danger／--primary', () => {
+    expect(has(root, '--status-danger', '#e0434f')).toBe(true)
+    expect(has(dark, '--status-danger', '#ff6b7f')).toBe(true)
+    expect(has(root, '--primary', '#5b8cff')).toBe(true)
+    expect(has(dark, '--primary', '#5b8cff')).toBe(true)
+  })
+})

@@ -1,4 +1,4 @@
-import { chmodSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { chmodSync, cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
@@ -42,6 +42,15 @@ export async function waitFor<T>(fn: () => T | undefined | false | null | Promis
     if (Date.now() > end) throw new Error('waitFor timed out');
     await new Promise((r) => setTimeout(r, step));
   }
+}
+
+/** 等 dir 底下出現至少一個檔；目錄先建出來、檔案晚點才寫是常態，空陣列不算到了。 */
+export async function waitForFiles(dir: string, ms = 5000): Promise<string[]> {
+  return waitFor(() => {
+    if (!existsSync(dir)) return null;
+    const names = readdirSync(dir);
+    return names.length > 0 ? names : null;
+  }, ms);
 }
 
 /**

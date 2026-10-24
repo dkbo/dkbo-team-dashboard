@@ -4,7 +4,7 @@ import path from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/react'
 import type { Substate } from '@dash/shared'
-import { AgentHoverCard, AgentMarker, ZoneSign } from '@/features/office-scene/Marker'
+import { AgentHoverCard, AgentMarker, EdgeAlertChip, ZoneSign } from '@/features/office-scene/Marker'
 import OfficeScene from '@/features/office-scene/OfficeScene'
 import { officeSession } from '../shell/builders'
 
@@ -27,7 +27,18 @@ describe('AgentMarker', () => {
     const btn = screen.getByRole('button')
     expect(btn).toHaveAccessibleName('dev-a，等你，已等 3 分 0 秒')
     expect(container.querySelector('.animate-alert-pulse')).not.toBeNull()
-    expect(container.querySelector('.bg-status-danger.h-marker-alert')).not.toBeNull()
+    expect(container.querySelector('.bg-marker-alert-bg.text-marker-alert-fg.h-marker-alert')).not.toBeNull()
+  })
+
+  it('警示標記（pill、脈動環、指向三角）與邊緣 chip 用 marker-alert 對比 token，不用 status-danger／on-color（亮暗 ≥ 4.5:1）', () => {
+    const { container } = marker('waiting')
+    const html = container.innerHTML
+    expect(html).not.toMatch(/bg-status-danger|text-on-color|fill-status-danger|stroke-status-danger/)
+    expect(container.querySelector('.animate-alert-pulse')).toHaveClass('bg-marker-alert-bg')
+    expect(container.querySelector('svg[viewBox="0 0 10 6"]')).toHaveClass('fill-marker-alert-bg', 'stroke-marker-alert-bg')
+    const chip = render(<EdgeAlertChip name="dev-a" onClick={vi.fn()} style={{}} />).container.firstElementChild!
+    expect(chip).toHaveClass('bg-marker-alert-bg', 'text-marker-alert-fg')
+    expect(chip.className).not.toMatch(/bg-status-danger|text-on-color/)
   })
 
   it('錯誤不脈動（只有等你脈動，Q2）', () => {
@@ -74,6 +85,21 @@ describe('AgentMarker', () => {
     expect(marker('waiting', { scale: 'dot' }).container.querySelector('[data-slot="marker-dot"]')).toBeNull()
     const el = marker('running', { scale: 0.8 }).container.querySelector('[data-slot="agent-marker"]') as HTMLElement
     expect(el.style.transform).toBe('scale(0.8)')
+  })
+
+  it('hover 時多出的 effort 星把標記膠囊推高：指標從膠囊移到星上仍算在標記內（不取消 hover）', () => {
+    const { onHover, container } = marker('running', { focused: true }, { kind: 'claude', effort: 'high' })
+    const btn = screen.getByRole('button')
+    const stars = container.querySelector('[data-slot="effort-stars"]') as HTMLElement
+    fireEvent.pointerOver(btn)
+    expect(onHover).toHaveBeenLastCalledWith('p1')
+    // 膠囊上移後指標落在星上：pointerout(btn → stars) 接 pointerover(stars)
+    fireEvent.pointerOut(btn, { relatedTarget: stars })
+    fireEvent.pointerOver(stars, { relatedTarget: btn })
+    expect(onHover).not.toHaveBeenCalledWith(null)
+    // 真正離開標記才取消
+    fireEvent.pointerOut(stars, { relatedTarget: document.body })
+    expect(onHover).toHaveBeenLastCalledWith(null)
   })
 
   it('click 選取、focus／hover 開 hover 卡', () => {

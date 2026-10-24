@@ -193,7 +193,7 @@ export function FinderPanel({
             <button
               type="button"
               onClick={() => onFilters({ fProject: null, fTask: null, fRole: null })}
-              className="cursor-pointer rounded-md text-xs font-semibold text-primary outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
+              className="cursor-pointer rounded-md text-xs font-semibold text-link-fg outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
             >
               清除
             </button>
@@ -202,7 +202,7 @@ export function FinderPanel({
             type="button"
             aria-expanded={!collapsed}
             onClick={() => onCollapsed(!collapsed)}
-            className="inline-flex cursor-pointer items-center gap-1 rounded-md text-xs font-semibold text-primary outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="inline-flex cursor-pointer items-center gap-1 rounded-md text-xs font-semibold text-link-fg outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             {collapsed ? (
               <>
