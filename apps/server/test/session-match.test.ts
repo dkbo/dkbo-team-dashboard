@@ -68,6 +68,48 @@ describe('pane ↔ session 對應', () => {
     expect(obj(matchPanes([P('p1', { firstSeen: 100_000 })], [S('prev', { startedAt: 1_000, updatedAt: 99_000 }), S('mine', { startedAt: 97_000, updatedAt: 98_000 })]))).toEqual({ p1: 'mine' });
   });
 
+  it('I2：相隔 6 秒派出的兩個 Codex 成員、session 各早於 since 3 秒：組內 pane 數＝候選數，依先後一一對應', () => {
+    const m = matchPanes([P('pB', { firstSeen: 106_000 }), P('pA', { firstSeen: 100_000 })], [S('sB', { startedAt: 103_000, updatedAt: 1 }), S('sA', { startedAt: 97_000, updatedAt: 9 })]);
+    expect(obj(m)).toEqual({ pA: 'sA', pB: 'sB' });
+  });
+
+  it('I2：三個 Codex 成員相隔 5 秒，session 早 2 秒：依序對應，不受更新時間影響', () => {
+    const m = matchPanes([P('p1', { firstSeen: 100_000 }), P('p2', { firstSeen: 105_000 }), P('p3', { firstSeen: 110_000 })], [S('s3', { startedAt: 108_000, updatedAt: 1 }), S('s1', { startedAt: 98_000, updatedAt: 2 }), S('s2', { startedAt: 103_000, updatedAt: 99 })]);
+    expect(obj(m)).toEqual({ p1: 's1', p2: 's2', p3: 's3' });
+  });
+
+  it('I2：候選數與 pane 數不相等（多一個分不出歸屬的 session）：依先後對應不成立，不配', () => {
+    const m = matchPanes([P('pA', { firstSeen: 100_000 }), P('pB', { firstSeen: 106_000 })], [S('sA', { startedAt: 97_000 }), S('sX', { startedAt: 100_500 }), S('sB', { startedAt: 103_000 })]);
+    expect(obj(m)).toEqual({});
+  });
+
+  it('I2：依先後配到的 session 比對應 pane 早超過容差（兩個都擠在 pA 之前）：不配', () => {
+    const m = matchPanes([P('pA', { firstSeen: 100_000 }), P('pB', { firstSeen: 106_000 })], [S('s1', { startedAt: 71_000 }), S('s2', { startedAt: 72_000 })]);
+    expect(obj(m)).toEqual({});
+  });
+
+  it('I2：pB 沒有自己的 session、pA 一小時後又開了 sA2：數量相等也不依先後把 sA2 配給 pB', () => {
+    // 兩個 session 都落在 pB 的時間窗內（窗內不唯一，退路也不配）：只剩 pairByOrder 會硬配，必須有上界擋住
+    const m = matchPanes([P('pA', { firstSeen: 100_000 }), P('pB', { firstSeen: 106_000 })], [S('sA', { startedAt: 97_000 }), S('sA2', { startedAt: 100_000 + 3_600_000 })]);
+    expect(m.get('pB')).toBeUndefined();
+  });
+
+  it('退路時間窗上界：最後一窗也只收 pane 出現後 10 分鐘內開始的 session，晚一小時的不配', () => {
+    const m = matchPanes([P('pA', { firstSeen: 100_000 }), P('pB', { firstSeen: 106_000 })], [S('sA', { startedAt: 72_000 }), S('sA2', { startedAt: 100_000 + 3_600_000 })]);
+    expect(obj(m)).toEqual({ pA: 'sA' });
+  });
+
+  it('退路時間窗上界：恰在 firstSeen＋10 分仍配、超過 1 毫秒不配（非最後一窗）', () => {
+    const panes = [P('pA', { firstSeen: 100_000 }), P('pB', { firstSeen: 5_000_000 })];
+    expect(obj(matchPanes(panes, [S('on', { startedAt: 100_000 + 600_000 })]))).toEqual({ pA: 'on' });
+    expect(obj(matchPanes(panes, [S('over', { startedAt: 100_000 + 600_001 })]))).toEqual({});
+  });
+
+  it('firstSeen 未知的長壽 pane 不受上界限制', () => {
+    const m = matchPanes([P('old'), P('new', { firstSeen: 100_000 })], [S('o1', { startedAt: 100_000 - 3_600_000 - 30_000, updatedAt: 9 }), S('n1', { startedAt: 98_000, updatedAt: 1 })]);
+    expect(obj(m)).toEqual({ old: 'o1', new: 'n1' });
+  });
+
   it('同一 session 不會對到兩個 pane', () => {
     const m = matchPanes([P('p1', { sessionId: 's1' }), P('p2', { sessionId: 's1' })], [S('s1')]);
     expect([...m.values()].filter((v) => v === 's1')).toHaveLength(1);

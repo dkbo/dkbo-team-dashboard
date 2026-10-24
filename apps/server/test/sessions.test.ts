@@ -68,6 +68,18 @@ describe('sessionOptsFromEnv', () => {
 });
 
 describe('AC1 session 探索', () => {
+
+  it('Claude 首行讀不到 cwd（檔剛建、cwd 行還沒寫）不快取：之後寫入 cwd 行就找得到', async () => {
+    const e = setup();
+    const f = claudeFile(e.claudeDir, e.proj, 'c-late');
+    writeJsonl(f, [{ type: 'summary', summary: 'FAKE' }], e.now - 5_000);
+    await e.tracker.scan();
+    expect(byId(e)['c-late']).toBeUndefined();
+    appendJsonl(f, [cl.prompt('c-late', e.proj, e.now - 3_000)], e.now - 3_000);
+    await e.tracker.scan();
+    expect(byId(e)['c-late']).toBeDefined();
+  });
+
   it('Claude：專案與 .worktrees 底下、24 小時內；以檔內 cwd 確認專案（/a/b 不收 /a/b-c）', async () => {
     const e = setup();
     const wt = join(e.proj, '.worktrees/feat');

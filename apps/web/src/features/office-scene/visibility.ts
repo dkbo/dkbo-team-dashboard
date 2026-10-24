@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react'
 
 export type Frameloop = 'always' | 'demand' | 'never'
 
-export const frameloopFor = (v: DocumentVisibilityState): Frameloop => (v === 'hidden' ? 'never' : 'demand')
+export const frameloopFor = (v: DocumentVisibilityState, visible: Frameloop = 'demand'): Frameloop => (v === 'hidden' ? 'never' : visible)
 
 export function useVisibilityFrameloop(opts: { setFrameloop: (f: Frameloop) => void; invalidate: () => void; onResume?: () => void }) {
   const ref = useRef(opts)

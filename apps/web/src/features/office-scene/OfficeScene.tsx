@@ -1,7 +1,8 @@
 // 辦公室 3D 場景（共用契約「OfficeScene 元件」，frontend-office 以 React.lazy 載入）。
 // 無 WebGL、素材載入失敗、context lost 時呼叫 onFallback，由頁面落到清單。
-import { Component, Suspense, useEffect, useRef, useState, type ReactNode } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import type { OfficeSession } from '@dash/shared'
+import { AssetBoundary } from './AssetBoundary'
 import { CAMERA } from './camera'
 import type { TaskInfo } from './layout'
 import { AgentHoverCard, EdgeAlertChip } from './Marker'
@@ -37,20 +38,6 @@ export function hasWebGL(): boolean {
     return !!(c.getContext('webgl2') ?? c.getContext('webgl'))
   } catch {
     return false
-  }
-}
-
-/** 素材（glb）載入失敗會從 Suspense 丟出來 */
-class AssetBoundary extends Component<{ onError(): void; children: ReactNode }, { failed: boolean }> {
-  state = { failed: false }
-  static getDerivedStateFromError() {
-    return { failed: true }
-  }
-  componentDidCatch() {
-    this.props.onError()
-  }
-  render() {
-    return this.state.failed ? null : this.props.children
   }
 }
 

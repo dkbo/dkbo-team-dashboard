@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { createRoot, events as createPointerEvents, extend, type ReconcilerRoot, type RenderProps, type RootState } from '@react-three/fiber'
 import { DirectionalLight, Group, HemisphereLight, Mesh } from 'three'
+import { frameloopFor } from './visibility'
 
 // JSX 用到的 three 元素（<primitive> 是內建）；drei 的 Html、OrbitControls 只用 group／primitive
 extend({ Group, Mesh, HemisphereLight, DirectionalLight })
@@ -43,6 +44,8 @@ export function SlimCanvas({ children, onPointerMissed, onCreated, 'aria-label':
     let alive = true
     r.configure({
       ...config,
+      // 背景分頁維持 never（AC11）：r3f 拿這次的值跟上次傳入的比，所以不能省略（省略＝預設 'always'），要明確傳
+      frameloop: frameloopFor(document.visibilityState, config.frameloop),
       events: createPointerEvents,
       size,
       onPointerMissed: (e: MouseEvent) => cb.current.onPointerMissed?.(e),

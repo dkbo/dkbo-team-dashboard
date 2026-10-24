@@ -4,11 +4,16 @@ import { EmptyState } from '@/components/app/EmptyState'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import { loadScene } from './loadScene'
+import { loadScene, retryUrl } from './loadScene'
 import type { OfficeSceneProps } from './sceneTypes'
 
 // memo：頁面每秒更新計時，props 沒變就不重渲染場景（避免無謂的 invalidate）
-const OfficeScene = memo(lazy(loadScene))
+const makeScene = (url?: string) => memo(lazy(() => loadScene(url)))
+// React.lazy 會永久記住 rejected；失敗後重建，下一次掛載（再試 3D）才會重新 import()。沒失敗就沿用，切清單再切回來不會閃載入中。
+// 瀏覽器也以 URL 記住失敗的 import()，所以 chunk 載入失敗時換成 cache-bust 的 URL；不是載入失敗（場景 render 丟錯）就沿用目前能載的 URL。
+let sceneUrl: string | undefined
+let attempts = 0
+let OfficeScene = makeScene()
 
 /** lazy import 失敗（chunk 404、模型壞掉丟例外）→ 當成素材載入失敗，交給頁面切清單 */
 class SceneBoundary extends Component<{ onError(): void; children: ReactNode }, { failed: boolean }> {
@@ -16,7 +21,9 @@ class SceneBoundary extends Component<{ onError(): void; children: ReactNode }, 
   static getDerivedStateFromError() {
     return { failed: true }
   }
-  componentDidCatch() {
+  componentDidCatch(error: unknown) {
+    sceneUrl = retryUrl(error, ++attempts) ?? sceneUrl
+    OfficeScene = makeScene(sceneUrl)
     this.props.onError()
   }
   render() {
@@ -72,6 +79,7 @@ export interface OfficeCanvasProps {
 /** §5.1 OfficeCanvas：Card pane＋延遲載入的 3D 場景＋§4.2 四角疊層 */
 export function OfficeCanvas({ scene, finder, topRight, bottomLeft, bottomRight, emptyFilter, onList, className }: OfficeCanvasProps) {
   const [ref, width] = useWidth<HTMLDivElement>()
+  const [Scene] = useState(() => OfficeScene)
   const [hint, setHint] = useState(true)
   const { onFallback } = scene
   const movedRef = useRef(scene.onUserMovedCamera)
@@ -95,7 +103,7 @@ export function OfficeCanvas({ scene, finder, topRight, bottomLeft, bottomRight,
         <Suspense fallback={<SceneLoading onList={onList} />}>
           {/* 場景自成一層：drei <Html> 標記的 z-index（最高 599）關在這層裡，疊層與底部 Sheet 永遠在上面 */}
           <div className="absolute inset-0 z-0">
-            <OfficeScene {...scene} onUserMovedCamera={onUserMovedCamera} />
+            <Scene {...scene} onUserMovedCamera={onUserMovedCamera} />
           </div>
         </Suspense>
       </SceneBoundary>

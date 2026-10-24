@@ -10,7 +10,7 @@ export type AttentionKind = 'waiting' | 'error'
 
 /** 一個「需要你」的對象（Q14）：pane 或沒有 pane 的 session */
 export interface AttentionItem {
-  /** paneId；沒有 pane 的 session 用 OfficeSession.id（`s:<sessionId>`） */
+  /** sessionId（pane 關掉或配對變動時 OfficeSession.id 會變，sessionId 不會）；沒有 session 的 herdr pane 才用 paneId */
   key: string
   kind: AttentionKind
   label: string
@@ -22,15 +22,17 @@ export interface AttentionItem {
 const officeHref = (id: string) => `/office?${new URLSearchParams({ focus: id })}`
 
 /**
- * 需要你＝「細狀態等你／錯誤的 session」∪「herdr 全部 agent 中 status 為 blocked 的 pane」，以 paneId（無 pane 用 session id）去重。
+ * 需要你＝「細狀態等你／錯誤的 session」∪「herdr 全部 agent 中 status 為 blocked 的 pane」，以 sessionId 去重（無 session 的 herdr pane 才用 paneId；pane 關掉或改配對時 key 不變，不重發通知）。
  * herdr pane 不在 config 專案（沒有 session 資料）時算「有人等你」，連到 herdr 頁。
  */
 export function attentionItems(doc: OverviewDoc | null, sessions: OfficeSession[] | null): AttentionItem[] {
   const out = new Map<string, AttentionItem>()
+  const claimedPanes = new Set<string>()
   for (const s of sessions ?? []) {
     if (s.substate !== 'waiting' && s.substate !== 'error') continue
-    out.set(s.id, {
-      key: s.id,
+    if (s.paneId) claimedPanes.add(s.paneId)
+    out.set(s.sessionId, {
+      key: s.sessionId,
       kind: s.substate,
       label: sessionName(s),
       detail: s.substate === 'waiting' ? s.question : s.error,
@@ -38,9 +40,10 @@ export function attentionItems(doc: OverviewDoc | null, sessions: OfficeSession[
     })
   }
   for (const a of blockedAgents(doc)) {
-    if (out.has(a.paneId)) continue
-    out.set(a.paneId, {
-      key: a.paneId,
+    const key = a.session?.sessionId ?? a.paneId
+    if (out.has(key) || claimedPanes.has(a.paneId)) continue
+    out.set(key, {
+      key,
       kind: a.session?.substate === 'error' ? 'error' : 'waiting',
       label: agentLabel(a),
       detail: a.project ? `${a.project} · ${a.cwd}` : a.cwd,

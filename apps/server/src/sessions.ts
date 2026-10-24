@@ -266,7 +266,8 @@ export class SessionTracker extends EventEmitter {
         if (now - st.mtime > this.o.windowMs && !wanted.has(sid)) continue;
         if (!this.claudeHead.has(path)) {
           const head = await scanHead(path, (j) => (typeof j.cwd === 'string' ? { cwd: j.cwd, startedAt: tsOf(j.timestamp) } : undefined));
-          this.claudeHead.set(path, head && this.projectOf(head.cwd) ? head : null);
+          // 讀不到 cwd（檔剛建、cwd 行還沒寫）不快取，下一輪再試；讀到了才記（不屬於專案的記 null）
+          if (head) this.claudeHead.set(path, this.projectOf(head.cwd) ? head : null);
         }
         const h = this.claudeHead.get(path);
         if (!h) continue;

@@ -11,6 +11,7 @@ import type { Place } from './layout'
 import type { SceneMaterials } from './materials'
 import type { ClipName } from './model-map'
 import { ANIMATION_MS, actionFor, shouldAnimate, walkMs, type Action } from './motion'
+import { animatedBones, applyProcedural, captureRest } from './procedural'
 import type { Tickets } from './tickets'
 
 /** 角色身高（格）；Kenney Mini Characters 原始約 0.55 */
@@ -90,7 +91,8 @@ export function Character(props: CharacterProps) {
       }
     })
     const mixer = new THREE.AnimationMixer(root)
-    return { root, bones, meshes, mixer }
+    // mixer 還沒動過，此刻的 head／torso 就是 rest pose（見 procedural.ts）
+    return { root, bones, meshes, mixer, rest: captureRest(bones) }
   }, [gltf])
 
   useLayoutEffect(() => {
@@ -123,6 +125,8 @@ export function Character(props: CharacterProps) {
     prevPlace: null as Place | null,
     group: null as THREE.Group | null,
     t: 0,
+    /** 目前這個姿勢的 clip 有軌道的骨頭（procedural 不去動它們） */
+    animated: new Set<string>(),
   })
 
   /** 擺姿勢：playing＝讓 mixer 跑，否則停在關鍵影格 */
@@ -148,22 +152,17 @@ export function Character(props: CharacterProps) {
       a.paused = !playing
       a.play()
     }
-    mixer.update(0)
-    procedural(action, 0)
     state.current.action = action
     state.current.playing = playing
+    state.current.animated = animatedBones(layers.map((l) => l.c))
+    mixer.update(0)
+    procedural(action, 0)
   }
 
-  /** clip 沒有的動作用骨頭補：趴桌、托下巴左右看、打瞌睡 */
+  /** clip 沒有的動作用骨頭補：趴桌、托下巴左右看、打瞌睡（絕對偏移，見 procedural.ts） */
   const procedural = (action: Action, t: number) => {
-    const head = rig.bones.head
-    const torso = rig.bones.torso
-    if (action.slump) {
-      torso?.rotateX(0.35)
-      head?.rotateX(0.45)
-    }
-    if (action.think) head?.rotateY((8 * Math.PI) / 180 * (state.current.playing ? Math.sin(t * 2) : 1))
-    if (action.doze) head?.rotateX(0.3)
+    const st = state.current
+    applyProcedural(action, rig.bones, rig.rest, t, st.playing, st.animated)
   }
 
   const live = () => isLive() && !reducedMotion && document.visibilityState === 'visible'
