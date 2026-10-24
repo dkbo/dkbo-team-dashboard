@@ -100,7 +100,8 @@ describe('ChildTracker（debt AC6）', () => {
     const a = start(tk, 'sleep 30');
     const pid = await a.pid();
     await tk.terminate(2000);
-    expect(gone(pid)).toBe(true);
+    // 群組裡被殺的子行程要等 init 回收，回收前 kill(-pgid, 0) 仍成功：等一下而不是立即斷言
+    await waitFor(() => gone(pid), 2000);
     expect(await a.r).toMatchObject({ ok: false });
   });
   it('忽略 SIGTERM 的行程在 grace 後改 SIGKILL', async () => {
@@ -110,7 +111,7 @@ describe('ChildTracker（debt AC6）', () => {
     const t0 = Date.now();
     await tk.terminate(300);
     expect(Date.now() - t0).toBeLessThan(2000);
-    expect(gone(pid)).toBe(true);
+    await waitFor(() => gone(pid), 2000);
   });
   it('關閉後不再 spawn', async () => {
     const tk = new ChildTracker();

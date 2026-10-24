@@ -36,7 +36,7 @@ export function createApp(collector: StatusCollector, hub: Hub, reader: HerdrRea
   // herdr 鏡像：只有 GET，底下只會跑 `herdr api snapshot`／`herdr pane read`（見 herdr-view.ts 白名單）
   app.get('/api/herdr/view', async (c) => {
     try {
-      return c.json(await reader.getView());
+      return c.json(hub.decorateView(await reader.getView()));
     } catch (e) {
       const r = herdrError(e);
       return c.json(r.body, r.status);
@@ -66,6 +66,8 @@ export function createApp(collector: StatusCollector, hub: Hub, reader: HerdrRea
   });
 
   app.get('/api/overview', (c) => c.json(hub.overview()));
+
+  app.get('/api/sessions', (c) => c.json(hub.sessions()));
 
   app.get('/api/projects/:name/tasks/:dir', async (c) => {
     const { name, dir } = c.req.param();

@@ -1,4 +1,4 @@
-import type { OverviewDoc, PaneLive, ProjectView, TaskDetail, TaskSummary } from '@dash/shared'
+import type { OfficeSession, OverviewDoc, PaneLive, ProjectView, SessionLive, SessionsDoc, TaskDetail, TaskSummary } from '@dash/shared'
 import teamflowList from '../../../../packages/shared/fixtures/teamflow-list.json'
 import opsDetail from '../../../../packages/shared/fixtures/teamflow-detail-ops.json'
 
@@ -95,4 +95,44 @@ export function overview(over: Partial<OverviewDoc> = {}): OverviewDoc {
     herdr: { state: 'subscribed', lastAt: 1_000 },
     ...over,
   }
+}
+
+export function sessionLive(over: Partial<SessionLive> = {}): SessionLive {
+  return {
+    kind: 'claude',
+    sessionId: 'sess-1',
+    substate: 'idle',
+    substateSince: null,
+    turnStartedAt: null,
+    tool: null,
+    question: null,
+    error: null,
+    subagents: 0,
+    lastEventAt: null,
+    model: null,
+    ...over,
+  }
+}
+
+export function officeSession(over: Partial<OfficeSession> = {}): OfficeSession {
+  return {
+    ...sessionLive(),
+    id: 'p1',
+    paneId: 'p1',
+    project: 'teamflow',
+    cwd: '/projects/teamflow',
+    taskDir: null,
+    member: 'dev-a',
+    role: null,
+    leader: false,
+    agentName: null,
+    effort: null,
+    cost: null,
+    ctxPct: null,
+    ...over,
+  }
+}
+
+export function sessionsDoc(sessions: OfficeSession[] = [], over: Partial<SessionsDoc> = {}): SessionsDoc {
+  return { generatedAt: 1_000, sessions, ...over }
 }

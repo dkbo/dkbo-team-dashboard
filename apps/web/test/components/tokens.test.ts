@@ -104,3 +104,66 @@ describe('index.css token（規格 §How to use C）', () => {
       expect(has(root, n), n).toBe(true)
   })
 })
+
+// office AC7：index.css 依 office 規格 How to use A／B 加 scene-*、rank-*、--marker-*、--hovercard-w 等
+describe('index.css office token（office 規格 How to use A／B）', () => {
+  const root = block(':root')
+  const dark = block('.dark')
+
+  const SCENE_LIGHT: Record<string, string> = {
+    sky: '#f5f6fe', floor: '#dfe3f5', 'floor-edge': '#c3c9e8', zone: '#d3d9f1', 'zone-edge': '#b6bde2', lounge: '#ece6fb',
+    'wall-l': '#ffffff', 'wall-r': '#e9ecf9', 'wall-top': '#c9cee9', window: '#cfe0ff', desk: '#f3e7d5', 'desk-side': '#dccaae',
+    monitor: '#2b2e4c', 'screen-off': '#4a4f78', 'screen-on': '#a9c6ff', couch: '#c4bdf0', plant: '#8fb8a5',
+    shadow: 'rgb(61 67 128 / 12%)', cabinet: '#e4e7f4', 'cabinet-side': '#cdd2ea', board: '#ffffff', cork: '#e2c9a0', 'lamp-off': '#8a8fb3',
+  }
+  const SCENE_DARK: Record<string, string> = {
+    sky: '#161935', floor: '#2a2e5a', 'floor-edge': '#1a1d3d', zone: '#323668', 'zone-edge': '#15183a', lounge: '#332f63',
+    'wall-l': '#363b74', 'wall-r': '#2b2f62', 'wall-top': '#454b8c', window: '#0e1130', desk: '#4c4675', 'desk-side': '#3b3660',
+    monitor: '#1a1c33', 'screen-off': '#2c2f52', 'screen-on': '#7fa6ff', couch: '#5a5296', plant: '#4f7f6c',
+    shadow: 'rgb(5 6 20 / 40%)', cabinet: '#4a4f86', 'cabinet-side': '#3a3e70', board: '#c9cdea', cork: '#6b5a73', 'lamp-off': '#3a3e66',
+  }
+  const RANK_LIGHT = { senior: '#3f3a9e', mid: '#5b8cff', junior: '#a9d8f5', visitor: '#cfd2dd' }
+  const RANK_DARK = { senior: '#5a52d0', mid: '#6f9bff', junior: '#b4dcf8', visitor: '#d6d8e2' }
+
+  it(':root 的 scene-* 亮色 23 個', () => {
+    for (const [k, v] of Object.entries(SCENE_LIGHT)) expect(has(root, `--scene-${k}`, v), `:root --scene-${k}`).toBe(true)
+  })
+
+  it('.dark 的 scene-* 暗色 23 個', () => {
+    for (const [k, v] of Object.entries(SCENE_DARK)) expect(has(dark, `--scene-${k}`, v), `.dark --scene-${k}`).toBe(true)
+  })
+
+  it('rank-* 亮暗各 4 個', () => {
+    for (const [k, v] of Object.entries(RANK_LIGHT)) expect(has(root, `--rank-${k}`, v), `:root --rank-${k}`).toBe(true)
+    for (const [k, v] of Object.entries(RANK_DARK)) expect(has(dark, `--rank-${k}`, v), `.dark --rank-${k}`).toBe(true)
+  })
+
+  it('尺寸變數：hovercard-w、marker-h、marker-alert-h、finder-w（只在 :root）', () => {
+    expect(has(root, '--hovercard-w', '17.5rem')).toBe(true)
+    expect(has(root, '--marker-h', '1.5rem')).toBe(true)
+    expect(has(root, '--marker-alert-h', '1.75rem')).toBe(true)
+    expect(has(root, '--finder-w', '19rem')).toBe(true)
+    for (const n of ['--hovercard-w', '--marker-h', '--marker-alert-h', '--finder-w']) expect(has(dark, n), `.dark 不重複 ${n}`).toBe(false)
+  })
+
+  it('@theme inline（B 段）：scene-sky／floor、rank-*、尺寸', () => {
+    const theme = block('@theme inline')
+    expect(has(theme, '--color-scene-sky', 'var(--scene-sky)')).toBe(true)
+    expect(has(theme, '--color-scene-floor', 'var(--scene-floor)')).toBe(true)
+    for (const k of ['senior', 'mid', 'junior', 'visitor']) expect(has(theme, `--color-rank-${k}`, `var(--rank-${k})`), `rank-${k}`).toBe(true)
+    expect(has(theme, '--width-hovercard', 'var(--hovercard-w)')).toBe(true)
+    expect(has(theme, '--height-marker', 'var(--marker-h)')).toBe(true)
+    expect(has(theme, '--height-marker-alert', 'var(--marker-alert-h)')).toBe(true)
+    expect(has(theme, '--width-finder', 'var(--finder-w)')).toBe(true)
+  })
+
+  it('其他 scene-* 只給 three.js 讀，不進 @theme', () => {
+    const theme = block('@theme inline')
+    expect(theme).not.toMatch(/--color-scene-(zone|desk|monitor|lounge|couch|plant|cabinet|board|cork|window|wall)/)
+  })
+
+  it('不動既有的 status／brand token', () => {
+    expect(has(root, '--status-danger', '#e0434f')).toBe(true)
+    expect(has(dark, '--status-ok-fg', '#5fdcae')).toBe(true)
+  })
+})
