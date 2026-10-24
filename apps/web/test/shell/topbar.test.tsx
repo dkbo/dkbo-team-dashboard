@@ -57,6 +57,10 @@ describe('TopBar', () => {
     expect(screen.getByTestId('light-herdr')).toHaveAttribute('data-state', 'down')
     expect(screen.getByText(/最後更新 09:08:07/)).toBeInTheDocument()
     expect(screen.getByRole('link', { name: '總覽' })).toHaveAttribute('href', '/')
+    // 辦公室在總覽之後（Q12）
+    const navLinks = within(screen.getByRole('navigation', { name: '主要導覽' })).getAllByRole('link')
+    expect(navLinks.map((a) => a.textContent)).toEqual(['總覽', '辦公室', '歷史', '趨勢', 'herdr', 'git'])
+    expect(screen.getByRole('link', { name: '辦公室' })).toHaveAttribute('href', '/office')
     expect(screen.getByRole('link', { name: '歷史' })).toHaveAttribute('href', '/history')
     expect(screen.getByRole('link', { name: '趨勢' })).toHaveAttribute('href', '/trends')
   })

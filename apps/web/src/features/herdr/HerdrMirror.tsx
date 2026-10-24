@@ -1,25 +1,57 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { Link } from 'react-router'
-import { Eye, History, ListTree, Maximize2, Minimize2, Search } from 'lucide-react'
-import type { HerdrSearchHit, HerdrView, HerdrViewPane, HerdrViewTab, PaneStatus } from '@dash/shared'
+import { Eye, History, ListTree, Maximize2, Minimize2, Search, Terminal } from 'lucide-react'
+import type { HerdrSearchHit, HerdrView, HerdrViewPane, HerdrViewTab, PaneStatus, SessionLive } from '@dash/shared'
 import { PaneBody, PaneHeader } from '@/components/app/PaneHeader'
 import { SegmentedControl } from '@/components/app/SegmentedControl'
 import { SidebarItem, SidebarList, SidebarSection } from '@/components/app/SidebarList'
 import { StatusDot, type Tone } from '@/components/app/StatusDot'
 import { agentStatusPill, StatusPill } from '@/components/app/StatusPill'
+import { SubstatePill } from '@/components/app/SubstatePill'
 import { Tag } from '@/components/app/Tag'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import { useNow } from '@/hooks/useNow'
 import { formatPct } from '@/lib/format'
+import { substateLabel, SUBSTATE_META, timerText } from '@/lib/substate'
 import { cn } from '@/lib/utils'
 import { useDashStore } from '@/store'
-import { agentPanes, sortAgents, type Resolved } from './model'
+import { agentGroup, agentPanes, groupAgents, paneSubstate, paneTone, tabTone, type AgentGroup, type Resolved } from './model'
 import { AnsiLine } from './AnsiText'
 import { SearchPanel } from './SearchPanel'
 import type { ScreenState } from './useHerdr'
 
 /** pane／space 狀態 → 狀態點語意色（§1.4） */
 const toneOf = (status: PaneStatus): Tone => agentStatusPill(status).tone
+
+/** 計時文字（§1.2）：自己每秒走一格，不拖整個鏡像重繪；danger 用 status-danger-fg */
+function SubstateTimer({ session, danger, className }: { session: SessionLive; danger: boolean; className?: string }) {
+  const now = useNow(1000)
+  const text = timerText(session, now)
+  if (!text) return null
+  return (
+    <span data-slot="substate-timer" className={cn('tabular-nums', danger ? 'text-status-danger-fg' : undefined, className)}>
+      {text}
+    </span>
+  )
+}
+
+/** agents 項第二行：「專案 · 細狀態 · 計時」；沒有 session 退回 herdr 粗狀態、不帶計時 */
+function AgentSubtitle({ project, pane, group, now }: { project: string; pane: HerdrViewPane; group: AgentGroup; now: number }) {
+  const sub = paneSubstate(pane, now)
+  const label = sub ? substateLabel(sub, pane.session?.tool?.name) : agentStatusPill(pane.status).label
+  return (
+    <>
+      <span className="truncate">{[project, label].join(' · ')}</span>
+      {pane.session && (
+        <>
+          <span aria-hidden>{' · '}</span>
+          <SubstateTimer session={pane.session} danger={group === 'needs'} className="shrink-0 font-bold" />
+        </>
+      )}
+    </>
+  )
+}
 
 export interface TaskLink {
   href: string
@@ -73,7 +105,9 @@ export interface HerdrMirrorProps {
 }
 
 export function HerdrMirror({ view, sel, zoomed, screens, historyId, onHistory, search, onSearch, onWorkspace, onTab, onPane, onJump, onZoom }: HerdrMirrorProps) {
-  const agents = sortAgents(agentPanes(view))
+  const now = useNow(10_000)
+  const agents = agentPanes(view)
+  const groups = groupAgents(agents, now)
   const links = useTaskLinks()
   const tabs = sel.workspace?.tabs ?? []
   const tabNo = sel.tab ? tabs.indexOf(sel.tab) + 1 : 0
@@ -101,22 +135,32 @@ export function HerdrMirror({ view, sel, zoomed, screens, historyId, onHistory, 
           </SidebarSection>
           <SidebarSection title="agents" count={<Tag count={agents.length} />} data-testid="herdr-agents">
             {agents.length === 0 && <p className="px-3 py-2 text-xs text-muted-foreground">沒有 agent</p>}
-            {agents.map(({ workspace, pane }) => {
-              const look = agentStatusPill(pane.status)
-              return (
-                <SidebarItem
-                  key={pane.paneId}
-                  data-pane={pane.paneId}
-                  title={pane.name ?? pane.agent}
-                  subtitle={`${workspace.label} · ${look.label}`}
-                  dot={look.tone}
-                  pulse={look.pulse}
-                  dotLabel={look.label}
-                  selected={pane.paneId === sel.pane?.paneId}
-                  onClick={() => onJump(pane.paneId)}
-                />
-              )
-            })}
+            {groups.map(({ group, label, items }) => (
+              <div key={group} data-testid="herdr-agent-group" data-group={group} className="flex flex-col gap-0.5">
+                <h3 className={cn('flex items-center gap-1.5 px-3 pt-2 pb-1 text-2xs font-bold', group === 'needs' ? 'text-status-danger-fg' : 'text-muted-foreground')}>
+                  {label}
+                  <Tag count={items.length} variant={group === 'needs' ? 'danger' : 'neutral'} />
+                </h3>
+                {items.map(({ workspace, pane }) => {
+                  const sub = paneSubstate(pane, now)
+                  const look = agentStatusPill(pane.status)
+                  const meta = sub ? SUBSTATE_META[sub] : null
+                  return (
+                    <SidebarItem
+                      key={pane.paneId}
+                      data-pane={pane.paneId}
+                      title={pane.name ?? pane.agent}
+                      subtitle={<AgentSubtitle project={workspace.label} pane={pane} group={group} now={now} />}
+                      dot={paneTone(pane, now)}
+                      pulse={meta ? meta.pulse : look.pulse}
+                      dotLabel={meta ? meta.label : look.label}
+                      selected={pane.paneId === sel.pane?.paneId}
+                      onClick={() => onJump(pane.paneId)}
+                    />
+                  )
+                })}
+              </div>
+            ))}
           </SidebarSection>
         </SidebarList>
       </Card>
@@ -137,7 +181,7 @@ export function HerdrMirror({ view, sel, zoomed, screens, historyId, onHistory, 
                   value: t.id,
                   label: (
                     <span className="inline-flex items-center gap-1.5">
-                      <StatusDot tone={toneOf(t.status)} size="sm" />
+                      <StatusDot tone={tabTone(t, now)} size="sm" />
                       <span className="tabular-nums">{i + 1}</span>
                       {t.label !== String(i + 1) && t.label}
                     </span>
@@ -174,6 +218,7 @@ export function HerdrMirror({ view, sel, zoomed, screens, historyId, onHistory, 
             highlight={search?.highlight ?? ''}
             focusLine={search?.focusLine ?? null}
             onPane={onPane}
+            now={now}
           />
         ) : (
           <PaneBody className="bg-terminal-bg p-8 text-center text-sm text-terminal-dim">這個 space 沒有 tab</PaneBody>
@@ -195,6 +240,7 @@ function TabLayout({
   highlight,
   focusLine,
   onPane,
+  now,
 }: {
   tab: HerdrViewTab
   selectedId: string | null
@@ -206,6 +252,7 @@ function TabLayout({
   highlight: string
   focusLine: FocusLine | null
   onPane(id: string): void
+  now: number
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const [size, setSize] = useState({ w: 0, h: 0 })
@@ -246,6 +293,7 @@ function TabLayout({
             highlight={highlight}
             focusLine={focusLine?.paneId === p.paneId ? focusLine.line : null}
             onSelect={onPane}
+            now={now}
           />
         )
       })}
@@ -265,6 +313,7 @@ function PaneBox({
   highlight,
   focusLine,
   onSelect,
+  now,
 }: {
   pane: HerdrViewPane
   style: CSSProperties
@@ -276,25 +325,49 @@ function PaneBox({
   highlight: string
   focusLine: number | null
   onSelect(id: string): void
+  now: number
 }) {
+  const sub = paneSubstate(pane, now)
+  const danger = agentGroup(pane, now) === 'needs'
+  const session = pane.session
+  const toolLine = session?.tool ? (session.tool.summary ?? session.tool.name) : null
   return (
     <div
       data-testid={`herdr-pane-${pane.paneId}`}
       data-selected={selected || undefined}
       onMouseDown={() => onSelect(pane.paneId)}
-      className={cn('@container absolute flex flex-col overflow-hidden border', selected ? 'z-10 border-brand-blue' : 'border-terminal-line')}
+      className={cn(
+        '@container absolute flex flex-col overflow-hidden border',
+        selected ? (danger ? 'z-10 border-status-danger ring-1 ring-status-danger ring-inset' : 'z-10 border-brand-blue') : 'border-terminal-line',
+      )}
       style={style}
     >
       <PaneHeader
         variant="terminal"
         title={
           <span className="flex min-w-0 items-center gap-2">
-            <StatusPill status={pane.status} size="sm" terminal />
+            {sub && session ? (
+              <>
+                <span data-testid="pane-substate" data-substate={sub} className="inline-flex shrink-0">
+                  <SubstatePill substate={sub} tool={session.tool?.name} size="sm" className="dark bg-on-color/5" />
+                </span>
+                {/* 終端固定黑底：dark 讓 danger 字色取暗色版，亮色主題下才讀得到 */}
+                <SubstateTimer session={session} danger={danger} className="dark shrink-0 text-2xs font-bold" />
+              </>
+            ) : (
+              <StatusPill status={pane.status} size="sm" terminal />
+            )}
             <span className="truncate">{pane.name ?? pane.agent ?? pane.paneId}</span>
           </span>
         }
         info={
           <span className="flex min-w-0 items-center gap-2">
+            {toolLine && (
+              <span data-testid="pane-tool" className="flex min-w-0 items-center gap-1 text-terminal-dim" title={toolLine}>
+                <Terminal aria-hidden className="size-3 shrink-0" />
+                <code className="min-w-0 truncate font-mono text-2xs">{toolLine}</code>
+              </span>
+            )}
             {link && (
               <Link
                 to={link.href}

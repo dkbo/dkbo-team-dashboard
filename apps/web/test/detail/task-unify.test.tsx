@@ -129,7 +129,7 @@ describe('任務詳情 unify（AC6）：成員表', () => {
     expect(within(backend).getByText('寫 API 路由').closest('td')!.className).toContain('py-3')
   })
 
-  it('herdr 欄只留 StatusPill＋「看畫面」icon button；複製指令收進 hover', async () => {
+  it('動作欄只留 icon button（在辦公室看、看畫面）；複製指令收進細狀態膠囊的 hover', async () => {
     const user = userEvent.setup()
     view()
     const backend = screen.getByTestId('member-backend')
@@ -138,7 +138,7 @@ describe('任務詳情 unify（AC6）：成員表', () => {
     expect(watch).toHaveAccessibleName('看畫面')
     expect(watch.getAttribute('href')).toContain('p=w1-p2')
     expect(screen.queryByText('herdr agent focus w1-p2')).toBeNull()
-    await user.hover(herdr.querySelector('[data-slot="status-pill"]')!)
+    await user.hover(within(backend).getByTestId('member-substate').querySelector('[data-slot="status-pill"]')!)
     expect(await screen.findByText('herdr agent focus w1-p2')).toBeInTheDocument()
   })
 

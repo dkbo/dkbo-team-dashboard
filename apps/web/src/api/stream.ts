@@ -14,7 +14,7 @@ export interface StreamOptions {
   maxDelayMs?: number
 }
 
-const EVENTS: SseEventName[] = ['overview.updated', 'pane.updated', 'task.updated', 'herdr.view']
+const EVENTS: SseEventName[] = ['overview.updated', 'pane.updated', 'task.updated', 'herdr.view', 'sessions.updated']
 const CLOSED = 2
 
 /** 開 SSE 連線；回傳關閉函式。 */

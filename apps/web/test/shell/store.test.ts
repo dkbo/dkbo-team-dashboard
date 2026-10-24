@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { TaskDetailResponse } from '@dash/shared'
 import { resetDashStore, useDashStore } from '@/store/store'
-import { detail, overview, pane, project } from './builders'
+import { detail, officeSession, overview, pane, project, sessionsDoc } from './builders'
 
 type Route = (url: string) => { status: number; body: unknown }
 
@@ -162,5 +162,35 @@ describe('SSE 連線狀態', () => {
     expect(useDashStore.getState().sse).toBe('connecting')
     useDashStore.getState().handleStreamError(true)
     expect(useDashStore.getState().sse).toBe('closed')
+  })
+})
+
+describe('sessions（辦公室）', () => {
+  it('fetchSessions 取得 /api/sessions；sessions.updated 較舊的 generatedAt 不覆蓋較新的', async () => {
+    const fetchFn = stubFetch((url) => ({ status: 200, body: url === '/api/sessions' ? sessionsDoc([officeSession()], { generatedAt: 5 }) : {} }))
+    await useDashStore.getState().fetchSessions()
+    expect(fetchFn).toHaveBeenCalledWith('/api/sessions', expect.anything())
+    expect(useDashStore.getState().sessions?.sessions.map((s) => s.id)).toEqual(['p1'])
+    useDashStore.getState().handleEvent({ event: 'sessions.updated', data: sessionsDoc([], { generatedAt: 9 }) })
+    expect(useDashStore.getState().sessions?.generatedAt).toBe(9)
+    useDashStore.getState().handleEvent({ event: 'sessions.updated', data: sessionsDoc([officeSession()], { generatedAt: 7 }) })
+    expect(useDashStore.getState().sessions?.sessions).toEqual([])
+  })
+
+  it('抓取失敗記錯誤、保留舊資料；成功後清掉錯誤', async () => {
+    stubFetch(() => ({ status: 500, body: {} }))
+    await useDashStore.getState().fetchSessions()
+    expect(useDashStore.getState().sessionsError).toMatch('500')
+    expect(useDashStore.getState().sessions).toBeNull()
+    stubFetch(() => ({ status: 200, body: sessionsDoc() }))
+    await useDashStore.getState().fetchSessions()
+    expect(useDashStore.getState().sessionsError).toBeNull()
+  })
+
+  it('SSE 重連時已載入的 sessions 會重抓', () => {
+    const fetchFn = stubFetch(() => ({ status: 200, body: sessionsDoc() }))
+    useDashStore.setState({ sessions: sessionsDoc() })
+    useDashStore.getState().handleStreamOpen()
+    expect(fetchFn.mock.calls.map((c) => c[0])).toContain('/api/sessions')
   })
 })

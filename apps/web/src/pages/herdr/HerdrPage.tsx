@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router'
-import { CircleQuestionMark } from 'lucide-react'
+import { Link, useSearchParams } from 'react-router'
+import { Armchair, CircleQuestionMark } from 'lucide-react'
 import type { HerdrSearchHit } from '@dash/shared'
 import { Banner } from '@/components/app/Banner'
 import { EmptyState } from '@/components/app/EmptyState'
@@ -157,7 +157,19 @@ export default function HerdrPage() {
 
   return (
     <div className="flex flex-col gap-3 p-3 lg:h-(--tool-h)">
-      <PageHeader size="compact" title="herdr" subtitle="唯讀鏡像：不會送任何按鍵到 herdr，選擇只存在網址" actions={<KeyHelp />} />
+      <PageHeader size="compact" title="herdr" subtitle="唯讀鏡像：不會送任何按鍵到 herdr，選擇只存在網址"
+        actions={
+          <>
+            <Button asChild variant="outline" size="sm">
+              <Link to={sel.pane ? `/office?${new URLSearchParams({ focus: sel.pane.paneId })}` : '/office'} data-testid="herdr-office-link">
+                <Armchair aria-hidden />
+                在辦公室看
+              </Link>
+            </Button>
+            <KeyHelp />
+          </>
+        }
+      />
       {error && (
         <Banner tone={view ? 'warn' : 'danger'} title={view ? '更新失敗，顯示的是舊資料' : '無法讀取 herdr'}>
           <code className="font-mono text-xs break-all">{error}</code>

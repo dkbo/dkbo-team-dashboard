@@ -86,6 +86,13 @@ describe('App 殼層', () => {
     expect(await screen.findByRole('heading', { name: '花費與額度趨勢' }, { timeout: 3000 })).toBeInTheDocument()
   })
 
+  it('/office 渲染辦公室頁（窄螢幕預設清單，不載入 3D）', async () => {
+    renderAt('/office')
+    expect(await screen.findByTestId('office-page')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '辦公室' })).toBeInTheDocument()
+    expect(within(topNav()).getByRole('link', { name: '辦公室' })).toHaveAttribute('aria-current', 'page')
+  })
+
   it('未知路徑顯示找不到頁面', async () => {
     renderAt('/nope')
     expect(await screen.findByText('找不到這個頁面')).toBeInTheDocument()

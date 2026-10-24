@@ -162,6 +162,25 @@ describe('index.css office token（office 規格 How to use A／B）', () => {
     expect(theme).not.toMatch(/--color-scene-(zone|desk|monitor|lounge|couch|plant|cabinet|board|cork|window|wall)/)
   })
 
+  // 波 2（frontend-scene QUESTION）：§1.5 燈光色、§3 motion
+  it('燈光色 light-hemi-sky／ground、light-key（§1.5，亮暗各一，只含色）', () => {
+    expect(has(root, '--light-hemi-sky', '#ffffff')).toBe(true)
+    expect(has(root, '--light-hemi-ground', 'var(--scene-floor)')).toBe(true)
+    expect(has(root, '--light-key', '#fff4e5')).toBe(true)
+    expect(has(dark, '--light-hemi-sky', '#8fa8ff')).toBe(true)
+    expect(has(dark, '--light-hemi-ground', '#1a1d3d')).toBe(true)
+    expect(has(dark, '--light-key', '#b9c6ff')).toBe(true)
+  })
+
+  it('motion：animate-alert-pulse（1.6s）、animate-think-dots（1.2s）進 @theme，keyframes 與 reduced-motion 退化', () => {
+    const theme = block('@theme inline')
+    expect(has(theme, '--animate-alert-pulse', 'alert-pulse 1.6s ease-out infinite')).toBe(true)
+    expect(has(theme, '--animate-think-dots', 'think-dots 1.2s ease-in-out infinite')).toBe(true)
+    expect(css).toMatch(/@keyframes alert-pulse\s*{[^@]*?scale\(1\)[^@]*?opacity:\s*0\.4[^@]*?scale\(1\.25\)[^@]*?opacity:\s*0\s*;?\s*}\s*}/)
+    expect(css).toMatch(/@keyframes think-dots\s*{[^@]*?opacity:\s*1[^@]*?opacity:\s*0\.3/)
+    expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\)\s*{[^@]*\.animate-alert-pulse[^@]*\.animate-think-dots[^@]*animation:\s*none/)
+  })
+
   it('不動既有的 status／brand token', () => {
     expect(has(root, '--status-danger', '#e0434f')).toBe(true)
     expect(has(dark, '--status-ok-fg', '#5fdcae')).toBe(true)

@@ -1,10 +1,11 @@
 import { Link } from 'react-router'
-import { MonitorPlay, Users } from 'lucide-react'
+import { Armchair, MonitorPlay, Terminal, Users } from 'lucide-react'
 import { modelMismatch, type Dispatch, type PaneLive, type TaskDetail } from '@dash/shared'
 import { CopyCommand } from '@/components/app/CopyCommand'
 import { EmptyState } from '@/components/app/EmptyState'
 import { MismatchMark } from '@/components/app/MismatchMark'
 import { StatusPill, type PillLook } from '@/components/app/StatusPill'
+import { SubstatePill } from '@/components/app/SubstatePill'
 import { Tag } from '@/components/app/Tag'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -12,10 +13,13 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/h
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { formatStamp } from '@/features/trends/model'
+import { useNow } from '@/hooks/useNow'
 import { herdrHref } from '@/lib/herdr'
 import { fmtConfigured, fmtModelEffort } from '@/lib/modelcost'
+import { effectiveSubstate, timerText } from '@/lib/substate'
 import { cn } from '@/lib/utils'
 import { fmtCost, fmtPct } from './format'
+import { needsYou } from './model'
 
 /** 成員 state 檔的 status → StatusPill 外觀（§1.4：blocked＝danger、working＝ok、done＝ok＋✓，其他 idle）；文字保留原文 */
 function memberStateLook(status: string): PillLook {
@@ -25,33 +29,91 @@ function memberStateLook(status: string): PillLook {
   return { tone: 'idle', label: status }
 }
 
-/** herdr 欄：StatusPill（hover／focus 出 model／effort 與複製 focus 指令）＋「看畫面」icon button */
-function HerdrStatus({ pane }: { pane: PaneLive | null }) {
+/** 細狀態欄（§6.12）：SubstatePill＋計時，有工具時第二行 mono 參數；hover／focus 出 model／effort 與複製 focus 指令 */
+function SubstateCell({ pane, now }: { pane: PaneLive | null; now: number }) {
+  const s = pane?.session
   if (!pane)
     return (
-      <div data-testid="herdr-status" className="flex items-center">
-        <StatusPill status="unknown" label="無 pane" />
+      <div data-testid="member-substate">
+        <StatusPill tone="idle" dashed size="sm" label="無 session" />
       </div>
     )
   const me = [pane.model, pane.effort].filter(Boolean).join(' / ')
+  const hover = (
+    <HoverCardContent align="start" className="flex w-72 flex-col gap-2">
+      {me && <p className="text-xs font-medium text-muted-foreground">{me}</p>}
+      <CopyCommand command={`herdr agent focus ${pane.paneId}`} />
+    </HoverCardContent>
+  )
+  // 有 pane 沒 session（DASH_SESSIONS=off、對不到）：不編細狀態，沿用 herdr 粗狀態膠囊
+  if (!s)
+    return (
+      <div data-testid="member-substate" className="py-1">
+        <HoverCard openDelay={150} closeDelay={100}>
+          <HoverCardTrigger asChild>
+            <span tabIndex={0} className="inline-flex w-fit rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
+              <StatusPill status={pane.status} size="sm" interactive />
+            </span>
+          </HoverCardTrigger>
+          {hover}
+        </HoverCard>
+      </div>
+    )
+  const sub = effectiveSubstate(s, now)
+  const danger = sub === 'waiting' || sub === 'error'
+  const timer = timerText(s, now)
+  const toolLine = s.tool ? (s.tool.summary ?? s.tool.name) : null
   return (
-    <div data-testid="herdr-status" className="flex items-center gap-1">
+    <div data-testid="member-substate" data-substate={sub} className="flex flex-col gap-0.5 py-1">
       <HoverCard openDelay={150} closeDelay={100}>
         <HoverCardTrigger asChild>
-          <span tabIndex={0} className="rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
-            <StatusPill status={pane.status} interactive />
+          <span tabIndex={0} className="inline-flex w-fit max-w-full items-center gap-1.5 rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
+            <SubstatePill substate={sub} tool={s.tool?.name} size="sm" />
+            {timer && (
+              <span data-slot="substate-timer" className={cn('text-xs font-semibold tabular-nums', danger ? 'text-status-danger-fg' : 'text-muted-foreground')}>
+                {timer}
+              </span>
+            )}
           </span>
         </HoverCardTrigger>
-        <HoverCardContent align="start" className="flex w-72 flex-col gap-2">
-          {me && <p className="text-xs font-medium text-muted-foreground">{me}</p>}
-          <CopyCommand command={`herdr agent focus ${pane.paneId}`} />
-        </HoverCardContent>
+        {hover}
       </HoverCard>
-      <Button asChild variant="ghost" size="icon-sm">
-        <Link to={herdrHref(pane)} data-testid="watch-pane" aria-label="看畫面" title="看畫面">
+      {toolLine && (
+        <span data-testid="member-tool" className="flex min-w-0 items-center gap-1 text-muted-foreground" title={toolLine}>
+          <Terminal aria-hidden className="size-3 shrink-0" />
+          <code className="min-w-0 truncate font-mono text-2xs">{toolLine}</code>
+        </span>
+      )}
+    </div>
+  )
+}
+
+/** 動作欄（§6.12）：「在辦公室看」（沒有 session 時 disabled）、「在 herdr 開」（沒有 pane 時不畫） */
+function RowActions({ pane }: { pane: PaneLive | null }) {
+  return (
+    <div data-testid="herdr-status" className="flex items-center justify-end gap-1">
+      {pane?.session ? (
+        <Button asChild variant="ghost" size="icon-sm">
+          <Link to={`/office?${new URLSearchParams({ focus: pane.paneId })}`} data-testid="member-office-link" aria-label="在辦公室看" title="在辦公室看">
+            <Armchair aria-hidden />
+          </Link>
+        </Button>
+      ) : (
+        <Button variant="ghost" size="icon-sm" disabled data-testid="member-office-link" aria-label="在辦公室看" title="沒有 session">
+          <Armchair aria-hidden />
+        </Button>
+      )}
+      {pane ? (
+        <Button asChild variant="ghost" size="icon-sm">
+          <Link to={herdrHref(pane)} data-testid="watch-pane" aria-label="看畫面" title="在 herdr 開">
+            <MonitorPlay aria-hidden />
+          </Link>
+        </Button>
+      ) : (
+        <Button variant="ghost" size="icon-sm" disabled aria-label="在 herdr 開" title="沒有 pane">
           <MonitorPlay aria-hidden />
-        </Link>
-      </Button>
+        </Button>
+      )}
     </div>
   )
 }
@@ -105,6 +167,8 @@ function CurrentCell({ current, todo, blockedBy, blocked }: { current: string | 
 const dimIfNone = (v: string) => cn('text-right tabular-nums', v === '—' && 'text-muted-foreground')
 
 export function MemberTable({ task, panes, dispatch = [] }: { task: TaskDetail; panes: Record<string, PaneLive | null>; dispatch?: Dispatch[] }) {
+  const now = useNow(1000)
+  const needs = task.members.filter((m) => needsYou(panes[m.name], now)).length
   return (
     <Card data-testid="member-table" className={cn(task.members.length > 0 && 'pb-2')}>
       <CardHeader>
@@ -112,6 +176,11 @@ export function MemberTable({ task, panes, dispatch = [] }: { task: TaskDetail; 
           <Users aria-hidden />
           成員
           <Tag count={task.members.length} />
+          {needs > 0 && (
+            <Tag variant="danger" data-testid="member-needs-tag">
+              {needs} 個等你
+            </Tag>
+          )}
         </CardTitle>
       </CardHeader>
       {task.members.length === 0 ? (
@@ -120,17 +189,21 @@ export function MemberTable({ task, panes, dispatch = [] }: { task: TaskDetail; 
         </CardContent>
       ) : (
         <CardContent className="px-0">
-          <Table flush>
+          {/* 欄位比原本多兩欄（細狀態、動作）：中間欄左右 padding 收到 px-2，讓 1440 寬（右欄任務資訊旁）放得下 */}
+          <Table flush className="[&_tr>*:not(:first-child):not(:last-child)]:px-2">
             <TableHeader>
               <TableRow className="hover:bg-transparent">
                 <TableHead>成員</TableHead>
                 <TableHead>state</TableHead>
+                <TableHead>細狀態</TableHead>
                 <TableHead>目前</TableHead>
-                <TableHead>herdr</TableHead>
                 <TableHead>設定</TableHead>
                 <TableHead>實際</TableHead>
                 <TableHead className="text-right">cost</TableHead>
                 <TableHead className="text-right">ctx</TableHead>
+                <TableHead>
+                  <span className="sr-only">動作</span>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -140,8 +213,9 @@ export function MemberTable({ task, panes, dispatch = [] }: { task: TaskDetail; 
                 const last = sent.at(-1) ?? null
                 const cost = fmtCost(pane?.cost)
                 const ctx = fmtPct(pane?.ctxPct)
+                const danger = m.status === 'blocked' || needsYou(pane, now)
                 return (
-                  <TableRow key={m.name} data-testid={`member-${m.name}`} className={cn(m.status === 'blocked' && 'bg-status-danger-soft hover:bg-status-danger-soft')}>
+                  <TableRow key={m.name} data-testid={`member-${m.name}`} className={cn(danger && 'bg-status-danger-soft hover:bg-status-danger-soft')}>
                     <TableCell>
                       <div className="flex flex-col">
                         <span className="font-semibold">{m.name}</span>
@@ -157,11 +231,11 @@ export function MemberTable({ task, panes, dispatch = [] }: { task: TaskDetail; 
                         </span>
                       )}
                     </TableCell>
-                    <TableCell className="max-w-72 min-w-44 py-3 whitespace-normal">
-                      <CurrentCell current={m.current} todo={m.todo} blockedBy={m.blocked_by} blocked={m.status === 'blocked'} />
-                    </TableCell>
                     <TableCell>
-                      <HerdrStatus pane={pane} />
+                      <SubstateCell pane={pane} now={now} />
+                    </TableCell>
+                    <TableCell className="max-w-72 min-w-32 py-3 whitespace-normal">
+                      <CurrentCell current={m.current} todo={m.todo} blockedBy={m.blocked_by} blocked={danger} />
                     </TableCell>
                     <TableCell data-testid={`member-configured-${m.name}`} className="py-3">
                       <div className="flex flex-col gap-0.5">
@@ -183,6 +257,9 @@ export function MemberTable({ task, panes, dispatch = [] }: { task: TaskDetail; 
                     </TableCell>
                     <TableCell className={dimIfNone(cost)}>{cost}</TableCell>
                     <TableCell className={dimIfNone(ctx)}>{ctx}</TableCell>
+                    <TableCell>
+                      <RowActions pane={pane} />
+                    </TableCell>
                   </TableRow>
                 )
               })}

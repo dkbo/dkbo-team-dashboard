@@ -6,13 +6,14 @@
 全站共用一套深靛可愛風設計系統（規格 `design/unify/DESIGN-SYSTEM.md`）：狀態色只有五種語意（danger 卡住要人處理、warn 降級／熔斷／ESCALATE、ok 運作中、idle 閒置／已結束、info 中性事件），內容頁（總覽、任務詳情、歷史、趨勢）置中最寬 1536px，工具頁（herdr、git）滿版窗格卡。各頁頂端是 PageHeader（標題、副標、工具列），錯誤一律用頁首下的橫幅（沒資料紅、有舊資料黃＋重試），空資料用空狀態卡。
 
 - `/`：總覽。上方四張摘要卡：進行中任務、今日花費、卡住的 agent、熔斷與額度（有熔斷或任一額度 ≥ 80% 變黃）；專案分「需要注意／活躍」（依卡住 > 警示 > 活躍排序，卡片依最嚴重狀態加外框）與收合的「閒置專案」（每專案一列，點了展開）；agent 畫面縮圖只畫工作中／卡住的 pane、最後 10 行，每 5 秒更新，頁首「畫面縮圖」可關，偏好存在瀏覽器；右側活動欄，見下方「活動欄」。手機寬度依序是摘要 2×2 → 活躍專案 → 活動（最新 5 則）→ 閒置專案
-- `/p/:project/t/:dir`：任務詳情。麵包屑＋頁首（任務名、專案 · dir · 分支、狀態膠囊，工具列「看 herdr」「複製 focus 指令」）；波次時間軸只展開進行中的波，已關閉的波收成一行可點開；成員表（state 膠囊、待辦與卡在併進「目前」欄、「看畫面」按鈕）；寬螢幕右欄是任務資訊與花費
+- `/office`：辦公室。把 Claude Code、Codex 的 session 畫成 3D 小人（three.js，進這一頁且是 3D 視圖才延遲載入）：有進行中任務的專案一區、任務桌群依 brief 成員順序固定座位、leader 坐大桌戴皇冠、沒有任務的 session 坐散座區、完成的去休息區；頭頂標記與地面圈顯示細狀態（見下方「辦公室與細狀態」），滑鼠移上去看 hover 卡。左側找人清單分「需要你／工作中／其他」，點一列場景會飛過去並選取，右側詳情含終端尾 6 行與 resume 指令（Claude `claude --resume <sessionId>`、Codex `codex resume <sessionId>`）。工具列有 kind 篩選、專案、「只看需要你」、3D｜清單切換、重設視角與全螢幕；選取與篩選存在網址（`?kind=&project=&needs=1&focus=&view=list`，找人清單另可 `f_project`／`f_task`／`f_role`）。不支援 WebGL、素材載入失敗或 context lost 時自動改用清單並顯示橫幅；< 768 寬預設清單、可「仍要開 3D」。純唯讀，沒有任何回覆或審批操作
+- `/p/:project/t/:dir`：任務詳情。麵包屑＋頁首（任務名、專案 · dir · 分支、狀態膠囊，工具列「在辦公室看」「看 herdr」「複製 focus 指令」）；波次時間軸只展開進行中的波，已關閉的波收成一行可點開；成員表的「細狀態」欄顯示該成員 session 此刻在做什麼（膠囊＋計時，有工具時第二行是工具參數；沒有 pane 註「無 session」），「state」欄仍是 dkbo 的任務流程狀態；等你或錯誤的成員整列淡紅底、卡片標題出現「N 個等你」，列尾有「在辦公室看」「在 herdr 開」；寬螢幕右欄是任務資訊與花費
 - `/history`：歷史與分析。篩選在頁首工具列；dev vs 審查圖預設只畫最近 15 件，右上「顯示全部 N 件」切換；表格預設最近 10 件、底部「再顯示 30 件」，裁定／自主、minor 數、重審次數合成「審查」一欄（例 `9/6 · m5 · r1`，表頭 ⓘ 有說明）
 - `/trends`：花費與額度趨勢（額度與 ctx 曲線、撞額度預估、每日花費、依任務／角色／kind 的花費）；時間區間在頁首切換，沒資料的圖收成矮的空狀態卡；資料來源見下方「花費與額度趨勢」
-- `/herdr`：herdr 唯讀鏡像。spaces／tabs／分割版面／pane 畫面與 agent 狀態；鍵盤 ↑↓ 切 space、n/p/1-9 切 tab、h/j/k/l 切 pane、Tab 循環、z 放大、/ 搜尋所有 pane 的畫面（不分大小寫的純文字，點結果跳到那一行）、e 看捲動歷史（只有 herdr 有保留歷史的 pane 才有；Claude Code 這類全螢幕 TUI 沒有）。herdr 變動由 SSE `herdr.view` 即時推送（server 訂不到事件時網頁退回每 2 秒輪詢）。選擇只存在網址，不會 focus 真的 herdr，也不送任何按鍵或命令。版面是左側 spaces／agents 清單（agents 依卡住 → 工作中 → 閒置排序）＋主窗格卡（tab 列、搜尋、放大），鍵盤說明在頁首的 `?`；終端畫面亮暗主題都固定黑底與原 ANSI 色
+- `/herdr`：herdr 唯讀鏡像。spaces／tabs／分割版面／pane 畫面與 agent 狀態；鍵盤 ↑↓ 切 space、n/p/1-9 切 tab、h/j/k/l 切 pane、Tab 循環、z 放大、/ 搜尋所有 pane 的畫面（不分大小寫的純文字，點結果跳到那一行）、e 看捲動歷史（只有 herdr 有保留歷史的 pane 才有；Claude Code 這類全螢幕 TUI 沒有）。herdr 變動由 SSE `herdr.view` 即時推送（server 訂不到事件時網頁退回每 2 秒輪詢）。選擇只存在網址，不會 focus 真的 herdr，也不送任何按鍵或命令。版面是左側 spaces／agents 清單（agents 依細狀態分「需要你／工作中／其他」三組、組內依等你 → 錯誤 → 中斷 → 執行 → 回覆 → 思考 → 完成 → 閒置排序，第二行是「專案 · 細狀態 · 計時」；沒有 session 資料的 pane 退回 herdr 的卡住／工作中／其他）＋主窗格卡（tab 列的點取該 tab 最嚴重的細狀態；pane 標題列是細狀態膠囊、計時與工具參數；搜尋、放大），頁首有「在辦公室看」（帶目前選的 pane），鍵盤說明在頁首的 `?`；終端畫面亮暗主題都固定黑底與原 ANSI 色
 - `/git`：各專案的 git 唯讀檢視。左欄清單切專案（每列顯示分支、狀態標籤（乾淨／N 改動／N 衝突）、ahead/behind；不是 git repo 或路徑不存在會標出）；工作樹狀態（分支、HEAD、upstream ↑↓、衝突／已暫存／未暫存／未追蹤檔案）；worktree 清單與各自的改動；歷史含所有分支與 tag 的分支圖（`--all --topo-order`，預設 200 筆、可載入更多到 1000 筆），點 commit 看作者、訊息與改動檔案（+/−，merge 對第一個 parent 比較），再點檔案在中欄看該檔的 diff（舊／新行號，超過 5000 行截斷；Esc 回歷史、再按一次關詳情）。lg 以上三欄滿版窗格卡、各欄自己捲：左欄專案、工作樹狀態、Worktree 三段（乾淨綠、有改動黃、衝突紅），中欄歷史（ref 標籤：HEAD 紫、分支灰、版本 tag 品牌色），右欄 commit 詳情選了才出現。每 10 秒更新，選的專案、commit 與檔案存在網址（`?p=&c=&f=`）。不 fetch，ahead/behind 以本機最後一次 fetch 為準
-- blocked 提醒（全站）：有 agent 卡住時分頁標題顯示 `(N)`、頂部列出現紅色膠囊（hover 列出、點了跳到 herdr 頁；頂部列另有熔斷膠囊、額度膠囊（≥ 80% 變黃、不會變紅）與 SSE／herdr 連線燈，放不下時收成 `+N`）；右上鈴鐺可開桌面通知，只在 agent「新變成」blocked 時通知
-- 任務 ↔ pane：任務詳情成員表的 herdr 欄是狀態膠囊＋旁邊的「看畫面」圖示鈕（跳到 herdr 頁），膠囊的 hover 卡只有 model／effort 與複製 focus 指令；總覽膠囊的 hover 卡有「在 herdr 頁看畫面」；herdr 頁 pane 標頭顯示所屬任務與成員，點了回任務詳情
+- 需要你提醒（全站）：有人卡住、等你或出錯時分頁標題前綴 `(N) 需要你 · `（N＝herdr 全部 blocked 的 pane 與細狀態為等你／錯誤的 session 的聯集，以 pane（沒有 pane 用 session）去重）、頂部列出現紅色膠囊（hover 列出、點了跳到 herdr 頁；頂部列另有熔斷膠囊、額度膠囊（≥ 80% 變黃、不會變紅）與 SSE／herdr 連線燈，放不下時收成 `+N`）；右上鈴鐺可開桌面通知，只在「新變成」等你或出錯時通知（文案分「有人等你」「出錯」；設定以外專案的 blocked pane 歸「有人等你」），頁面第一次載入的資料當基準不通知
+- 任務 ↔ pane：任務詳情成員表的細狀態膠囊 hover 卡有 model／effort 與複製 focus 指令，列尾圖示鈕「在 herdr 開」跳到 herdr 頁、「在辦公室看」跳到 `/office?focus=<pane>`；總覽膠囊的 hover 卡有「在 herdr 頁看畫面」；herdr 頁 pane 標頭顯示所屬任務與成員，點了回任務詳情
 
 ## 需求
 - Node ≥ 24、pnpm 11
@@ -40,7 +41,7 @@ server 的測試整輪跑在一個私有暫存目錄（`$TMPDIR/dash-vitest-*`�
 
 ## 結構
 - `apps/server`：Hono server（入口 `src/index.ts`）
-- `apps/web`：Vite + React + shadcn/ui + Tailwind v4 + Zustand（入口 `src/main.tsx`）
+- `apps/web`：Vite + React + shadcn/ui + Tailwind v4 + Zustand（入口 `src/main.tsx`）；辦公室 3D 場景用 three.js／react-three-fiber／drei（`src/features/office-scene/`，延遲載入），模型與 `LICENSE.md` 在 `public/office/`
 - `packages/shared`：`@dash/shared`，共用型別與計算（直接吃 TS，不 build）
 - `vendor/dkbo-status`：dkbo 0.20.0 的 dk-status（bin/lib/VERSION，未修改），給沒有 dk-status 的舊專案用相容模式
 
@@ -54,9 +55,21 @@ server 的測試整輪跑在一個私有暫存目錄（`$TMPDIR/dash-vitest-*`�
 | `DASH_HERDR_SOCKET` | herdr 預設 | herdr socket 路徑 |
 | `DASH_HERDR` | — | 設 `off` 等同沒有 herdr |
 | `DASH_GIT_BIN` | `git` | git 執行檔（e2e 換成記錄參數的包裝） |
+| `DASH_CLAUDE_DIR` | `$CLAUDE_CONFIG_DIR` 或 `~/.claude` | 辦公室讀 Claude Code session JSONL 的目錄（只讀） |
+| `DASH_CODEX_DIR` | `$CODEX_HOME` 或 `~/.codex` | 辦公室讀 Codex rollout JSONL 的目錄（只讀） |
+| `DASH_SESSIONS` | — | 設 `off` 關閉整個 session／細狀態功能：`/api/sessions` 回空、`PaneLive.session` 恆為 null，各頁細狀態退回 herdr 粗狀態 |
 | `DASH_DATA_DIR` | `${XDG_STATE_HOME:-$HOME/.local/state}/dkbo-dashboard` | 趨勢樣本的資料目錄（server 唯一會寫的地方；相對路徑以 server 的 cwd 解析） |
 | `DASH_SAMPLE_MS` | 60000 | 取樣間隔（毫秒） |
 | `DASH_RETENTION_DAYS` | 30 | 樣本保留天數 |
+
+## 辦公室與細狀態
+server 唯讀讀 `DASH_CLAUDE_DIR`／`DASH_CODEX_DIR` 底下的 session JSONL，和 herdr 的 pane 狀態合算出每個 session 的「細狀態」，經 `GET /api/sessions`、SSE `sessions.updated` 與各 pane 的 `session` 欄位送到網頁（型別見 `packages/shared/src/session.ts`）。
+- 八種細狀態：思考中、執行（附工具名）、回覆中、等你、完成、中斷、錯誤、閒置。完成或中斷滿 10 分鐘沒新事件顯示閒置；閒置滿 2 小時算下班，不畫角色、只計數。網頁一律用同一套規則換算，所以辦公室、任務詳情與 herdr 頁的顯示一致。
+- 範圍：只追 `dashboard.config.json` 專案（含其 `.worktrees/**`）底下 cwd 的 Claude Code 與 Codex session，其他 agent 不做。pane 與 session 以 herdr 給的 session id 優先對應，沒有時退回「同 cwd、同 kind、最近更新」；同 cwd 有多個 Codex pane 又分不出誰是誰時寧可不對，不會把甲的狀態掛到乙。
+- 隱私：提示詞與回覆全文不出 server；送到網頁的文字只有工具名加參數摘要（≤ 80 字）、等你的問句（≤ 200 字）、錯誤第一行（≤ 200 字）。
+- **Claude 等審批的已知限制**：Claude Code 的審批請求不會寫進 session JSONL，所以「等你」只能由 herdr 回報該 pane `blocked` 轉出，問句取自 pane 畫面最後一行以問號結尾的文字（啟發式，抓不到時不顯示問句）；herdr 沒回 blocked、或畫面上沒有問號行時，審批會顯示成執行或思考。Codex 的審批事件有寫進 rollout，但 dkbo 的 Codex 通常以 `approval_policy: never` 執行，很少出現。
+- Claude 出錯時 herdr 實際回報什麼尚未實測；細狀態以 JSONL 的 API 錯誤優先（pane 粗狀態一律顯示 blocked）。
+- 3D 素材：角色來自 [Kenney Mini Characters 1.0](https://kenney.nl/assets/mini-characters)、家具來自 [Kenney Furniture Kit 2.0](https://kenney.nl/assets/furniture-kit)，授權 CC0 1.0；只保留用到的模型與動畫並做 meshopt 壓縮，授權與修改說明見 `apps/web/public/office/LICENSE.md`。
 
 ## 花費與額度趨勢
 server 開著時每 `DASH_SAMPLE_MS` 對手上已有的 herdr pane 狀態（`/api/overview` 的 `agents`，不另外呼叫 herdr）取樣一次，append 到 `$DASH_DATA_DIR/samples/YYYY-MM-DD.jsonl`（server 本地日期，一行一筆 `UsageSample`，型別見 `packages/shared/src/trends.ts`）。
@@ -94,6 +107,9 @@ server 開著時每 `DASH_SAMPLE_MS` 對手上已有的 herdr pane 狀態（`/ap
 
 ## herdr 唯讀保證
 server 對 herdr 只會做三件事：`herdr api snapshot`、`herdr pane read <id> --source visible|recent [--lines N] --format ansi`、socket `events.subscribe`（pane 事件與 workspace／tab／layout 結構事件各一條連線）（白名單見 `apps/server/src/herdr-view.ts` 的 `herdrArgs`）。HTTP 只有 GET：`/api/herdr/view`、`/api/herdr/search?q=`、`/api/herdr/panes/:id/screen[?source=recent&lines=N]`。
+
+## session 唯讀保證
+server 對 `~/.claude`、`~/.codex` 只做 `readdir`、`stat`、讀檔（transcript 只讀新增的位元組），不寫入、不刪除；對 herdr 沒有新增任何寫入類呼叫（Claude pane 轉等你時多讀一次可見畫面，走既有的 `herdr pane read` 白名單）。網頁沒有任何回覆或審批操作。
 
 ## git 唯讀保證
 server 對各專案的 git 只會跑白名單內的指令（`apps/server/src/git.ts` 的 `gitArgs`）：`status --porcelain=v2 --branch -z`、`worktree list --porcelain -z`、`log --all --topo-order`、`show -s <hash>`、`diff-tree <parent> <hash>`（檔案清單），以及單檔 `diff-tree -p --no-ext-diff --no-textconv <parent> <hash> -- <path>`（不執行 repo 設定的外部 diff／textconv；path 必須是該 commit 改到的檔）。每次都帶 `--no-optional-locks`（status 不刷新 index、不建 `index.lock`）、`-c core.fsmonitor=false`（不執行 repo 設定的 fsmonitor 指令），並設 `GIT_TERMINAL_PROMPT=0`、不繼承 server 的 `GIT_*` 環境變數；commit 參數只收 7–64 碼小寫 hex。不 fetch、不 checkout、不寫任何 ref。HTTP 只有 GET：`/api/git`（各專案摘要）、`/api/git/:project?limit=1..1000`、`/api/git/:project/commits/:hash`、`/api/git/:project/commits/:hash/diff?path=`；不是 git repo 回 409、找不到專案或 commit 回 404。

@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import type { CostsResponse, HistoryRow, OverviewDoc, PaneLive, TaskDetailResponse } from '@dash/shared'
+import type { CostsResponse, HistoryRow, OverviewDoc, PaneLive, SessionsDoc, TaskDetailResponse } from '@dash/shared'
 import { detailKey, useDashStore, type SseState } from './store'
 
 export { useDashStore } from './store'
@@ -77,4 +77,14 @@ export function usePane(paneId: string | null | undefined): PaneLive | undefined
 
 export function useConnection(): { sse: SseState; herdr: OverviewDoc['herdr'] | null } {
   return useDashStore(useShallow((s) => ({ sse: s.sse, herdr: s.overview?.herdr ?? null })))
+}
+
+/** 辦公室的 session 細狀態；沒抓過就抓（之後靠 SSE sessions.updated） */
+export function useSessions(): { data: SessionsDoc | null; error: string | null } {
+  const r = useDashStore(useShallow((s) => ({ data: s.sessions, error: s.sessionsError })))
+  useEffect(() => {
+    const s = useDashStore.getState()
+    if (!s.sessions) void s.fetchSessions()
+  }, [])
+  return r
 }

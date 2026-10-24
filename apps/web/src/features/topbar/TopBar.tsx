@@ -30,6 +30,7 @@ const HERDR_TONE: Record<HerdrState, Tone> = { subscribed: 'ok', polling: 'warn'
 
 const NAV = [
   { to: '/', label: '總覽', end: true },
+  { to: '/office', label: '辦公室' },
   { to: '/history', label: '歷史' },
   { to: '/trends', label: '趨勢' },
   { to: '/herdr', label: 'herdr' },

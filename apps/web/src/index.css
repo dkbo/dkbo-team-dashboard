@@ -85,6 +85,8 @@
     --height-marker: var(--marker-h);
     --height-marker-alert: var(--marker-alert-h);
     --width-finder: var(--finder-w);
+    --animate-alert-pulse: alert-pulse 1.6s ease-out infinite;
+    --animate-think-dots: think-dots 1.2s ease-in-out infinite;
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
     --radius-lg: var(--radius);
@@ -212,6 +214,8 @@
     --scene-couch: #c4bdf0; --scene-plant: #8fb8a5; --scene-shadow: rgb(61 67 128 / 12%);
     --scene-cabinet: #e4e7f4; --scene-cabinet-side: #cdd2ea; --scene-board: #ffffff;
     --scene-cork: #e2c9a0; --scene-lamp-off: #8a8fb3;
+    /* §1.5 燈光色（強度與方向是數字，留在場景程式） */
+    --light-hemi-sky: #ffffff; --light-hemi-ground: var(--scene-floor); --light-key: #fff4e5;
     --rank-senior: #3f3a9e; --rank-mid: #5b8cff; --rank-junior: #a9d8f5; --rank-visitor: #cfd2dd;
     --hovercard-w: 17.5rem; --marker-h: 1.5rem; --marker-alert-h: 1.75rem; --finder-w: 19rem;
 }
@@ -272,6 +276,7 @@
     --scene-couch: #5a5296; --scene-plant: #4f7f6c; --scene-shadow: rgb(5 6 20 / 40%);
     --scene-cabinet: #4a4f86; --scene-cabinet-side: #3a3e70; --scene-board: #c9cdea;
     --scene-cork: #6b5a73; --scene-lamp-off: #3a3e66;
+    --light-hemi-sky: #8fa8ff; --light-hemi-ground: #1a1d3d; --light-key: #b9c6ff;
     --rank-senior: #5a52d0; --rank-mid: #6f9bff; --rank-junior: #b4dcf8; --rank-visitor: #d6d8e2;
 }
 
@@ -286,6 +291,21 @@
         --sidebar-w: 18rem;
         --detail-w: 26rem;
     }
+}
+
+/* office §3 motion：alert 標記脈動環、thinking 三點（stagger 由使用處用 animation-delay） */
+@keyframes alert-pulse {
+    from { transform: scale(1); opacity: 0.4; }
+    to { transform: scale(1.25); opacity: 0; }
+}
+
+@keyframes think-dots {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-alert-pulse, .animate-think-dots { animation: none; }
 }
 
 @layer base {

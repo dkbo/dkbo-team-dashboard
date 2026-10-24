@@ -1,6 +1,8 @@
 // 任務詳情頁的純計算。參數用結構型別，只取需要的欄位，與 @dash/shared 的 dk-status 型別相容。
 
+import type { SessionLive } from '@dash/shared'
 import { findMemberPane, type MemberPaneLive } from '@/lib/member-pane'
+import { effectiveSubstate } from '@/lib/substate'
 
 type Ts = string | null
 
@@ -105,4 +107,11 @@ export function wavePhase(w: { wave: number; opened_at: Ts; closed_at: Ts }, cur
   if (currentWave === w.wave) return 'current'
   if (w.opened_at) return 'open'
   return 'pending'
+}
+
+/** 「需要你」：細狀態（經 effectiveSubstate）為等你或錯誤；沒有 session 資料不算 */
+export function needsYou(pane: { session?: SessionLive | null } | null | undefined, now: number): boolean {
+  if (!pane?.session) return false
+  const sub = effectiveSubstate(pane.session, now)
+  return sub === 'waiting' || sub === 'error'
 }

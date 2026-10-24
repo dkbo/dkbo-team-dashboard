@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link } from 'react-router'
-import { Check, Copy, Info, ListChecks, MonitorPlay, TriangleAlert } from 'lucide-react'
+import { Armchair, Check, Copy, Info, ListChecks, MonitorPlay, TriangleAlert } from 'lucide-react'
 import type { PaneLive, TaskDetail } from '@dash/shared'
 import { PageHeader } from '@/components/app/PageHeader'
 import { StatusPill, taskStatusPill } from '@/components/app/StatusPill'
@@ -57,6 +57,11 @@ export function TaskHeader({ project, task, pane }: { project: string; task: Tas
         }
         actions={
           <>
+            <Button asChild variant="outline" size="sm">
+              <Link to={`/office?${new URLSearchParams({ project })}`}>
+                <Armchair aria-hidden />在辦公室看
+              </Link>
+            </Button>
             <Button asChild variant="outline" size="sm">
               <Link to={pane ? herdrHref(pane) : '/herdr'}>
                 <MonitorPlay aria-hidden />看 herdr

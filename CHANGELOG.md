@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+### 新增：辦公室視圖與 session 細狀態（dkbo 任務 office）
+- `/office`：3D 辦公室（three.js／react-three-fiber，只在進頁且是 3D 視圖時延遲載入）把 Claude Code、Codex 的 session 畫成 Kenney 小人；有任務的專案一區、任務桌群依 brief 成員順序固定座位、leader 大桌加皇冠、完成的去休息區；頭頂標記、地面圈與 hover 卡顯示細狀態與職等。找人清單（需要你／工作中／其他）、詳情（終端尾、resume 指令）、清單模式（桌機三欄、手機三張收合卡）；無 WebGL、素材載入失敗或 context lost 時自動退到清單。選取與篩選存在網址（`focus`、`kind`、`project`、`needs`、`view`、`f_*`）。純唯讀。
+- 細狀態：server 唯讀讀 Claude／Codex 的 session JSONL，與 herdr 狀態合算出思考中、執行、回覆中、等你、完成、中斷、錯誤、閒置；新增 `GET /api/sessions`、SSE `sessions.updated`，`PaneLive` 加選填的 `session`（總覽、任務詳情、herdr 的 pane 都帶）。transcript 只讀新增位元組，推送每 500 ms 合併去重。提示詞與回覆全文不出 server。
+- 任務詳情成員表：「herdr」欄改成「細狀態」（膠囊＋計時＋工具參數；沒有 session 註「無 session」，有 pane 沒 session 時退回 herdr 粗狀態），等你／錯誤整列淡紅底，卡片標題加「N 個等你」，列尾加「在辦公室看」「在 herdr 開」，頁首加「在辦公室看」；dkbo 的 state 欄保留。
+- herdr 頁：agents 清單分「需要你／工作中／其他」三組，第二行「專案 · 細狀態 · 計時」；pane 標題列改細狀態膠囊、計時與工具參數；tab 的點用該 tab 最嚴重的細狀態；頁首加「在辦公室看」。鍵盤與網址行為不變。
+- 提醒：分頁標題前綴改為 `(N) 需要你 · `（blocked 的 pane 與等你／錯誤的 session 取聯集去重）；桌面通知改為「有人等你」「出錯」兩種，取代原本的 blocked 通知。
+- 新環境變數 `DASH_CLAUDE_DIR`、`DASH_CODEX_DIR`、`DASH_SESSIONS=off`。web 新增依賴 `three`、`@react-three/fiber`、`@react-three/drei`、`@types/three`；`public/office/` 放 Kenney Mini Characters 1.0 與 Furniture Kit 2.0（CC0）壓縮模型，總量 < 1.5 MB。
+- 已知限制：Claude Code 的審批不寫 session JSONL，「等你」只能由 herdr 回報的 blocked 轉出，問句取自 pane 畫面（啟發式）。
+
 ## [0.4.0] - 2026-10-04
 
 ### 改版：全站設計統一（dkbo 任務 unify）
