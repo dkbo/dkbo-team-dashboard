@@ -1,0 +1,47 @@
+const ISO={s:28,ox:0,oy:0};
+const IS=(x,y,z=0)=>[ISO.ox+(x-y)*ISO.s*0.866,ISO.oy+(x+y)*ISO.s*0.5-z*ISO.s];
+const poly=(p,pts,fill,o={})=>{const xs=pts.map(q=>q[0]),ys=pts.map(q=>q[1]);const x0=Math.min(...xs),y0=Math.min(...ys),w=Math.max(1,Math.max(...xs)-x0),h=Math.max(1,Math.max(...ys)-y0);const g="M"+pts.map(q=>(q[0]-x0).toFixed(1)+" "+(q[1]-y0).toFixed(1)).join(" L")+" Z";return Insert(p,{type:"path",name:o.name||"poly",x:x0,y:y0,width:w,height:h,viewBox:[0,0,w,h],geometry:g,fill,stroke:o.stroke,strokeWidth:o.sw,opacity:o.opacity})};
+const quad=(p,a,b,c,d,fill,o)=>poly(p,[IS(...a),IS(...b),IS(...c),IS(...d)],fill,o);
+const box=(p,x,y,z,w,d,h,c,o={})=>{const n=o.name||"box";quad(p,[x,y+d,z],[x+w,y+d,z],[x+w,y+d,z+h],[x,y+d,z+h],c.l,{name:n+" L"});quad(p,[x+w,y,z],[x+w,y+d,z],[x+w,y+d,z+h],[x+w,y,z+h],c.r,{name:n+" R"});quad(p,[x,y,z+h],[x+w,y,z+h],[x+w,y+d,z+h],[x,y+d,z+h],c.t,{name:n+" T"})};
+const fEll=(p,cx,cy,r,fill,o={})=>{const [sx,sy]=IS(cx,cy,o.z||0);const a=r*ISO.s*1.2247,b=r*ISO.s*0.7071;return Insert(p,{type:"ellipse",name:o.name||"floor-ellipse",x:sx-a,y:sy-b,width:2*a,height:2*b,fill,stroke:o.stroke,strokeWidth:o.sw,opacity:o.opacity})};
+const DESK={t:"$scene-desk-t",l:"$scene-desk-l",r:"$scene-desk-r"};
+const desk=(p,x,y,screen)=>{box(p,x,y,0,1.4,0.8,0.5,DESK,{name:"desk"});box(p,x+0.35,y+0.12,0.5,0.7,0.08,0.42,{t:"$scene-monitor",l:screen||"$scene-screen-off",r:"$scene-monitor"},{name:"monitor"})};
+const bigDesk=(p,x,y,screen)=>{box(p,x,y,0,1.9,1.0,0.52,DESK,{name:"lead-desk"});box(p,x+0.3,y+0.12,0.52,0.6,0.08,0.42,{t:"$scene-monitor",l:screen||"$scene-screen-off",r:"$scene-monitor"},{name:"monitor-1"});box(p,x+1.0,y+0.12,0.52,0.6,0.08,0.42,{t:"$scene-monitor",l:screen||"$scene-screen-off",r:"$scene-monitor"},{name:"monitor-2"})};
+const chibi=(p,sx,sy,o={})=>{const k=o.k||1,pose=o.pose||"sit",sit=["sit","type","think","slump","nap"].includes(pose),front=!!o.front;const g=fr(p,{name:"Character "+(o.name||pose),layout:"none",x:sx-20*k,y:sy-60*k,width:48*k,height:62*k,opacity:o.dim?0.55:undefined});const X=20*k,Y=60*k;
+Insert(g,{type:"ellipse",name:"shadow",x:X-12*k,y:Y-4*k,width:24*k,height:8*k,fill:"$scene-shadow"});
+const legH=sit?4*k:11*k;if(!sit){Insert(g,{type:"rectangle",name:"leg",x:X-6*k,y:Y-12*k,width:5*k,height:12*k,cornerRadius:2*k,fill:"$pants"});Insert(g,{type:"rectangle",name:"leg",x:X+1*k,y:Y-12*k,width:5*k,height:12*k,cornerRadius:2*k,fill:"$pants"})}else Insert(g,{type:"rectangle",name:"lap",x:X-7*k,y:Y-6*k,width:14*k,height:5*k,cornerRadius:2*k,fill:"$pants"});
+const ty=Y-legH-15*k;Insert(g,{type:"rectangle",name:"torso",x:X-8*k,y:ty,width:16*k,height:16*k,cornerRadius:[6*k,6*k,4*k,4*k],fill:o.shirt||"$shirt-1"});
+const slump=pose==="slump"||pose==="nap";const hy=ty-18*k+(slump?5*k:0),hx=X-10*k+(slump&&!front?0:0);
+if(pose==="wave"){Insert(g,{type:"rectangle",name:"arm-up",x:X+9*k,y:ty-13*k,width:4.5*k,height:15*k,cornerRadius:2*k,fill:o.shirt||"$shirt-1",rotation:-25});Insert(g,{type:"ellipse",name:"hand",x:X+13*k,y:ty-19*k,width:7*k,height:7*k,fill:"$skin"})}
+if(pose==="type"){Insert(g,{type:"rectangle",name:"arm-l",x:X-11*k,y:ty+4*k,width:4*k,height:8*k,cornerRadius:2*k,fill:"$skin"});Insert(g,{type:"rectangle",name:"arm-r",x:X+7*k,y:ty+4*k,width:4*k,height:8*k,cornerRadius:2*k,fill:"$skin"})}
+if(pose==="coffee"){Insert(g,{type:"rectangle",name:"cup",x:X+6*k,y:ty+4*k,width:6*k,height:7*k,cornerRadius:1.5*k,fill:"#ffffff",stroke:"$scene-desk-r",strokeWidth:Math.max(1,0.8*k)})}
+if(pose==="think"){Insert(g,{type:"ellipse",name:"hand-chin",x:X+1*k,y:ty-3*k,width:6*k,height:6*k,fill:"$skin"})}
+if(front){Insert(g,{type:"ellipse",name:"head",x:hx,y:hy,width:20*k,height:20*k,fill:"$skin"});Insert(g,{type:"ellipse",name:"hair",x:hx-0.5*k,y:hy-1*k,width:21*k,height:16*k,fill:"$hair",startAngle:0,sweepAngle:180});
+ if(slump||pose==="nap"){Insert(g,{type:"rectangle",name:"eye",x:hx+5*k,y:hy+11*k,width:3.5*k,height:1.2*k,fill:"$hair"});Insert(g,{type:"rectangle",name:"eye",x:hx+11.5*k,y:hy+11*k,width:3.5*k,height:1.2*k,fill:"$hair"})}
+ else{Insert(g,{type:"ellipse",name:"eye",x:hx+5.5*k,y:hy+10*k,width:2.6*k,height:3*k,fill:"$hair"});Insert(g,{type:"ellipse",name:"eye",x:hx+12*k,y:hy+10*k,width:2.6*k,height:3*k,fill:"$hair"})}
+ if(o.mouth==="o")Insert(g,{type:"ellipse",name:"mouth",x:hx+8.5*k,y:hy+14.5*k,width:3*k,height:3*k,fill:"#c0606f"});
+ Insert(g,{type:"ellipse",name:"blush",x:hx+2.5*k,y:hy+13*k,width:3.5*k,height:2*k,fill:"#ff9eb566"});Insert(g,{type:"ellipse",name:"blush",x:hx+14*k,y:hy+13*k,width:3.5*k,height:2*k,fill:"#ff9eb566"})}
+else{Insert(g,{type:"ellipse",name:"head-back",x:hx,y:hy,width:20*k,height:20*k,fill:"$hair"})}
+if(o.crown)tx(g,"👑",{fontSize:11*k,x:X-7*k,y:hy-10*k,fill:"#000000",name:"crown"});
+return {x:sx,y:sy-60*k+hy-(o.crown?8*k:2*k)}};
+const MK={thinking:{tone:"ok",icon:null,label:"思考中",style:"bubble"},running:{tone:"ok",icon:"terminal",style:"line"},writing:{tone:"ok",icon:"pencil-line",label:"回覆中",style:"line"},waiting:{tone:"danger",icon:"hand",label:"等你",style:"solid"},error:{tone:"danger",icon:"circle-alert",label:"錯誤",style:"solid"},done:{tone:"ok",icon:"check",label:"完成",style:"soft"},interrupted:{tone:"warn",icon:"square",label:"中斷",style:"soft"},idle:{tone:"idle",icon:"moon",label:"閒置",style:"soft"}};
+const tw=(s,fs)=>[...String(s)].reduce((a,c)=>a+(c.charCodeAt(0)>255?fs:fs*0.6),0);
+const marker=(p,sx,sy,kind,o={})=>{const m=MK[kind],sc=o.scale||1,solid=m.style==="solid",H=(solid?28:24)*sc,fs=(solid?13:12)*sc,label=o.label||m.label||"";const W=Math.round((solid?24:20)*sc+(m.icon?18*sc:0)+(m.style==="bubble"&&!o.label?26*sc:tw(label,fs)));
+const g=fr(p,{name:"Marker "+kind,layout:"vertical",alignItems:"center",x:sx-W/2,y:sy-H-(m.style==="bubble"?12:6)*sc,width:W,gap:0});
+const st={bubble:{fill:"$popover",stroke:"$status-ok",strokeWidth:1.5*sc,effect:SH},line:{fill:"$popover",stroke:"$status-ok",strokeWidth:1.5*sc,effect:SH},solid:{fill:"$status-danger",effect:POP},soft:{fill:"$status-"+m.tone+"-soft",stroke:"$status-"+m.tone,strokeWidth:1.5*sc}}[m.style];
+const fg=solid?"#ffffff":"$status-"+m.tone+"-fg";const b=row(g,{name:"badge",height:H,width:W,cornerRadius:999,justifyContent:"center",gap:4*sc,padding:[0,10*sc],...st});
+if(m.style==="bubble"&&!o.label){[0,1,2].forEach(i=>Insert(b,{type:"ellipse",name:"dot",width:5*sc,height:5*sc,fill:"$status-ok-fg",opacity:i===1?0.7:(i===2?0.45:1)}))}else{if(m.icon)ic(b,m.icon,(solid?14:12)*sc,fg);tx(b,label,{fontSize:fs,fontWeight:solid?"800":"700",fill:fg,fontFamily:o.mono?M:F})}
+if(m.style==="bubble"){const t=col(g,{name:"tail",alignItems:"center",gap:1,padding:[2,0,0,8*sc]});Insert(t,{type:"ellipse",name:"t1",width:6*sc,height:6*sc,fill:"$popover",stroke:"$status-ok",strokeWidth:1.2*sc});Insert(t,{type:"ellipse",name:"t2",width:3.5*sc,height:3.5*sc,fill:"$popover",stroke:"$status-ok",strokeWidth:1*sc})}
+else{Insert(g,{type:"path",name:"pointer",width:10*sc,height:6*sc,geometry:"M0 0 L10 0 L5 6 Z",viewBox:[0,0,10,6],fill:solid?"$status-danger":(m.style==="soft"?"$status-"+m.tone:"$status-ok")})}
+return g};
+const alertRing=(p,x,y)=>{fEll(p,x,y,0.95,"$status-danger",{opacity:0.14,name:"alert-halo"});fEll(p,x,y,0.62,undefined,{stroke:"$status-danger",sw:2,opacity:0.9,name:"alert-ring"});fEll(p,x,y,0.95,undefined,{stroke:"$status-danger",sw:1.5,opacity:0.4,name:"alert-ring-outer"})};
+const selRing=(p,x,y)=>{fEll(p,x,y,0.62,undefined,{stroke:"$ring",sw:3,name:"select-ring"})};
+const zoneSign=(p,x,y,title,sub,o={})=>{const [sx,sy]=IS(x,y,o.z||0);const g=row(p,{name:"ZoneSign "+title,x:sx,y:sy,height:28,cornerRadius:999,fill:"$popover",effect:SH,padding:[0,12],gap:8});if(o.icon)ic(g,o.icon,14,"$brand-violet");tx(g,title,{fontSize:12,fontWeight:"800"});if(sub)tx(g,sub,{fontSize:11,fill:"$muted-foreground"});if(o.tag)tag(g,o.tag[0],o.tag[1]);return g};
+const plant=(p,x,y)=>{box(p,x,y,0,0.5,0.5,0.45,{t:"$scene-pot",l:"$scene-pot",r:"$scene-desk-r"},{name:"pot"});const [sx,sy]=IS(x+0.25,y+0.25,0.95);Insert(p,{type:"ellipse",name:"leaves",x:sx-16,y:sy-14,width:32,height:30,fill:"$scene-plant"})};
+const room=(p,W,D,o={})=>{const H=2.4;
+quad(p,[0,0,0],[W,0,0],[W,D,0],[0,D,0],"$scene-floor",{name:"floor"});
+quad(p,[0,D,0],[W,D,0],[W,D,-0.25],[0,D,-0.25],"$scene-floor-edge",{name:"floor edge L"});quad(p,[W,0,0],[W,D,0],[W,D,-0.25],[W,0,-0.25],"$scene-zone-edge",{name:"floor edge R"});
+quad(p,[0,0,0],[0,D,0],[0,D,H],[0,0,H],"$scene-wall-l",{name:"wall left"});quad(p,[0,0,0],[W,0,0],[W,0,H],[0,0,H],"$scene-wall-r",{name:"wall back"});
+quad(p,[-0.2,-0.2,H],[W,-0.2,H],[W,0,H],[0,0,H],"$scene-wall-top",{name:"wall cap"});quad(p,[-0.2,-0.2,H],[0,0,H],[0,D,H],[-0.2,D,H],"$scene-wall-top",{name:"wall cap"});
+(o.windows||[]).forEach(([a,b])=>{quad(p,[a,0,0.95],[b,0,0.95],[b,0,2.0],[a,0,2.0],"$scene-window",{name:"window"});quad(p,[a+0.1,0,1.85],[b-0.1,0,1.85],[b-0.1,0,1.95],[a+0.1,0,1.95],"$scene-window-glow",{name:"window glare"})})};
+const zoneRug=(p,x,y,w,d,fill)=>{quad(p,[x,y,0.01],[x+w,y,0.01],[x+w,y+d,0.01],[x,y+d,0.01],fill||"$scene-zone",{name:"zone rug"})};

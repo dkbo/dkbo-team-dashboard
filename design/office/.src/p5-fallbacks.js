@@ -1,0 +1,34 @@
+const pg=toolPage("page-office-list",0,2400,false);topbar(pg,1,{blocked:2});const body=toolBody(pg);
+const a=compactHeader(body,"辦公室","清單模式 · 12 個 session · 2 個需要你");seg(a,["全部|12","Claude|9","Codex|3"],0,{sm:true});field(a,null,"專案：全部");
+const sw=row(a,{name:"SegmentedControl view",height:32,cornerRadius:999,fill:"$muted",padding:2,gap:2});const s3=row(sw,{height:28,cornerRadius:999,padding:[0,12],opacity:0.5,gap:4});ic(s3,"ban",12,"$muted-foreground");tx(s3,"3D",{fontSize:12,fontWeight:"600",fill:"$muted-foreground"});const sl=row(sw,{height:28,cornerRadius:999,padding:[0,12],fill:"$seg-active",effect:SH});tx(sl,"清單",{fontSize:12,fontWeight:"600"});
+banner(body,"info","這個瀏覽器無法使用 WebGL，改用清單顯示","資料與篩選跟 3D 相同；換用支援 WebGL 2 的瀏覽器（或開啟硬體加速）後重新整理即可看到辦公室",{sm:false});
+const g=row(body,{name:"Columns",width:"fill_container",height:"fill_container",gap:12,alignItems:"start"});
+const colm=(title,tone,icon,items,cnt)=>{const p=pane(g,{name:"Col "+title});const h=paneHead(p,null);ic(h,icon,16,tone==="neutral"?"$muted-foreground":"$status-"+tone+"-fg");tx(h,title,{fontSize:14,fontWeight:"800",fill:tone==="danger"?"$status-danger-fg":"$foreground"});tag(h,String(cnt),tone);const l=col(p,{name:"list",width:"fill_container",padding:8,gap:4});items.forEach(o=>sessionRow(l,o));return l};
+colm("需要你","danger","hand",SESS.slice(0,2),2);colm("工作中","ok","activity",SESS.slice(2,8),6);const lst=colm("完成 · 中斷 · 閒置","neutral","coffee",SESS.slice(8),4);
+tx(lst,"2 位已下班（閒置超過 2 小時）· 顯示",{fontSize:12,fill:"$muted-foreground"});
+LIST=pg;
+//---
+const pg=page("office-mobile-390",1540,2400,390,{});
+const tb=col(pg,{name:"TopBar mobile",width:"fill_container",fill:"$topbar",effect:SH,padding:[8,16],gap:8});const t1=row(tb,{width:"fill_container",gap:8});ic(t1,"cloud",22,"$brand-blue");tx(t1,"dkbo",{fontSize:16,fontWeight:"800"});pill(t1,"2 個卡住","danger");sp(t1);iconBtn(t1,"sun");const nv=row(tb,{gap:4});["總覽","辦公室","歷史","趨勢","herdr"].forEach((n,i)=>{const b=row(nv,{height:30,cornerRadius:999,padding:[0,12],fill:i===1?"$primary":undefined});tx(b,n,{fontSize:13,fontWeight:"700",fill:i===1?"$primary-foreground":"$muted-foreground"})});
+const body=col(pg,{name:"Body",width:"fill_container",padding:16,gap:12});
+const h=row(body,{width:"fill_container",gap:8});tx(h,"辦公室",{fontSize:18,fontWeight:"800"});tx(h,"12 個 session",{fontSize:13,fill:"$muted-foreground"});
+seg(body,["全部|12","Claude|9","Codex|3"],0,{sm:true});
+const bn=row(body,{name:"Banner sm info",width:"fill_container",fill:"$status-info-soft",cornerRadius:14,padding:[8,12],gap:8});ic(bn,"info",16,"$status-info-fg");wrap(bn,"窄螢幕用清單顯示",{fontSize:13,fontWeight:"700",fill:"$status-info-fg"});btn(bn,"仍要開 3D","outline",{size:"sm"});
+const grp=(title,tone,items,o={})=>{const c=card(body,{name:"Group "+title,padding:[12,8,8,8],gap:4});const hh=row(c,{width:"fill_container",padding:[0,8,4,8],gap:8});tx(hh,title,{fontSize:14,fontWeight:"800",fill:tone==="danger"?"$status-danger-fg":"$foreground"});tag(hh,String(o.n||items.length),tone);sp(hh);ic(hh,o.closed?"chevron-down":"chevron-up",16,"$muted-foreground");items.forEach(x=>sessionRow(c,x));return c};
+const g1=grp("需要你","danger",SESS.slice(0,2));
+const ex=col(g1,{name:"expanded detail",width:"fill_container",padding:[4,12,8,48],gap:8});const rc=row(ex,{width:"fill_container",height:32,fill:"$muted",cornerRadius:14,padding:[0,4,0,10],gap:6});tx(rc,"codex resume 019a6e…c42f",{fontFamily:M,fontSize:11});sp(rc);iconBtn(rc,"copy");const ac=row(ex,{gap:6});btn(ac,"任務詳情","outline",{icon:"list-checks",size:"sm"});btn(ac,"herdr","outline",{icon:"monitor-play",size:"sm"});
+grp("工作中","ok",SESS.slice(2,5),{n:6});tx(body,"再顯示 3 位",{fontSize:12,fontWeight:"600",fill:"$primary"});
+grp("完成 · 中斷 · 閒置","neutral",[],{n:4,closed:1});
+MOB=pg;
+//---
+const pg=page("office-edge-states",0,3400,1440,{});const body=pageBody(pg,{pad:[32,24,32,24]});
+pageHeader(body,"triangle-alert","載入、空、錯誤","canvas 區內的六種非正常狀態；Banner 一律在 PageHeader 下、canvas 上");
+const grid=col(body,{width:"fill_container",gap:16});const r1=row(grid,{width:"fill_container",gap:16,alignItems:"start"});const r2=row(grid,{width:"fill_container",gap:16,alignItems:"start"});
+const panel=(r,title,sub,fn)=>{const c=col(r,{name:"case "+title,width:"fill_container",gap:8});const h=row(c,{gap:8});tx(h,title,{fontSize:14,fontWeight:"800"});tx(h,sub,{fontSize:12,fill:"$muted-foreground"});const cv=col(c,{name:"canvas",width:"fill_container",height:300,fill:"$scene-sky",cornerRadius:20,effect:SH,clip:true,padding:16,gap:12});fn(cv);return cv};
+panel(r1,"1 · 載入中","延遲載入 three.js＋模型",cv=>{const m=col(cv,{width:"fill_container",height:"fill_container",alignItems:"center",justifyContent:"center",gap:12});Insert(m,{type:"path",name:"Skeleton floor",width:260,height:130,geometry:"M130 0 L260 65 L130 130 L0 65 Z",viewBox:[0,0,260,130],fill:"$muted",stroke:"$input",strokeWidth:1});tx(m,"載入辦公室 3D 場景…",{fontSize:14,fontWeight:"700"});const pb=fr(m,{name:"ProgressBar",width:220,height:6,cornerRadius:999,fill:"$muted"});Insert(pb,{type:"rectangle",width:130,height:6,cornerRadius:999,fill:"$primary"});tx(m,"0.8 ／ 1.3 MB · 等待期間可切到「清單」",{fontSize:12,fill:"$muted-foreground"})});
+panel(r1,"2 · 沒有 session","EmptyState page",cv=>{empty(cv,"🌙","辦公室還沒有人上班","開一個 Claude Code 或 Codex session（herdr 裡）就會出現在這裡",{page:1,h:"fill_container"})});
+panel(r1,"3 · 篩選後沒人","EmptyState inline",cv=>{const m=col(cv,{width:"fill_container",height:"fill_container",justifyContent:"center"});empty(m,"search-x","「Codex · beacon」目前沒有人","",{});const b=row(m,{width:"fill_container",justifyContent:"center"});btn(b,"清除篩選","outline",{size:"sm",icon:"x"})});
+panel(r2,"4 · 載入失敗（沒有資料）","danger · 不畫場景",cv=>{banner(cv,"danger","載入失敗","GET /api/sessions 502；10 秒後自動重試",{action:"重試"});empty(cv,"cloud-off","目前拿不到 session 資料","",{h:"fill_container"})});
+panel(r2,"5 · 3D 素材載入失敗","danger · 自動切清單",cv=>{banner(cv,"danger","3D 素材載入失敗，已改用清單","kenney/furniture.glb 404",{action:"再試 3D"});const l=col(cv,{width:"fill_container",gap:4,opacity:0.9});sessionRow(l,SESS[0]);sessionRow(l,SESS[2])});
+panel(r2,"6 · GPU 重置／資料過時","warn · 場景保留",cv=>{banner(cv,"warn","3D 畫面暫停，正在重建（WebGL context lost）","通常 1–2 秒恢復；資料照常更新",{sm:true});banner(cv,"warn","更新失敗，顯示的是舊資料","最後成功 12:55；角色停在最後狀態並降為 55% 不透明",{sm:true});Insert(cv,{type:"rectangle",name:"scene dim",width:"fill_container",height:"fill_container",cornerRadius:14,fill:"$scene-floor",opacity:0.6})});
+EDGE=pg;

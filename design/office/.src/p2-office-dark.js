@@ -1,0 +1,13 @@
+const {pg,g,cv}=officeFrame("page-office-dark",1540,0,true,{banner:1});
+scene(cv,{s:33,ox:622,oy:100,hov:1,night:1});
+const nc=col(cv,{name:"NeedsYou overlay",x:16,y:16,width:288,fill:"$popover",cornerRadius:20,padding:[12,8,8,8],gap:2,effect:POP});
+const nh=row(nc,{name:"head",width:"fill_container",padding:[0,8,6,8],gap:8});ic(nh,"hand",16,"$status-danger-fg");tx(nh,"需要你",{fontSize:14,fontWeight:"800",fill:"$status-danger-fg"});tag(nh,"2","danger");sp(nh);tx(nh,"點一下飛過去",{fontSize:11,fill:"$muted-foreground"});
+sideItem(nc,{title:"dev-a",dot:"danger",sub:r=>tx(r,"atlas · 等你審批 · 3 分 12 秒",{fontSize:12,fill:"$muted-foreground"}),trail:it=>ic(it,"crosshair",14,"$muted-foreground")});
+sideItem(nc,{title:"qa",dot:"danger",sub:r=>tx(r,"beacon · 錯誤：API 529 · 1 分",{fontSize:12,fill:"$muted-foreground"}),trail:it=>ic(it,"crosshair",14,"$muted-foreground")});
+const W=1416,H=698;
+const sc=row(cv,{name:"StateCounts",x:W-16-470,y:16,height:32,cornerRadius:999,fill:"$popover",effect:SH,padding:[0,14],gap:12});
+[["ok","思考 2"],["ok","執行 3"],["ok","回覆 1"],["ok","完成 2"],["warn","中斷 1"],["idle","閒置 1"]].forEach(([t,l])=>{const r=row(sc,{gap:6});dot(r,t,8);tx(r,l,{fontSize:12,fontWeight:"600"})});
+legend(cv,{x:16,y:H-16-378});
+const zc=col(cv,{name:"ViewControls",x:W-16-40,y:H-16-124,width:40,fill:"$popover",cornerRadius:999,effect:SH,padding:4,gap:2});iconBtn(zc,"plus");iconBtn(zc,"minus");fr(zc,{name:"divider",width:"fill_container",height:1,fill:"$border"});iconBtn(zc,"rotate-ccw");
+const dv=AG[1];hoverCard(cv,dv.hx+24,dv.hy-40,{emoji:"🦊",name:"dev-a",kind:"claude",where:"atlas · 結帳流程改版 · 波 3",pill:["等你 · 審批","danger"],timer:"已等 3 分 12 秒",tool:"Edit package.json"});
+OFFICE_D=pg;
