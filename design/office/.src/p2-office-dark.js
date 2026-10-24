@@ -1,13 +1,11 @@
 const {pg,g,cv}=officeFrame("page-office-dark",1540,0,true,{banner:1});
-scene(cv,{s:33,ox:622,oy:100,hov:1,night:1});
-const nc=col(cv,{name:"NeedsYou overlay",x:16,y:16,width:288,fill:"$popover",cornerRadius:20,padding:[12,8,8,8],gap:2,effect:POP});
-const nh=row(nc,{name:"head",width:"fill_container",padding:[0,8,6,8],gap:8});ic(nh,"hand",16,"$status-danger-fg");tx(nh,"需要你",{fontSize:14,fontWeight:"800",fill:"$status-danger-fg"});tag(nh,"2","danger");sp(nh);tx(nh,"點一下飛過去",{fontSize:11,fill:"$muted-foreground"});
-sideItem(nc,{title:"dev-a",dot:"danger",sub:r=>tx(r,"atlas · 等你審批 · 3 分 12 秒",{fontSize:12,fill:"$muted-foreground"}),trail:it=>ic(it,"crosshair",14,"$muted-foreground")});
-sideItem(nc,{title:"qa",dot:"danger",sub:r=>tx(r,"beacon · 錯誤：API 529 · 1 分",{fontSize:12,fill:"$muted-foreground"}),trail:it=>ic(it,"crosshair",14,"$muted-foreground")});
+const CAM=globalThis.CAM_D||{s:31,ox:715,oy:112};scene(cv,{...CAM,hov:globalThis.HOV_D||9,night:1,compact:1,objLabels:{"總覽":{hide:1},git:{hide:1}}});
+finder(cv,16,16,{});
 const W=1416,H=698;
 const sc=row(cv,{name:"StateCounts",x:W-16-470,y:16,height:32,cornerRadius:999,fill:"$popover",effect:SH,padding:[0,14],gap:12});
 [["ok","思考 2"],["ok","執行 3"],["ok","回覆 1"],["ok","完成 2"],["warn","中斷 1"],["idle","閒置 1"]].forEach(([t,l])=>{const r=row(sc,{gap:6});dot(r,t,8);tx(r,l,{fontSize:12,fontWeight:"600"})});
-legend(cv,{x:16,y:H-16-378});
+const lg=row(cv,{name:"Legend (collapsed)",x:16,y:H-16-32,height:32,cornerRadius:999,fill:"$popover",effect:SH,padding:[0,12],gap:6});ic(lg,"info",14,"$muted-foreground");tx(lg,"圖例",{fontSize:13,fontWeight:"600"});ic(lg,"chevron-up",14,"$muted-foreground");
 const zc=col(cv,{name:"ViewControls",x:W-16-40,y:H-16-124,width:40,fill:"$popover",cornerRadius:999,effect:SH,padding:4,gap:2});iconBtn(zc,"plus");iconBtn(zc,"minus");fr(zc,{name:"divider",width:"fill_container",height:1,fill:"$border"});iconBtn(zc,"rotate-ccw");
-const dv=AG[1];hoverCard(cv,dv.hx+24,dv.hy-40,{emoji:"🦊",name:"dev-a",kind:"claude",where:"atlas · 結帳流程改版 · 波 3",pill:["等你 · 審批","danger"],timer:"已等 3 分 12 秒",tool:"Edit package.json"});
+const dv=AG[globalThis.HOV_D||9];const OVS=[{x:16,y:16,w:304,h:612},{x:930,y:16,w:470,h:32},{x:16,y:650,w:92,h:32},{x:1360,y:558,w:40,h:124}];const HC=(()=>{const C=[],C2=[];for(const dy of [-220,-120,-60,0,40,80])for(const dx of [24,-304,-140])C.push([dx,dy]);for(const c of C){const r={x:dv.hx+c[0],y:dv.hy+c[1],w:280,h:200};if(r.x<8||r.y<8||r.x+r.w>1416-8||r.y+r.h>698-8)continue;if(OVS.some(b=>hitR(r,b)))continue;const hs=LBL.filter(b=>hitR(r,b));if(hs.some(b=>!/^object/.test(b.kind)))continue;C2.push([hs.length,c,hs.map(b=>b.name)])}C2.sort((a,b)=>a[0]-b[0]);return C2[0]?C2[0][1]:[24,0]})();const hcx=dv.hx+HC[0],hcy=dv.hy+HC[1];hoverCard(cv,hcx,hcy,{emoji:"🐰",name:"qa",kind:"codex",where:"beacon · API 速率限制 · 波 2",rank:["senior","gpt-5.5/medium"],ef:2,pill:["錯誤","danger"],timer:"1 分",tool:"API 529 overloaded"});
+LBL=LBL.filter(b=>!(b.kind==="object"&&(globalThis.HIDDEN_D||[]).includes(b.name)));labelReport("dark",1416,698,[{name:"finder",x:16,y:16,w:304,h:612},{name:"counts",x:930,y:16,w:470,h:32},{name:"legend",x:16,y:650,w:92,h:32},{name:"zoom",x:1360,y:558,w:40,h:124},{name:"hover",x:hcx,y:hcy,w:280,h:200}]);
 OFFICE_D=pg;

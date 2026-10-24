@@ -17,6 +17,8 @@ topbar:C("#eef0fbe6","#1e2142e6"),"seg-active":C("#ffffff","#353a6e"),field:C("#
 "scene-desk-t":C("#f3e7d5","#4c4675"),"scene-desk-l":C("#dccaae","#3b3660"),"scene-desk-r":C("#c9b494","#332f55"),"scene-monitor":C("#2b2e4c","#1a1c33"),"scene-screen-off":C("#4a4f78","#2c2f52"),"scene-screen-on":C("#a9c6ff","#7fa6ff"),
 "scene-couch-t":C("#c4bdf0","#5a5296"),"scene-couch-l":C("#aaa1e3","#4a4383"),"scene-couch-r":C("#978dd6","#3f3974"),"scene-plant":C("#8fb8a5","#4f7f6c"),"scene-pot":C("#d9c7ae","#5a4f7a"),"scene-lamp":C("#ffe2a6","#ffd27a"),
 "scene-shadow":C("#3d43801f","#05061466"),"skin":C("#f6d2b5","#e9bf9f"),"hair":C("#3b2f4a","#2a2236"),"pants":C("#4b4f7a","#3a3d66"),
+"rank-senior":C("#3f3a9e","#5a52d0"),"rank-mid":C("#5b8cff","#6f9bff"),"rank-junior":C("#a9d8f5","#b4dcf8"),"rank-visitor":C("#cfd2dd","#d6d8e2"),
+"scene-cabinet-t":C("#e4e7f4","#4a4f86"),"scene-cabinet-l":C("#cdd2ea","#3a3e70"),"scene-cabinet-r":C("#b9bfdf","#30345f"),"scene-board":C("#ffffff","#c9cdea"),"scene-cork":C("#e2c9a0","#6b5a73"),"scene-lamp-off":C("#8a8fb3","#3a3e66"),
 "shirt-1":C("#5b8cff","#5b8cff"),"shirt-2":C("#a68cff","#a68cff"),"shirt-3":C("#ff9eb5","#ff9eb5"),"shirt-4":C("#8aa0c8","#8aa0c8"),
 "terminal-bg":{type:"color",value:"#0b0b10"},"terminal-chrome":{type:"color",value:"#17171f"},"terminal-line":{type:"color",value:"#26262f"},"terminal-fg":{type:"color",value:"#e4e4e7"},"terminal-dim":{type:"color",value:"#8b8b96"},
 "grad-ok-from":{type:"color",value:"#157f5f"},"grad-ok-to":{type:"color",value:"#0e6b50"},"grad-warn-from":{type:"color",value:"#a05f00"},"grad-warn-to":{type:"color",value:"#7a4400"},

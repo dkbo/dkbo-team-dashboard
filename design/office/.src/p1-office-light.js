@@ -1,17 +1,14 @@
 const {pg,g,cv}=officeFrame("page-office-light",0,0,false);
-scene(cv,{s:30,ox:416,oy:150,sel:1,hov:2});
-const nc=col(cv,{name:"NeedsYou overlay",x:16,y:16,width:288,fill:"$popover",cornerRadius:20,padding:[12,8,8,8],gap:2,effect:POP});
-const nh=row(nc,{name:"head",width:"fill_container",padding:[0,8,6,8],gap:8});ic(nh,"hand",16,"$status-danger-fg");tx(nh,"需要你",{fontSize:14,fontWeight:"800",fill:"$status-danger-fg"});tag(nh,"2","danger");sp(nh);tx(nh,"點一下飛過去",{fontSize:11,fill:"$muted-foreground"});
-sideItem(nc,{title:"dev-a",dot:"danger",sel:true,sub:r=>tx(r,"atlas · 等你審批 · 3 分 12 秒",{fontSize:12,fill:"$accent-foreground"}),trail:it=>ic(it,"crosshair",14,"$accent-foreground")});
-sideItem(nc,{title:"qa",dot:"danger",sub:r=>tx(r,"beacon · 錯誤：API 529 · 1 分",{fontSize:12,fill:"$muted-foreground"}),trail:it=>ic(it,"crosshair",14,"$muted-foreground")});
+const CAM=globalThis.CAM_L||{s:28,ox:372,oy:196};scene(cv,{...CAM,sel:1,hov:-1,compact:1,objLabels:globalThis.OL_L||{}});
+finder(cv,16,16,{collapsed:1,sel:0});
 const sc=row(cv,{name:"StateCounts",x:988-16-470,y:16,height:32,cornerRadius:999,fill:"$popover",effect:SH,padding:[0,14],gap:12});
 [["ok","思考 2"],["ok","執行 3"],["ok","回覆 1"],["ok","完成 2"],["warn","中斷 1"],["idle","閒置 1"]].forEach(([t,l])=>{const r=row(sc,{gap:6});dot(r,t,8);tx(r,l,{fontSize:12,fontWeight:"600"})});
 const lg=row(cv,{name:"Legend (collapsed)",x:16,y:768-16-32,height:32,cornerRadius:999,fill:"$popover",effect:SH,padding:[0,12],gap:6});ic(lg,"info",14,"$muted-foreground");tx(lg,"圖例",{fontSize:13,fontWeight:"600"});ic(lg,"chevron-up",14,"$muted-foreground");
 const zc=col(cv,{name:"ViewControls",x:988-16-40,y:768-16-124,width:40,fill:"$popover",cornerRadius:999,effect:SH,padding:4,gap:2});iconBtn(zc,"plus");iconBtn(zc,"minus");fr(zc,{name:"divider",width:"fill_container",height:1,fill:"$border"});iconBtn(zc,"rotate-ccw");
 tx(cv,"拖曳旋轉 · 滾輪縮放 · 點小人看詳情 · Esc 取消選取",{x:340,y:768-36,fontSize:12,fill:"$muted-foreground"});
-const dv=AG[2];hoverCard(cv,dv.hx+20,dv.hy-178,{emoji:"🐱",name:"dev-b",kind:"claude",where:"atlas · 結帳流程改版 · 波 3",pill:["執行 Bash","ok"],timer:"本輪 1 分 08 秒",tool:"pnpm -C apps/web test -- cart"});
+
 const dp=pane(g,{name:"Detail pane",w:416});
-const dh=row(dp,{name:"DetailHeader",width:"fill_container",padding:[16,16,12,16],gap:12,stroke:"$border",strokeWidth:{bottom:1}});avatar(dh,"🦊","$accent",40);const dt=col(dh,{name:"who",gap:2,width:"fill_container"});const d1=row(dt,{gap:8});tx(d1,"dev-a",{fontSize:16,fontWeight:"800"});tag(d1,"dev","brand");tag(d1,"claude","neutral",{mono:true});tx(dt,"atlas · 結帳流程改版 · 波 3",{fontSize:13,fill:"$muted-foreground"});iconBtn(dh,"x");
+const dh=row(dp,{name:"DetailHeader",width:"fill_container",padding:[16,16,12,16],gap:12,stroke:"$border",strokeWidth:{bottom:1}});avatar(dh,"🦊","$accent",40);const dt=col(dh,{name:"who",gap:2,width:"fill_container"});const d1=row(dt,{gap:8});tx(d1,"dev-a",{fontSize:16,fontWeight:"800"});tag(d1,"dev","brand");tag(d1,"claude","neutral",{mono:true});rankTag(dt,"senior","opus/medium",{ef:2});tx(dt,"atlas · 結帳流程改版 · 波 3",{fontSize:13,fill:"$muted-foreground"});iconBtn(dh,"x");
 const db=col(dp,{name:"DetailBody",width:"fill_container",height:"fill_container",padding:16,gap:14});
 const s1=row(db,{name:"state",width:"fill_container",gap:8});pill(s1,"等你","danger",{note:"審批"});sp(s1);tx(s1,"已等 3 分 12 秒",{fontSize:13,fontWeight:"700",fill:"$status-danger-fg"});
 banner(db,"danger","Do you want to make this edit to package.json?","Edit package.json：\"dev\": \"vite\" → \"vite --host\"",{sm:false});
@@ -19,4 +16,5 @@ dl(db,[["目前工具",r=>tx(r,"Edit package.json",{fontSize:12,fontFamily:M})],
 term(db,[["● Bash(pnpm -C apps/web test -- cart)","$terminal-fg"],["  ⎿ 18 passed (1.2s)","#7ee0b5"],["Edit package.json","$terminal-fg"],["  -  \"dev\": \"vite\",","#ff8a9a"],["  +  \"dev\": \"vite --host\",","#7ee0b5"],["❯ 1. Yes   2. Yes, allow all   3. No","#7ee0b5"]],{h:118,r:14,fs:11});
 const rs=col(db,{name:"Resume",width:"fill_container",gap:6});tx(rs,"resume 指令",{fontSize:12,fontWeight:"700",fill:"$muted-foreground"});const rc=row(rs,{name:"code",width:"fill_container",height:36,fill:"$muted",cornerRadius:14,padding:[0,4,0,12],gap:8});tx(rc,"claude --resume 7f3c2e1a-…-9b1d",{fontFamily:M,fontSize:12,name:"cmd"});sp(rc);btn(rc,"複製","ghost",{icon:"copy",size:"sm"});
 const ac=row(db,{name:"Actions",width:"fill_container",gap:8});btn(ac,"任務詳情","outline",{icon:"list-checks",size:"sm"});btn(ac,"在 herdr 開","outline",{icon:"monitor-play",size:"sm"});sp(ac);btn(ac,"置中","ghost",{icon:"crosshair",size:"sm"});
+labelReport("light",988,768,[{name:"finder",x:16,y:16,w:304,h:182},{name:"counts",x:502,y:16,w:470,h:32},{name:"legend",x:16,y:720,w:92,h:32},{name:"zoom",x:932,y:628,w:40,h:124},{name:"hint",x:340,y:730,w:330,h:20}]);
 OFFICE_L=pg;
