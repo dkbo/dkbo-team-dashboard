@@ -64,7 +64,9 @@ server 的測試整輪跑在一個私有暫存目錄（`$TMPDIR/dash-vitest-*`�
 
 ## 辦公室與細狀態
 server 唯讀讀 `DASH_CLAUDE_DIR`／`DASH_CODEX_DIR` 底下的 session JSONL，和 herdr 的 pane 狀態合算出每個 session 的「細狀態」，經 `GET /api/sessions`、SSE `sessions.updated` 與各 pane 的 `session` 欄位送到網頁（型別見 `packages/shared/src/session.ts`）。
-- 八種細狀態：思考中、執行（附工具名）、回覆中、等你、完成、中斷、錯誤、閒置。完成或中斷滿 10 分鐘沒新事件顯示閒置；閒置滿 2 小時算下班，不畫角色、只計數。網頁一律用同一套規則換算，所以辦公室、任務詳情與 herdr 頁的顯示一致。
+- 八種細狀態：思考中、執行（附工具名）、回覆中、等你、完成、中斷、錯誤、閒置。完成或中斷滿 10 分鐘沒新事件顯示閒置；閒置滿 2 小時算下班，不畫角色、只計數。**pane 已關的錯誤**（例如 reviewer 啟動失敗後 pane 被收掉）沒人能回，比照完成：不算「需要你」（分頁標題 N、桌面通知、找人清單的需要你組、「只看需要你」都不含），10 分鐘後轉閒置、2 小時下班；pane 還開著的錯誤照舊一直算需要你。網頁一律用同一套規則換算，所以辦公室、任務詳情與 herdr 頁的顯示一致。
+- 頁面物件（辦公室當 dashboard 大廳）：每個既有頁面一件物件，物件與它頭上的數字標籤都可點（Enter 開頁、⌘／Ctrl＋click 新分頁）。任務白板（每個進行中任務一塊，波 closed/planned；桌群有人等你／有 pane 的錯誤、或 dk-watch 的 BLOCKED／TIMEOUT 未解＝紅，只有未回的 ESCALATE＝黃；結案後保留 10 分鐘顯示「結案 ✓」或「已放棄」）→ 任務詳情；監控牆（herdr pane 數、卡住數）→ `/herdr`；檔案室（已結案數、今天 +N）→ `/history`；git 檔案櫃（所有專案只亮最嚴重一項：衝突紅 ＞ 未推送 ＞ 未提交／detached 黃，乾淨熄燈）→ `/git`；大廳公告板（進行中任務數）→ `/`；茶水間電表（今日花費、最高額度 %，≥ 80% 黃 chip；任一 kind 熔斷＝「跳電」）→ `/trends`。git 摘要每 30 秒、今日花費每分鐘抓一次，只在 3D 視圖開著且分頁可見時抓。
+- 角色互動事件：reviewer 出動、審查通過／要修、ESCALATE（leader 頭上與找人清單的「!」常駐到 DECISION 或 ruling）、波關閉、任務結案。只播 SSE 即時收到的事件；首次載入、重連、背景分頁切回都直接畫最終狀態、不補播。每個事件寫一句到頁面的隱藏 live region（`aria-live="polite"`，3D 與清單模式都播報）；`prefers-reduced-motion` 時不走路、不跳，只出泡泡。進 `/office` 時會對每個進行中任務抓一次任務詳情，之後靠 SSE 保持新鮮。
 - 範圍：只追 `dashboard.config.json` 專案（含其 `.worktrees/**`）底下 cwd 的 Claude Code 與 Codex session，其他 agent 不做。pane 與 session 以 herdr 給的 session id 優先對應，沒有時退回「同 cwd、同 kind、最近更新」；同 cwd 有多個 Codex pane 又分不出誰是誰時寧可不對，不會把甲的狀態掛到乙。
 - 隱私：提示詞與回覆全文不出 server；送到網頁的文字只有工具名加參數摘要（≤ 80 字）、等你的問句（≤ 200 字）、錯誤第一行（≤ 200 字）。
 - **Claude 等審批的已知限制**：Claude Code 的審批請求不會寫進 session JSONL，所以「等你」只能由 herdr 回報該 pane `blocked` 轉出，問句取自 pane 畫面最後一行以問號結尾的文字（啟發式，抓不到時不顯示問句）；herdr 沒回 blocked、或畫面上沒有問號行時，審批會顯示成執行或思考。Codex 的審批事件有寫進 rollout，但 dkbo 的 Codex 通常以 `approval_policy: never` 執行，很少出現。

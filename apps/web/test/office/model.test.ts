@@ -8,8 +8,10 @@ import {
   parseOfficeParams,
   sceneSessions,
   stateCounts,
+  toneOf,
   writeOfficeParams,
 } from '@/features/office/model'
+import { SUBSTATE_META } from '@/lib/substate'
 import { detail, officeSession, overview, project } from '../shell/builders'
 
 const NOW = 10_000_000_000
@@ -137,6 +139,39 @@ describe('分組與計數', () => {
   })
 })
 
+describe('AC2：無 pane 的錯誤衰退（hasPane＝paneId != null）', () => {
+  const err = (id: string, paneId: string | null, m: number) =>
+    officeSession({ id, paneId, member: id, substate: 'error', error: 'boom', substateSince: NOW - m * min, lastEventAt: NOW - m * min })
+  const list = [err('n9', null, 9), err('n11', null, 11), err('n120', null, 120), err('p9', 'pp9', 9), err('p11', 'pp11', 11), err('p120', 'pp120', 120)]
+  const base = parseOfficeParams(new URLSearchParams())
+
+  it('需要你組只收有 pane 的錯誤；無 pane 的 9 分仍是錯誤但不算需要你、11 分轉閒置', () => {
+    const g = groupSessions(list, NOW)
+    expect(g.needs.map((x) => x.id)).toEqual(['p11', 'p120', 'p9'])
+    expect(g.rest.map((x) => x.id)).toEqual(['n9', 'n11', 'n120'])
+  })
+
+  it('2 小時下班只套無 pane；場景「只看需要你」與 needs 計數用 needsYou', () => {
+    expect(sceneSessions(list, base, NOW).map((x) => x.id)).toEqual(['n9', 'n11', 'p9', 'p11', 'p120'])
+    expect(sceneSessions(list, { ...base, needs: true }, NOW).map((x) => x.id)).toEqual(['p9', 'p11', 'p120'])
+    expect(kindCounts(list, base, NOW)).toMatchObject({ all: 5, needs: 3, offDuty: 1 })
+  })
+
+  it('StateCounts：無 pane 的錯誤 10 分內歸「中斷」（ruling 11:57）、11 分起算閒置；有 pane 的錯誤在需要你、不計', () => {
+    expect(stateCounts(list, NOW)).toEqual([
+      { substate: 'interrupted', count: 1 },
+      { substate: 'idle', count: 2 },
+    ])
+  })
+
+  it('toneOf：需要你才是 danger；無 pane 的錯誤用中斷的語氣', () => {
+    expect(toneOf(err('n9', null, 9), NOW)).toBe(SUBSTATE_META.interrupted.tone)
+    expect(toneOf(err('p9', 'pp9', 9), NOW)).toBe('danger')
+    expect(toneOf(officeSession({ substate: 'waiting' }), NOW)).toBe('danger')
+    expect(toneOf(officeSession({ substate: 'running' }), NOW)).toBe('ok')
+  })
+})
+
 describe('buildTasks（OfficeScene 的 tasks）', () => {
   it('key＝任務 dir（scene 以 taskDir 查）；members 依 brief 波次表順序取不重複 member，沒有波次表退回 members[].name；wave 取 closed／planned', () => {
     const withWaves = detail({
@@ -172,10 +207,10 @@ describe('buildTasks（OfficeScene 的 tasks）', () => {
         project({ name: 'atlas', active: { '2026-10-20-x': noWaves } }),
       ],
     })
-    expect(buildTasks(doc)).toEqual({
-      '2026-10-24-office': { project: 'dash', display: '辦公室', members: ['backend', 'it', 'qa'], wave: { current: 1, planned: 3 } },
-      '2026-10-20-x': { project: 'atlas', display: 'x', members: ['dev-a', 'dev-b'], wave: null },
+    expect(buildTasks(doc, NOW)).toEqual({
+      '2026-10-24-office': { project: 'dash', display: '辦公室', members: ['backend', 'it', 'qa'], wave: { current: 1, planned: 3 }, closedState: null, closedAt: null },
+      '2026-10-20-x': { project: 'atlas', display: 'x', members: ['dev-a', 'dev-b'], wave: null, closedState: null, closedAt: null },
     })
-    expect(buildTasks(null)).toEqual({})
+    expect(buildTasks(null, NOW)).toEqual({})
   })
 })

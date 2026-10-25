@@ -6,10 +6,13 @@ export const RANK_LABEL: Record<Rank, string> = { senior: '資深', mid: '中階
 
 /** 比對順序是規格的一部分：claude 先比 opus／sonnet／haiku 前綴；codex 先比 -mini|-nano → -codex-max → -codex → ^gpt-<版本>$ */
 function claudeRank(model: string): Rank {
-  const m = model.replace(/^(anthropic\/)?claude-/, '')
-  if (m.startsWith('opus')) return 'senior'
-  if (m.startsWith('sonnet')) return 'mid'
-  if (m.startsWith('haiku')) return 'junior'
+  // 去掉 Bedrock／Vertex 的區域與供應商前綴（us.anthropic.、anthropic/）再去 claude-
+  const m = model.replace(/^(?:[a-z]+\.)?anthropic[./]/, '').replace(/^claude-/, '')
+  // 新命名 sonnet-4-5…；舊命名 3-5-sonnet-…、3-opus-…（版本數字在家族名前面）
+  const family = /^(?:\d+(?:[-.]\d+)*-)?(opus|sonnet|haiku)/.exec(m)?.[1]
+  if (family === 'opus') return 'senior'
+  if (family === 'sonnet') return 'mid'
+  if (family === 'haiku') return 'junior'
   return 'visitor'
 }
 

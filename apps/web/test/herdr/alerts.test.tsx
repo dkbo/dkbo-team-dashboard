@@ -50,11 +50,10 @@ describe('alerts model', () => {
     expect(items.map((i) => [i.key, i.kind])).toEqual([
       ['sa', 'waiting'],
       ['sb', 'error'],
-      ['abc', 'error'],
       ['pX', 'waiting'],
     ])
     expect(items[0]).toMatchObject({ label: 'qa', detail: '要刪檔嗎？', href: '/office?focus=p1' })
-    expect(items[3]).toMatchObject({ label: 'outside-dev', href: '/herdr?w=wX&t=wX%3At1&p=pX' })
+    expect(items[2]).toMatchObject({ label: 'outside-dev', href: '/herdr?w=wX&t=wX%3At1&p=pX' })
     // sessions 還沒抓到時只算 herdr blocked
     expect(attentionItems(doc, null).map((i) => i.key)).toEqual(['sa', 'sb', 'pX'])
     expect(attentionItems(null, null)).toEqual([])
@@ -62,15 +61,26 @@ describe('alerts model', () => {
 
   it('key 用 sessionId：pane 關掉（id 由 paneId 變 s:<sessionId>）或 session 對不到 pane，同一個 session 不算新對象', () => {
     const withPane = attentionItems(null, [officeSession({ id: 'p9', paneId: 'p9', sessionId: 'sx', substate: 'error', error: 'boom' })])
-    const paneClosed = attentionItems(null, [officeSession({ id: 's:sx', paneId: null, sessionId: 'sx', substate: 'error', error: 'boom' })])
+    const paneClosed = attentionItems(null, [officeSession({ id: 's:sx', paneId: null, sessionId: 'sx', substate: 'waiting', question: '?' })])
     expect(withPane.map((i) => i.key)).toEqual(['sx'])
-    expect(newAttention(new Map(withPane.map((i) => [i.key, i.kind])), paneClosed)).toEqual([])
+    expect(newAttention(new Map([['sx', 'waiting']]), paneClosed)).toEqual([])
     // 連結仍用 OfficeSession.id（focus 契約不變）
     expect(withPane[0].href).toBe('/office?focus=p9')
     expect(paneClosed[0].href).toBe('/office?focus=s%3Asx')
     // 沒有 session 的 herdr blocked pane 才用 paneId；已被某 session 認領的 pane 不重複計
     const doc = overview({ agents: [agent('p9', 'blocked', { session: null }), agent('pZ', 'blocked')] })
     expect(attentionItems(doc, [officeSession({ id: 'p9', paneId: 'p9', sessionId: 'sx', substate: 'error' })]).map((i) => i.key)).toEqual(['sx', 'pZ'])
+  })
+
+  it('AC2：需要你改用 needsYou——無 pane 的錯誤不算（9 分、11 分、2 小時都不算）；有 pane 的錯誤 11 分、2 小時仍算', () => {
+    const now = Date.now()
+    const ago = (min: number) => now - min * 60_000
+    const err = (id: string, paneId: string | null, min: number) =>
+      officeSession({ id, paneId, sessionId: id, substate: 'error', error: 'boom', substateSince: ago(min), lastEventAt: ago(min) })
+    const sessions = [err('a9', null, 9), err('a11', null, 11), err('a120', null, 120), err('b11', 'pb11', 11), err('b120', 'pb120', 120)]
+    expect(attentionItems(null, sessions, now).map((i) => i.key)).toEqual(['b11', 'b120'])
+    // 等你沒有 pane 也算
+    expect(attentionItems(null, [officeSession({ id: 's:w', paneId: null, sessionId: 'w', substate: 'waiting' })], now).map((i) => i.key)).toEqual(['w'])
   })
 
   it('newAttention：只算新進入（或換了種類）的；第一輪不算', () => {
@@ -179,6 +189,45 @@ describe('useBlockedAlerts／BlockedBadge', () => {
     expect(FakeNotification.sent.map((n) => n.title)).toEqual(['出錯：dev-a'])
     act(() => useDashStore.setState({ overview: overview({ generatedAt: 3, agents: [] }), sessions: sessionsDoc([err({ id: 's:sx', paneId: null })], { generatedAt: 3 }) }))
     expect(FakeNotification.sent).toHaveLength(1)
+    // AC2：pane 關了的錯誤沒人能回，不再算需要你
+    expect(document.title).toBe('dkbo 儀表板')
+  })
+
+  it('AC2：無 pane 的錯誤 11 分後不在分頁標題 N 內、也不通知；有 pane 的錯誤照算', () => {
+    const t = Date.now() - 11 * 60_000
+    useDashStore.setState({ overview: overview({ agents: [] }), sessions: sessionsDoc() })
+    renderProbe()
+    act(() =>
+      useDashStore.setState({
+        sessions: sessionsDoc(
+          [
+            officeSession({ id: 's:x', paneId: null, sessionId: 'x', member: 'gone', substate: 'error', error: 'model_not_found', substateSince: t, lastEventAt: t }),
+            officeSession({ id: 'p2', paneId: 'p2', sessionId: 'y', member: 'alive', substate: 'error', error: 'API 500', substateSince: t, lastEventAt: t }),
+          ],
+          { generatedAt: 2 },
+        ),
+      }),
+    )
+    expect(document.title).toBe('(1) 需要你 · dkbo 儀表板')
+    expect(FakeNotification.sent.map((n) => n.title)).toEqual(['出錯：alive'])
+  })
+
+  it('斷線前已有 sessionsError：重連後要等 sessions 重抓（或錯誤換了）才定基準，不拿舊 sessions 當基準', () => {
+    useDashStore.setState({ overview: overview({ agents: [] }), sessions: sessionsDoc([]), sse: 'open' })
+    renderProbe()
+    act(() => useDashStore.setState({ sessionsError: 'HTTP 502' }))
+    act(() => useDashStore.setState({ sse: 'connecting' }))
+    act(() => useDashStore.setState({ sse: 'open' }))
+    // 重連後 overview 先回來：sessions 還是斷線前那份，不能當基準
+    act(() => useDashStore.setState({ overview: overview({ generatedAt: 2, agents: [] }) }))
+    // 斷線期間 w 變等你；重抓回來的第一份 sessions 才是基準，不通知
+    act(() =>
+      useDashStore.setState({
+        sessions: sessionsDoc([officeSession({ id: 'pw', paneId: 'pw', sessionId: 'w', member: 'w', substate: 'waiting' })], { generatedAt: 2 }),
+        sessionsError: null,
+      }),
+    )
+    expect(FakeNotification.sent).toHaveLength(0)
     expect(document.title).toBe('(1) 需要你 · dkbo 儀表板')
   })
 

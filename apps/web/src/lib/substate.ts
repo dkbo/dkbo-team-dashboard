@@ -53,16 +53,27 @@ type Timing = Pick<SessionLive, 'substate' | 'substateSince' | 'turnStartedAt' |
 /** 安靜多久的基準：最後事件，沒有就用進入該狀態的時間 */
 const quietSince = (s: Timing) => s.lastEventAt ?? s.substateSince
 
-/** 套 Q3／Q7：done、interrupted 滿 10 分鐘沒新事件視為 idle；等你、錯誤與進行中不轉 */
-export function effectiveSubstate(s: Timing, now: number): Substate {
-  if (s.substate !== 'done' && s.substate !== 'interrupted') return s.substate
+/** 有沒有存活 pane：省略＝true（任務一行為不變）。無 pane 的 error 沒人能處理，比照 done 衰退 */
+export interface PaneOpts {
+  hasPane?: boolean
+}
+
+const noPane = (opts?: PaneOpts) => opts?.hasPane === false
+
+/**
+ * 套 Q3／Q7：done、interrupted 滿 10 分鐘沒新事件視為 idle；等你與進行中不轉。
+ * 有 pane 的 error 不轉；無 pane 的 error（opts.hasPane === false）比照 done。
+ */
+export function effectiveSubstate(s: Timing, now: number, opts?: PaneOpts): Substate {
+  const decays = s.substate === 'done' || s.substate === 'interrupted' || (s.substate === 'error' && noPane(opts))
+  if (!decays) return s.substate
   const since = quietSince(s)
   return since != null && now - since >= IDLE_AFTER_MS ? 'idle' : s.substate
 }
 
 /** 套 Q8：（有效）閒置滿 2 小時＝下班，不畫角色、只計數。沒有時間戳時不知道多久，不算下班 */
-export function isOffDuty(s: Timing, now: number): boolean {
-  if (effectiveSubstate(s, now) !== 'idle') return false
+export function isOffDuty(s: Timing, now: number, opts?: PaneOpts): boolean {
+  if (effectiveSubstate(s, now, opts) !== 'idle') return false
   const since = quietSince(s)
   return since != null && now - since >= OFF_DUTY_AFTER_MS
 }
@@ -122,7 +133,13 @@ function timerFrom(s: Timing, sub: Substate): number | null {
 }
 
 /** §1.2 計時文字：先套 effectiveSubstate，再依有效狀態挑基準時間。沒有可用時間戳回空字串 */
-export function timerText(s: Timing, now: number, opts: { long?: boolean } = {}): string {
-  const sub = effectiveSubstate(s, now)
+export function timerText(s: Timing, now: number, opts: { long?: boolean; hasPane?: boolean } = {}): string {
+  const sub = effectiveSubstate(s, now, opts)
   return formatTimer(sub, timerFrom(s, sub), now, opts)
+}
+
+/** 需要你：waiting，或 error 且有 pane（無 pane 的錯誤沒人能回，不算；也不會永遠留在清單上） */
+export function needsYou(s: Timing, now: number, opts?: PaneOpts): boolean {
+  const sub = effectiveSubstate(s, now, opts)
+  return sub === 'waiting' || (sub === 'error' && !noPane(opts))
 }

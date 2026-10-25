@@ -254,3 +254,62 @@ describe('index.css 對比度 token（警示標記、清單連結字）', () => 
     expect(has(dark, '--primary', '#5b8cff')).toBe(true)
   })
 })
+
+// lobby AC3：office 規格 §3 事件動態、§1.8 頁面物件（物件燈號只用既有 status-*／scene-*，不新增色）
+describe('index.css 事件動態 token（office 規格 §3、§6.17）', () => {
+  const root = block(':root')
+  const theme = block('@theme inline')
+
+  it(':root 時長變數與規格表一致', () => {
+    const want: [string, string][] = [
+      ['--motion-thumb', '1500ms'],
+      ['--motion-head-down', '2000ms'],
+      ['--motion-badge-pop', '300ms'],
+      ['--motion-wave-fill', '600ms'],
+      ['--motion-spark', '1200ms'],
+      ['--motion-celebrate', '3000ms'],
+      ['--motion-event-bubble', '3000ms'],
+      ['--motion-event-fade', '150ms'],
+      ['--review-walk-max', '4000ms'],
+      ['--event-live-window', '10000ms'],
+    ]
+    for (const [n, v] of want) expect(has(root, n, v), `:root ${n}`).toBe(true)
+  })
+
+  it('DOM 動畫進 @theme inline：badge-pop、wave-fill、spark、event-bubble', () => {
+    expect(has(theme, '--animate-badge-pop', 'badge-pop var(--motion-badge-pop) ease-out both')).toBe(true)
+    expect(has(theme, '--animate-wave-fill', 'wave-fill var(--motion-wave-fill) ease-out both')).toBe(true)
+    expect(has(theme, '--animate-spark', 'spark var(--motion-spark) ease-out both')).toBe(true)
+    expect(has(theme, '--animate-event-bubble', 'event-bubble var(--motion-event-bubble) ease-in-out both')).toBe(true)
+  })
+
+  it('keyframes：badge-pop scale 0 → 1.15 → 1；wave-fill 由左到右；event-bubble 淡入淡出', () => {
+    expect(css).toMatch(/@keyframes badge-pop\s*{[^@]*?scale\(0\)[^@]*?scale\(1\.15\)[^@]*?scale\(1\)/)
+    expect(css).toMatch(/@keyframes wave-fill\s*{[^@]*?clip-path:\s*inset\(0 100% 0 0\)[^@]*?clip-path:\s*inset\(0 0 0 0\)/)
+    expect(css).toMatch(/@keyframes spark\s*{/)
+    expect(css).toMatch(/@keyframes event-bubble\s*{[^@]*?opacity:\s*0[^@]*?opacity:\s*1[^@]*?opacity:\s*1[^@]*?opacity:\s*0/)
+  })
+
+  it('reduced motion：四個動畫 class 不動；spark 不畫；EventBubble 停留 6000ms', () => {
+    expect(css).toMatch(
+      /@media \(prefers-reduced-motion: reduce\)\s*{[^@]*\.animate-badge-pop[^@]*\.animate-wave-fill[^@]*\.animate-event-bubble[^@]*animation:\s*none/,
+    )
+    expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\)\s*{[^@]*\.animate-spark[^@]*display:\s*none/)
+    expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\)\s*{[^@]*:root\s*{[^}]*--motion-event-bubble:\s*6000ms/)
+  })
+
+  it('§1.8 物件燈號用的 scene-cabinet／board／cork／lamp-off 已在（亮暗各一）', () => {
+    const dark = block('.dark')
+    for (const k of ['cabinet', 'cabinet-side', 'board', 'cork', 'lamp-off', 'screen-on', 'screen-off']) {
+      expect(has(root, `--scene-${k}`), `:root --scene-${k}`).toBe(true)
+      expect(has(dark, `--scene-${k}`), `.dark --scene-${k}`).toBe(true)
+    }
+  })
+})
+
+// lobby AC12：OfficePage Sheet 的 h-[60svh] 改 token（規格 §4.1／§6.9 底部 Sheet 高 60svh）
+describe('index.css --sheet-h', () => {
+  it(':root 有 --sheet-h: 60svh', () => {
+    expect(has(block(':root'), '--sheet-h', '60svh')).toBe(true)
+  })
+})

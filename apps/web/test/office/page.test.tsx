@@ -5,7 +5,7 @@ import { MemoryRouter, Route, Routes, useLocation } from 'react-router'
 import type { OfficeSession } from '@dash/shared'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { resetDashStore, useDashStore } from '@/store/store'
-import { officeSession, overview, pane, sessionsDoc } from '../shell/builders'
+import { detail, officeSession, overview, pane, project, sessionsDoc } from '../shell/builders'
 
 interface FakeSceneProps {
   sessions: OfficeSession[]
@@ -17,9 +17,18 @@ interface FakeSceneProps {
   onSelect(id: string | null): void
   onFallback(reason: 'webgl' | 'assets' | 'context-lost'): void
   onUserMovedCamera(moved: boolean): void
+  objects: { boards: Record<string, { tone: string | null; chips: { label: string }[]; href: string }>; monitor: { value: string } } | null
+  events: { id: string }[]
+  onOpenObject(href: string): void
 }
 
-const h = vi.hoisted(() => ({ props: null as FakeSceneProps | null, webgl: true, loads: 0, renders: 0 }))
+const h = vi.hoisted(() => ({
+  props: null as FakeSceneProps | null,
+  webgl: true,
+  loads: 0,
+  renders: 0,
+  events: { events: [] as { id: string }[], announce: null as string | null },
+}))
 
 vi.mock('@/features/office/loadScene', () => ({
   loadScene: async () => {
@@ -34,6 +43,7 @@ vi.mock('@/features/office/loadScene', () => ({
   },
 }))
 vi.mock('@/features/office/webgl', () => ({ hasWebGL: () => h.webgl }))
+vi.mock('@/features/office/events/useOfficeEvents', () => ({ useOfficeEvents: () => h.events }))
 
 // 頁面測試含 lazy 載入與 userEvent；共用 worktree 多人並跑全套時 5 秒預設太緊（frontend-scene 回報偶發 timeout）
 vi.setConfig({ testTimeout: 15_000 })
@@ -76,6 +86,7 @@ async function renderOffice(path = '/office') {
               </>
             }
           />
+          <Route path="*" element={<Probe />} />
         </Routes>
       </MemoryRouter>
     </TooltipProvider>,
@@ -93,6 +104,7 @@ beforeEach(() => {
   h.props = null
   h.webgl = true
   h.loads = 0
+  h.events = { events: [], announce: null }
   localStorage.clear()
   setWidth(1440)
   fetchMock.mockClear()
@@ -113,7 +125,8 @@ describe('/office 3D 視圖', () => {
     expect(within(kind).getByRole('tab', { name: /全部/ })).toHaveTextContent('5')
     expect(within(kind).getByRole('tab', { name: /Claude/ })).toHaveTextContent('3')
     expect(within(kind).getByRole('tab', { name: /Codex/ })).toHaveTextContent('2')
-    expect(screen.getByTestId('office-needs-toggle')).toHaveTextContent('2')
+    // AC2：s:cx1 是無 pane 的錯誤，不算需要你
+    expect(screen.getByTestId('office-needs-toggle')).toHaveTextContent('1')
     expect(screen.getByTestId('office-view-toggle').querySelector('[data-state="active"]')).toHaveAttribute('data-value', '3d')
     expect(await screen.findByTestId('fake-scene')).toHaveTextContent('p1,s:cx1,p3,p4,p5')
     expect(screen.getByTestId('office-canvas')).toBeInTheDocument()
@@ -123,20 +136,22 @@ describe('/office 3D 視圖', () => {
     expect(loc).toBe('/office?kind=codex')
     expect(screen.getByTestId('fake-scene')).toHaveTextContent('s:cx1,p4')
 
+    await userEvent.click(within(kind).getByRole('tab', { name: /全部/ }))
     await userEvent.click(screen.getByTestId('office-needs-toggle'))
-    expect(loc).toBe('/office?kind=codex&needs=1')
+    expect(loc).toBe('/office?needs=1')
     expect(screen.getByTestId('office-needs-toggle')).toHaveAttribute('aria-pressed', 'true')
-    expect(screen.getByTestId('fake-scene')).toHaveTextContent('s:cx1')
+    expect(screen.getByTestId('fake-scene')).toHaveTextContent(/^p1$/)
   })
 
-  it('找人清單：需要你組列等你與錯誤；點列＝網址 focus＋請場景飛過去＋詳情；resume 用 sessionId', async () => {
+  it('找人清單：需要你組列等你與有 pane 的錯誤（無 pane 的錯誤在第三組）；點列＝網址 focus＋請場景飛過去＋詳情；resume 用 sessionId', async () => {
     await renderOffice()
     await screen.findByTestId('fake-scene')
     const finder = screen.getByTestId('office-finder')
     const rows = within(finder).getAllByTestId('finder-row')
-    expect(rows.slice(0, 2).map((r) => [r.dataset.session, r.dataset.substate])).toEqual([
+    expect(rows.map((r) => [r.dataset.session, r.dataset.substate])).toEqual([
       ['p1', 'waiting'],
-      ['s:cx1', 'error'],
+      ['p3', 'running'],
+      ['p4', 'thinking'],
     ])
     await userEvent.click(rows[0])
     expect(loc).toBe('/office?focus=p1')
@@ -153,11 +168,20 @@ describe('/office 3D 視圖', () => {
     expect(within(detail).getByTestId('office-terminal-tail')).not.toHaveTextContent('l2')
 
     // 沒有 pane 的 codex session：codex resume、不畫終端尾
-    await userEvent.click(within(finder).getAllByTestId('finder-row')[1])
+    await userEvent.click(within(finder).getByRole('button', { name: /完成 · 中斷 · 閒置/ }))
+    const cx = within(finder).getAllByTestId('finder-row').find((r) => r.dataset.session === 's:cx1')!
+    expect(cx.dataset.substate).toBe('error')
+    // I2：無 pane 的錯誤不算需要你，不畫紅（中斷的語氣）
+    expect(cx.querySelector('[data-slot="status-dot"]')).toHaveAttribute('data-tone', 'warn')
+    expect(cx.querySelector('.text-status-danger-fg')).toBeNull()
+    await userEvent.click(cx)
     expect(loc).toBe('/office?focus=s%3Acx1')
     const d2 = screen.getByTestId('office-detail')
     expect(d2).toHaveTextContent('codex resume cx1')
     expect(d2).toHaveTextContent('usage_limit_exceeded')
+    expect(d2.querySelector('[data-slot="banner"]')).toHaveAttribute('data-tone', 'warn')
+    // 膠囊（SubstatePill，frontend-base）照細狀態畫「錯誤」；計時與 Banner 不用 danger 語氣
+    expect([...d2.querySelectorAll('.text-status-danger-fg')].filter((el) => !el.closest('[data-slot="status-pill"]'))).toEqual([])
     expect(within(d2).queryByTestId('office-terminal-tail')).toBeNull()
 
     // 場景點空白＝取消選取
@@ -250,7 +274,7 @@ describe('/office 清單模式與退路', () => {
     const list = screen.getByTestId('office-list')
     const cols = within(list).getAllByRole('region')
     expect(cols.map((c) => c.getAttribute('aria-label'))).toEqual(['需要你', '工作中', '完成 · 中斷 · 閒置'])
-    expect(within(cols[0]).getAllByTestId('finder-row').map((r) => r.dataset.session)).toEqual(['p1', 's:cx1'])
+    expect(within(cols[0]).getAllByTestId('finder-row').map((r) => r.dataset.session)).toEqual(['p1'])
     expect(within(cols[1]).getAllByTestId('finder-row').map((r) => r.dataset.session)).toEqual(['p3', 'p4'])
     expect(screen.queryByTestId('office-canvas')).toBeNull()
     expect(h.loads).toBe(0)
@@ -285,5 +309,113 @@ describe('/office 清單模式與退路', () => {
     await userEvent.click(within(row).getByRole('button', { name: /dev-a/ }))
     expect(within(list).getByText('claude --resume aaaa-1111')).toBeInTheDocument()
     expect(loc).toBe('/office?focus=p1')
+  })
+})
+
+describe('/office 頁面物件與事件接線（AC6）', () => {
+  const PAY = '2026-10-01-pay'
+  const ESC_TS = (() => {
+    const d = new Date(NOW - 60_000)
+    const p = (n: number) => String(n).padStart(2, '0')
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`
+  })()
+  const withTask = () =>
+    useDashStore.setState({
+      overview: overview({ agents: [], projects: [project({ name: 'atlas', list: null, active: { [PAY]: detail({ dir: PAY, short: 'pay', display: '結帳' }) } })] }),
+      sessions: sessionsDoc([...SESSIONS, officeSession({ id: 'p9', paneId: 'p9', member: 'leader', leader: true, project: 'atlas', taskDir: PAY, substate: 'idle' })]),
+    })
+  const escDetail = () => ({
+    project: 'atlas',
+    detail: { schema_version: 1, dkbo_version: null, generated_at: ESC_TS, kinds_down: [], task: detail({ dir: PAY, short: 'pay', display: '結帳', messages: [{ ts: ESC_TS, from: 'pay-qa', to: 'leader', type: 'ESCALATE', text: '?' }] }) },
+    panes: [],
+    dispatch: [],
+  })
+
+  it('掛載時對每個進行中任務呼叫 fetchDetail（3D 與清單都要）', async () => {
+    withTask()
+    await renderOffice('/office?view=list')
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith(`/api/projects/atlas/tasks/${PAY}`, expect.anything()))
+  })
+
+  it('場景收到 objects（白板 tone 走未解判定）、events；點物件＝navigate(href)', async () => {
+    withTask()
+    fetchMock.mockImplementation(async (url: string) => {
+      if (url === `/api/projects/atlas/tasks/${PAY}`) return Response.json(escDetail())
+      if (url === '/api/sessions') return Response.json(sessionsDoc(SESSIONS))
+      return new Response('{}', { status: 404 })
+    })
+    h.events = { events: [{ id: 'e1' }], announce: null }
+    await renderOffice()
+    await screen.findByTestId('fake-scene')
+    // p1 在這桌等你＝danger；ESCALATE 並存時 chip 兩個都列（E3）
+    await waitFor(() => expect(h.props?.objects?.boards[PAY]?.chips.map((c) => c.label)).toEqual(['1 等你', 'ESCALATE']))
+    expect(h.props?.objects?.boards[PAY]?.tone).toBe('danger')
+    expect(h.props?.events.map((e) => e.id)).toEqual(['e1'])
+    act(() => h.props!.onOpenObject('/herdr'))
+    expect(loc).toBe('/herdr')
+  })
+
+  it('找人清單：有未解 ESCALATE 的任務，leader 列顯示 EventBadge（finder-escalate）', async () => {
+    withTask()
+    fetchMock.mockImplementation(async (url: string) => {
+      if (url === `/api/projects/atlas/tasks/${PAY}`) return Response.json(escDetail())
+      if (url === '/api/sessions') return Response.json(sessionsDoc(SESSIONS))
+      return new Response('{}', { status: 404 })
+    })
+    await renderOffice()
+    await screen.findByTestId('fake-scene')
+    const finder = screen.getByTestId('office-finder')
+    await userEvent.click(within(finder).getByRole('button', { name: /完成 · 中斷 · 閒置/ }))
+    const row = await waitFor(() => {
+      const r = within(finder).getAllByTestId('finder-row').find((x) => x.dataset.session === 'p9')!
+      expect(within(r).getByTestId('finder-escalate')).toBeInTheDocument()
+      return r
+    })
+    expect(row).toBeInTheDocument()
+    const other = within(finder).getAllByTestId('finder-row').find((x) => x.dataset.session === 'p1')!
+    expect(within(other).queryByTestId('finder-escalate')).toBeNull()
+  })
+
+  it('live region 掛在頁面（3D 與清單都播報）', async () => {
+    h.events = { events: [], announce: 'atlas 結帳：波 1 審查通過' }
+    const { unmount } = await renderOffice()
+    const live = screen.getByTestId('office-live-region')
+    expect(live).toHaveAttribute('aria-live', 'polite')
+    expect(live).toHaveTextContent('atlas 結帳：波 1 審查通過')
+    unmount()
+    await renderOffice('/office?view=list')
+    expect(screen.getByTestId('office-live-region')).toHaveTextContent('審查通過')
+  })
+
+  it('git 摘要只在 3D 視圖抓，清單模式不抓', async () => {
+    await renderOffice('/office?view=list')
+    await new Promise((r) => setTimeout(r, 20))
+    expect(fetchMock.mock.calls.some(([u]) => u === '/api/git')).toBe(false)
+    expect(h.loads).toBe(0)
+  })
+
+  it('3D 視圖抓 /api/git', async () => {
+    await renderOffice()
+    await screen.findByTestId('fake-scene')
+    await waitFor(() => expect(fetchMock.mock.calls.some(([u]) => u === '/api/git')).toBe(true))
+  })
+})
+
+describe('/office 詳情 Sheet（AC12）', () => {
+  it('768–1023 底部 Sheet：高度用 token、aria-modal、Tab 圈在 Sheet 內', async () => {
+    setWidth(900)
+    await renderOffice('/office?focus=p3')
+    await screen.findByTestId('fake-scene')
+    const sheet = screen.getByRole('dialog', { name: '詳情' })
+    expect(sheet).toHaveAttribute('aria-modal', 'true')
+    expect(sheet.className).toContain('h-(--sheet-h)')
+    expect(sheet.className).not.toMatch(/h-\[/)
+    await waitFor(() => expect(sheet.contains(document.activeElement)).toBe(true))
+    for (let i = 0; i < 12; i++) {
+      await userEvent.tab()
+      expect(sheet.contains(document.activeElement)).toBe(true)
+    }
+    await userEvent.tab({ shift: true })
+    expect(sheet.contains(document.activeElement)).toBe(true)
   })
 })

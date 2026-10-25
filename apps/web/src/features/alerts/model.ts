@@ -1,6 +1,7 @@
 import type { AgentLive, OfficeSession, OverviewDoc } from '@dash/shared'
 import { sessionName } from '@/components/app/SessionRow'
 import { herdrHref } from '@/lib/herdr'
+import { needsYou } from '@/lib/substate'
 
 export const blockedAgents = (doc: OverviewDoc | null): AgentLive[] => (doc?.agents ?? []).filter((a) => a.status === 'blocked')
 
@@ -24,12 +25,13 @@ const officeHref = (id: string) => `/office?${new URLSearchParams({ focus: id })
 /**
  * 需要你＝「細狀態等你／錯誤的 session」∪「herdr 全部 agent 中 status 為 blocked 的 pane」，以 sessionId 去重（無 session 的 herdr pane 才用 paneId；pane 關掉或改配對時 key 不變，不重發通知）。
  * herdr pane 不在 config 專案（沒有 session 資料）時算「有人等你」，連到 herdr 頁。
+ * session 一律以 needsYou 判（AC2）：pane 已關的錯誤沒人能回，不算。
  */
-export function attentionItems(doc: OverviewDoc | null, sessions: OfficeSession[] | null): AttentionItem[] {
+export function attentionItems(doc: OverviewDoc | null, sessions: OfficeSession[] | null, now = Date.now()): AttentionItem[] {
   const out = new Map<string, AttentionItem>()
   const claimedPanes = new Set<string>()
   for (const s of sessions ?? []) {
-    if (s.substate !== 'waiting' && s.substate !== 'error') continue
+    if ((s.substate !== 'waiting' && s.substate !== 'error') || !needsYou(s, now, { hasPane: s.paneId != null })) continue
     if (s.paneId) claimedPanes.add(s.paneId)
     out.set(s.sessionId, {
       key: s.sessionId,

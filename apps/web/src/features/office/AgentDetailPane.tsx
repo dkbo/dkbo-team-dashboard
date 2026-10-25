@@ -13,10 +13,10 @@ import { useHerdrScreens } from '@/features/herdr/useHerdr'
 import { formatCost, formatPct } from '@/lib/format'
 import { herdrHref } from '@/lib/herdr'
 import { rankOf } from '@/lib/rank'
-import { effectiveSubstate, SUBSTATE_META, timerText } from '@/lib/substate'
+import { SUBSTATE_META, timerText } from '@/lib/substate'
 import { cn } from '@/lib/utils'
 import { taskHref, taskLabel, waitingNote } from './format'
-import { taskKey, type SceneTask } from './model'
+import { needsOf, paneOpts, subOf, taskKey, type SceneTask } from './model'
 
 const TAIL_LINES = 6
 
@@ -59,14 +59,14 @@ export interface AgentDetailPaneProps {
 
 /** 點選角色後的右欄（§6.9＋§6.18）。唯讀：沒有回覆／審批按鈕，去 herdr 處理 */
 export function AgentDetailPane({ session: s, pane, tasks, now, onClose, onCenter, className }: AgentDetailPaneProps) {
-  const sub = effectiveSubstate(s, now)
-  const danger = SUBSTATE_META[sub].tone === 'danger'
+  const sub = subOf(s, now)
+  const danger = needsOf(s, now)
   const name = sessionName(s)
   const task = s.taskDir ? tasks[taskKey(s.project, s.taskDir)] : undefined
   const where = [s.project, taskLabel(s, tasks), task?.wave ? `波 ${task.wave.current}/${task.wave.planned}` : null].filter(Boolean).join(' · ')
-  const timer = timerText(s, now, { long: true })
+  const timer = timerText(s, now, { long: true, ...paneOpts(s) })
   // 這輪還沒結束（進行中、等你、錯誤停在這輪）才算「這輪跑了」
-  const inTurn = SUBSTATE_META[sub].paneStatus === 'working' || danger
+  const inTurn = SUBSTATE_META[sub].paneStatus === 'working' || sub === 'waiting' || sub === 'error'
   const toolText = s.tool ? [s.tool.name, s.tool.summary].filter(Boolean).join(' ') : null
 
   return (
@@ -104,7 +104,7 @@ export function AgentDetailPane({ session: s, pane, tasks, now, onClose, onCente
           </Banner>
         )}
         {sub === 'error' && (
-          <Banner tone="danger" title="這輪出錯">
+          <Banner tone={danger ? 'danger' : 'warn'} title={danger ? '這輪出錯' : '這輪出錯（pane 已關閉）'}>
             <code className="font-mono text-xs break-all">{s.error ?? '（沒有錯誤原文）'}</code>
           </Banner>
         )}

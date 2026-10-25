@@ -91,6 +91,11 @@
     --color-link-fg: var(--link-fg);
     --animate-alert-pulse: alert-pulse 1.6s ease-out infinite;
     --animate-think-dots: think-dots 1.2s ease-in-out infinite;
+    /* office §3 事件動態（DOM 部分；thumb／head-down／celebrate／walk 是 3D clip，時長讀 :root 變數） */
+    --animate-badge-pop: badge-pop var(--motion-badge-pop) ease-out both;
+    --animate-wave-fill: wave-fill var(--motion-wave-fill) ease-out both;
+    --animate-spark: spark var(--motion-spark) ease-out both;
+    --animate-event-bubble: event-bubble var(--motion-event-bubble) ease-in-out both;
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
     --radius-lg: var(--radius);
@@ -209,6 +214,8 @@
     --rail-top: calc(var(--topbar-h) + 1.5rem);
     --rail-max-h: calc(100svh - var(--topbar-h) - 3rem);
     --pane-max-h-sm: 70svh;
+    /* office §4.1／§6.9：< lg 的底部 Sheet 高度 */
+    --sheet-h: 60svh;
     /* office（DESIGN-SYSTEM How to use A）：場景色由 three.js 讀 CSS 變數，不在 JS 寫 hex */
     --scene-sky: #f5f6fe; --scene-floor: #dfe3f5; --scene-floor-edge: #c3c9e8;
     --scene-zone: #d3d9f1; --scene-zone-edge: #b6bde2; --scene-lounge: #ece6fb;
@@ -224,6 +231,11 @@
     --hovercard-w: 17.5rem; --marker-h: 1.5rem; --marker-alert-h: 1.75rem; --finder-w: 19rem;
     /* 對比度：警示標記（等你／錯誤）白字 5.5:1、清單連結字 ≥ 5.2:1（對 background／card／muted…） */
     --marker-alert-bg: #c62a44; --marker-alert-fg: #ffffff; --link-fg: #2f55d4;
+    /* office §3 事件動態時長（§6.17）：DOM 動畫與 3D 事件導演共用同一組數字；reduced motion 見檔尾 */
+    --motion-thumb: 1500ms; --motion-head-down: 2000ms; --motion-badge-pop: 300ms;
+    --motion-wave-fill: 600ms; --motion-spark: 1200ms; --motion-celebrate: 3000ms;
+    --motion-event-bubble: 3000ms; --motion-event-fade: 150ms;
+    --review-walk-max: 4000ms; --event-live-window: 10000ms;
 }
 
 .dark {
@@ -311,8 +323,37 @@
     50% { opacity: 0.3; }
 }
 
+/* office §3 事件動態：EventBadge 彈出、白板進度格由左到右填滿、星點、EventBubble 淡入停留淡出 */
+@keyframes badge-pop {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+@keyframes wave-fill {
+    from { clip-path: inset(0 100% 0 0); }
+    to { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes spark {
+    0% { transform: scale(0); opacity: 0; }
+    40% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(0.6) translateY(-0.25rem); opacity: 0; }
+}
+
+@keyframes event-bubble {
+    0% { opacity: 0; }
+    5% { opacity: 1; }
+    95% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .animate-alert-pulse, .animate-think-dots { animation: none; }
+    /* §6.17 右欄：直接出現／填滿、無星點；EventBubble 沒有動作提示，改靠文字停留 6 秒 */
+    .animate-badge-pop, .animate-wave-fill, .animate-event-bubble { animation: none; }
+    .animate-spark { display: none; }
+    :root { --motion-event-bubble: 6000ms; }
 }
 
 @layer base {

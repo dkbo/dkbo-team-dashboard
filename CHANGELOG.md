@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+### 新增：辦公室大廳——頁面物件與角色互動事件（dkbo 任務 lobby）
+- `/office` 加六件頁面物件與數字標籤：任務白板（波數、E3 燈號，結案保留 10 分鐘）、監控牆（herdr pane／卡住數）、檔案室（已結案、今天 +N）、git 檔案櫃（衝突＞未推送＞未提交／detached，乾淨熄燈）、大廳公告板（進行中任務數）、茶水間電表（今日花費、最高額度、熔斷跳電）；點物件或標籤開對應頁。git 摘要每 30 秒、今日花費每分鐘，只在 3D 視圖開著且分頁可見時抓；值沒變不換參照，靜止時仍 0 幀。
+- 角色互動事件：reviewer 出動、審查通過／要修、ESCALATE 與解除、波關閉、結案；只播即時事件、不補播；事件寫進 `/office` 的 live region（`data-testid="office-live-region"`）。找人清單中有未解 ESCALATE 的 leader 列掛「!」（`finder-escalate`）。進 `/office` 時對每個進行中任務抓一次詳情。
+- 修正：pane 已關的「錯誤」session 不再一直算需要你（分頁標題 N、桌面通知、找人清單、只看需要你），10 分鐘轉閒置、2 小時下班。
+- 修正：SSE 斷線前 sessions 已抓失敗時，重連後要等 sessions 重抓（或錯誤換了）才定通知基準，不再拿斷線前的舊資料當基準而多發一則通知。
+- 修正：/office 768–1023 寬的詳情底部 Sheet 高度改用 `--sheet-h` token，開啟時焦點移入並以 Tab／Shift+Tab 圈在 Sheet 內（`aria-modal`）。
+
 ### 新增：辦公室視圖與 session 細狀態（dkbo 任務 office）
 - `/office`：3D 辦公室（three.js／react-three-fiber，只在進頁且是 3D 視圖時延遲載入）把 Claude Code、Codex 的 session 畫成 Kenney 小人；有任務的專案一區、任務桌群依 brief 成員順序固定座位、leader 大桌加皇冠、完成的去休息區；頭頂標記、地面圈與 hover 卡顯示細狀態與職等。找人清單（需要你／工作中／其他）、詳情（終端尾、resume 指令）、清單模式（桌機三欄、手機三張收合卡）；無 WebGL、素材載入失敗或 context lost 時自動退到清單。選取與篩選存在網址（`focus`、`kind`、`project`、`needs`、`view`、`f_*`）。純唯讀。
 - 細狀態：server 唯讀讀 Claude／Codex 的 session JSONL，與 herdr 狀態合算出思考中、執行、回覆中、等你、完成、中斷、錯誤、閒置；新增 `GET /api/sessions`、SSE `sessions.updated`，`PaneLive` 加選填的 `session`（總覽、任務詳情、herdr 的 pane 都帶）。transcript 只讀新增位元組，推送每 500 ms 合併去重。提示詞與回覆全文不出 server。
