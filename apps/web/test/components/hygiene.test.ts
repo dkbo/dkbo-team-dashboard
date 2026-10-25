@@ -45,4 +45,18 @@ describe('AC10 收尾', () => {
     const hits = grep(/#[0-9a-fA-F]{3,8}\b|-\[[0-9.]+px\]/, /\.tsx$/)
     expect(hits.filter((h) => !allowed(h))).toEqual([])
   })
+
+  // office（brief 全域約束「只用 token」）：frontend-base 新寫的檔不得有 hex、text-[／rounded-[、-[Npx]
+  it('office 新增的 lib 與元件沒有 hex、任意值 class', () => {
+    const OFFICE = [
+      'lib/substate.ts',
+      'lib/rank.ts',
+      'components/app/SubstatePill.tsx',
+      'components/app/SessionRow.tsx',
+      'components/app/EffortStars.tsx',
+      'components/app/RankTag.tsx',
+    ]
+    const hits = grep(/#[0-9a-fA-F]{3,8}\b|-\[[0-9.]+px\]|text-\[|rounded-\[/, new RegExp(`(${OFFICE.map((f) => f.replace('.', '\\.')).join('|')})$`))
+    expect(hits).toEqual([])
+  })
 })

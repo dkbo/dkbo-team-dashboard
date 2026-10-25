@@ -1,5 +1,6 @@
 import type { Dispatch } from './dispatch.ts';
 import type { DetailDoc, KindsDown, ListDoc, TaskDetail, TaskStatus, Ts } from './dkstatus.ts';
+import type { SessionLive, SessionsDoc } from './session.ts';
 
 export const PANE_STATUSES = ['idle', 'working', 'blocked', 'done', 'unknown'] as const;
 export type PaneStatus = (typeof PANE_STATUSES)[number];
@@ -29,6 +30,8 @@ export interface PaneLive {
   taskDir: string | null;
   /** 對到的成員（state 名）；otherPanes 一律 null */
   member: string | null;
+  /** 對到的 session 細狀態；undefined 與 null 同義：沒有 session 資料 */
+  session?: SessionLive | null;
 }
 
 export type ProjectErrorKind = 'missing' | 'no-dkbo' | 'exit' | 'timeout' | 'json' | 'schema';
@@ -136,7 +139,8 @@ export type SseEvent =
   | { event: 'overview.updated'; data: OverviewDoc }
   | { event: 'pane.updated'; data: PaneLive }
   | { event: 'task.updated'; data: TaskRef }
-  | { event: 'herdr.view'; data: HerdrView };
+  | { event: 'herdr.view'; data: HerdrView }
+  | { event: 'sessions.updated'; data: SessionsDoc };
 
 export type SseEventName = SseEvent['event'];
 

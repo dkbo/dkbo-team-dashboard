@@ -3,7 +3,7 @@ import { spawn } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { calls, fakeProject, miniProject, script, setFake, tmp, waitFor } from './helpers.ts';
+import { calls, fakeProject, miniProject, script, setFake, tmp, waitFor, waitForFiles } from './helpers.ts';
 
 const SERVER_DIR = resolve(import.meta.dirname, '..');
 /** `node --import tsx`：不經 tsx CLI（它會在 $TMPDIR 建 tsx-<uid> 放 IPC pipe） */
@@ -126,7 +126,7 @@ describe('趨勢取樣只寫 DASH_DATA_DIR（AC8）', () => {
     const exited = new Promise<number | null>((r) => child.on('exit', (code) => r(code)));
     try {
       const url = await waitFor(() => /listening on (http:\/\/\S+)/.exec(out)?.[1], 15_000);
-      const files = await waitFor(() => existsSync(join(data, 'samples')) && readdirSync(join(data, 'samples')), 10_000);
+      const files = await waitForFiles(join(data, 'samples'), 10_000);
       expect(files).toHaveLength(1);
       expect(files[0]).toMatch(/^\d{4}-\d{2}-\d{2}\.jsonl$/);
       const t = (await (await fetch(`${url}/api/trends?range=6h`)).json()) as { dataDir: string };

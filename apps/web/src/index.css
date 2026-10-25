@@ -74,6 +74,23 @@
     --leading-terminal: 1.2;
     /* 版面 → max-w-page */
     --container-page: 96rem;
+    /* office（DESIGN-SYSTEM How to use B）：其他 scene-* 只給 three.js 讀，不進 @theme */
+    --color-scene-sky: var(--scene-sky);
+    --color-scene-floor: var(--scene-floor);
+    --color-rank-senior: var(--rank-senior);
+    --color-rank-mid: var(--rank-mid);
+    --color-rank-junior: var(--rank-junior);
+    --color-rank-visitor: var(--rank-visitor);
+    --width-hovercard: var(--hovercard-w);
+    --height-marker: var(--marker-h);
+    --height-marker-alert: var(--marker-alert-h);
+    --width-finder: var(--finder-w);
+    /* office 對比度（波 3）：警示標記底／字、清單連結字；不動共用 status-danger／primary */
+    --color-marker-alert-bg: var(--marker-alert-bg);
+    --color-marker-alert-fg: var(--marker-alert-fg);
+    --color-link-fg: var(--link-fg);
+    --animate-alert-pulse: alert-pulse 1.6s ease-out infinite;
+    --animate-think-dots: think-dots 1.2s ease-in-out infinite;
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
     --radius-lg: var(--radius);
@@ -192,6 +209,21 @@
     --rail-top: calc(var(--topbar-h) + 1.5rem);
     --rail-max-h: calc(100svh - var(--topbar-h) - 3rem);
     --pane-max-h-sm: 70svh;
+    /* office（DESIGN-SYSTEM How to use A）：場景色由 three.js 讀 CSS 變數，不在 JS 寫 hex */
+    --scene-sky: #f5f6fe; --scene-floor: #dfe3f5; --scene-floor-edge: #c3c9e8;
+    --scene-zone: #d3d9f1; --scene-zone-edge: #b6bde2; --scene-lounge: #ece6fb;
+    --scene-wall-l: #ffffff; --scene-wall-r: #e9ecf9; --scene-wall-top: #c9cee9;
+    --scene-window: #cfe0ff; --scene-desk: #f3e7d5; --scene-desk-side: #dccaae;
+    --scene-monitor: #2b2e4c; --scene-screen-off: #4a4f78; --scene-screen-on: #a9c6ff;
+    --scene-couch: #c4bdf0; --scene-plant: #8fb8a5; --scene-shadow: rgb(61 67 128 / 12%);
+    --scene-cabinet: #e4e7f4; --scene-cabinet-side: #cdd2ea; --scene-board: #ffffff;
+    --scene-cork: #e2c9a0; --scene-lamp-off: #8a8fb3;
+    /* §1.5 燈光色（強度與方向是數字，留在場景程式） */
+    --light-hemi-sky: #ffffff; --light-hemi-ground: var(--scene-floor); --light-key: #fff4e5;
+    --rank-senior: #3f3a9e; --rank-mid: #5b8cff; --rank-junior: #a9d8f5; --rank-visitor: #cfd2dd;
+    --hovercard-w: 17.5rem; --marker-h: 1.5rem; --marker-alert-h: 1.75rem; --finder-w: 19rem;
+    /* 對比度：警示標記（等你／錯誤）白字 5.5:1、清單連結字 ≥ 5.2:1（對 background／card／muted…） */
+    --marker-alert-bg: #c62a44; --marker-alert-fg: #ffffff; --link-fg: #2f55d4;
 }
 
 .dark {
@@ -242,6 +274,17 @@
     --status-info: #7b5cff;
     --status-info-fg: #b9a8ff;
     --status-info-soft: #34326d;
+    --scene-sky: #161935; --scene-floor: #2a2e5a; --scene-floor-edge: #1a1d3d;
+    --scene-zone: #323668; --scene-zone-edge: #15183a; --scene-lounge: #332f63;
+    --scene-wall-l: #363b74; --scene-wall-r: #2b2f62; --scene-wall-top: #454b8c;
+    --scene-window: #0e1130; --scene-desk: #4c4675; --scene-desk-side: #3b3660;
+    --scene-monitor: #1a1c33; --scene-screen-off: #2c2f52; --scene-screen-on: #7fa6ff;
+    --scene-couch: #5a5296; --scene-plant: #4f7f6c; --scene-shadow: rgb(5 6 20 / 40%);
+    --scene-cabinet: #4a4f86; --scene-cabinet-side: #3a3e70; --scene-board: #c9cdea;
+    --scene-cork: #6b5a73; --scene-lamp-off: #3a3e66;
+    --light-hemi-sky: #8fa8ff; --light-hemi-ground: #1a1d3d; --light-key: #b9c6ff;
+    --rank-senior: #5a52d0; --rank-mid: #6f9bff; --rank-junior: #b4dcf8; --rank-visitor: #d6d8e2;
+    --marker-alert-bg: #ff6b7f; --marker-alert-fg: #0f1433; --link-fg: #8fb0ff;
 }
 
 @media (min-width: 64rem) {
@@ -255,6 +298,21 @@
         --sidebar-w: 18rem;
         --detail-w: 26rem;
     }
+}
+
+/* office §3 motion：alert 標記脈動環、thinking 三點（stagger 由使用處用 animation-delay） */
+@keyframes alert-pulse {
+    from { transform: scale(1); opacity: 0.4; }
+    to { transform: scale(1.25); opacity: 0; }
+}
+
+@keyframes think-dots {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-alert-pulse, .animate-think-dots { animation: none; }
 }
 
 @layer base {

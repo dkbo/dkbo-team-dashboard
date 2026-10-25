@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { CostsResponse, HerdrView, HistoryRow, OverviewDoc, PaneLive, SseEvent, TaskDetailResponse } from '@dash/shared'
+import type { CostsResponse, HerdrView, HistoryRow, OverviewDoc, PaneLive, SessionsDoc, SseEvent, TaskDetailResponse } from '@dash/shared'
 import { api, errorText, HttpError } from '@/api/client'
 import { mergePaneIntoDetail, mergePaneIntoHerdrView, mergePaneIntoOverview } from './merge'
 
@@ -42,6 +42,9 @@ interface DashData {
   /** herdr 鏡像頁的全貌；只有開過 herdr 頁才會抓 */
   herdrView: HerdrView | null
   herdrViewError: string | null
+  /** 辦公室的 session 細狀態（`GET /api/sessions`＋SSE `sessions.updated`）；提醒與 /office 會抓 */
+  sessions: SessionsDoc | null
+  sessionsError: string | null
   sse: SseState
 }
 
@@ -51,6 +54,7 @@ interface DashActions {
   fetchHistory(): Promise<void>
   fetchCostsAll(): Promise<void>
   fetchHerdrView(): Promise<void>
+  fetchSessions(): Promise<void>
   handleEvent(e: SseEvent): void
   handleStreamOpen(): void
   handleStreamError(closed: boolean): void
@@ -70,6 +74,8 @@ const initialData = (): DashData => ({
   costsAll: { data: null, error: null, loading: false, fetchedAt: null },
   herdrView: null,
   herdrViewError: null,
+  sessions: null,
+  sessionsError: null,
   sse: 'connecting',
 })
 
@@ -100,6 +106,12 @@ export const useDashStore = create<DashState>()((set, get) => {
     const cur = get().herdrView
     if (cur && v.generatedAt < cur.generatedAt) return
     set({ herdrView: v, herdrViewError: null })
+  }
+
+  const acceptSessions = (doc: SessionsDoc) => {
+    const cur = get().sessions
+    if (cur && doc.generatedAt < cur.generatedAt) return
+    set({ sessions: doc, sessionsError: null })
   }
 
   const patchDetail = (project: string, dir: string, patch: Partial<DetailEntry>) =>
@@ -163,6 +175,14 @@ export const useDashStore = create<DashState>()((set, get) => {
       }
     },
 
+    async fetchSessions() {
+      try {
+        acceptSessions(await api.sessions())
+      } catch (e) {
+        set({ sessionsError: errorText(e) })
+      }
+    },
+
     handleEvent(e) {
       for (const fn of streamListeners) fn(e)
       switch (e.event) {
@@ -190,6 +210,9 @@ export const useDashStore = create<DashState>()((set, get) => {
         case 'herdr.view':
           acceptHerdrView(e.data)
           return
+        case 'sessions.updated':
+          acceptSessions(e.data)
+          return
         case 'task.updated': {
           const { project, dir } = e.data
           const s = get()
@@ -209,6 +232,7 @@ export const useDashStore = create<DashState>()((set, get) => {
       if (s.history.data) void s.fetchHistory()
       if (s.costsAll.data) void s.fetchCostsAll()
       if (s.herdrView) void s.fetchHerdrView()
+      if (s.sessions || s.sessionsError) void s.fetchSessions()
     },
 
     handleStreamError(closed) {

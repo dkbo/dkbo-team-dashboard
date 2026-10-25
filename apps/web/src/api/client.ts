@@ -11,6 +11,7 @@ import type {
   HerdrView,
   HistoryResponse,
   OverviewDoc,
+  SessionsDoc,
   TaskDetailResponse,
   TrendRange,
   TrendsResponse,
@@ -38,6 +39,7 @@ export const api = {
   history: () => getJson<HistoryResponse>('/api/history'),
   trends: (range: TrendRange) => getJson<TrendsResponse>(`/api/trends?range=${range}`),
   costs: (range: CostRange) => getJson<CostsResponse>(`/api/costs?range=${range}`),
+  sessions: () => getJson<SessionsDoc>('/api/sessions'),
   herdrView: () => getJson<HerdrView>('/api/herdr/view'),
   herdrSearch: (q: string) => getJson<HerdrSearchResponse>(`/api/herdr/search?q=${encodeURIComponent(q)}`),
   herdrScreen: (paneId: string, recentLines?: number) =>

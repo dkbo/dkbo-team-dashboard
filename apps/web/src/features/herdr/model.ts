@@ -1,4 +1,7 @@
-import type { HerdrView, HerdrViewPane, HerdrViewTab, HerdrViewWorkspace } from '@dash/shared'
+import type { HerdrView, HerdrViewPane, HerdrViewTab, HerdrViewWorkspace, Substate } from '@dash/shared'
+import type { Tone } from '@/components/app/StatusDot'
+import { agentStatusPill } from '@/components/app/StatusPill'
+import { effectiveSubstate, SUBSTATE_META } from '@/lib/substate'
 
 export interface HerdrSelection {
   workspaceId?: string | null
@@ -86,11 +89,78 @@ export function findPane(view: HerdrView | null, paneId: string): { workspace: H
   return null
 }
 
-const AGENT_ORDER: Record<string, number> = { blocked: 0, working: 1, idle: 2 }
+/** pane 的有效細狀態（套 Q3／Q7）；沒有 session 資料回 null，不從粗狀態編造 */
+export function paneSubstate(p: HerdrViewPane, now: number): Substate | null {
+  return p.session ? effectiveSubstate(p.session, now) : null
+}
 
-/** 側欄 agents 段排序（§6.20）：blocked → working → idle → 其他，同狀態依名稱 */
-export function sortAgents<T extends { pane: HerdrViewPane }>(agents: T[]): T[] {
-  const rank = (p: HerdrViewPane) => AGENT_ORDER[p.status] ?? 3
-  const name = (p: HerdrViewPane) => p.name ?? p.agent ?? p.paneId
-  return [...agents].sort((a, b) => rank(a.pane) - rank(b.pane) || name(a.pane).localeCompare(name(b.pane)))
+export type AgentGroup = 'needs' | 'working' | 'other'
+
+export const AGENT_GROUPS: { group: AgentGroup; label: string }[] = [
+  { group: 'needs', label: '需要你' },
+  { group: 'working', label: '工作中' },
+  { group: 'other', label: '其他' },
+]
+
+const GROUP_OF: Record<Substate, AgentGroup> = {
+  waiting: 'needs',
+  error: 'needs',
+  running: 'working',
+  writing: 'working',
+  thinking: 'working',
+  interrupted: 'other',
+  done: 'other',
+  idle: 'other',
+}
+
+/** §6.13 三組：有 session 看有效細狀態；沒有就退回 herdr 粗狀態（blocked／working／其他） */
+export function agentGroup(p: HerdrViewPane, now: number): AgentGroup {
+  const sub = paneSubstate(p, now)
+  if (sub) return GROUP_OF[sub]
+  return p.status === 'blocked' ? 'needs' : p.status === 'working' ? 'working' : 'other'
+}
+
+/** 排序鍵：有 session 用 §1.2 的 order；沒有就把粗狀態對到最接近的細狀態（blocked＝等你、working＝思考、done、idle、其他最後） */
+function paneRank(p: HerdrViewPane, now: number): number {
+  const sub = paneSubstate(p, now)
+  if (sub) return SUBSTATE_META[sub].order
+  switch (p.status) {
+    case 'blocked':
+      return SUBSTATE_META.waiting.order
+    case 'working':
+      return SUBSTATE_META.thinking.order
+    case 'done':
+      return SUBSTATE_META.done.order
+    case 'idle':
+      return SUBSTATE_META.idle.order
+    default:
+      return SUBSTATE_META.idle.order + 1
+  }
+}
+
+/** pane 的狀態點語意色：有 session 用細狀態 tone，否則 herdr 粗狀態 */
+export function paneTone(p: HerdrViewPane, now: number): Tone {
+  const sub = paneSubstate(p, now)
+  return sub ? SUBSTATE_META[sub].tone : agentStatusPill(p.status).tone
+}
+
+/** tab 的狀態點：該 tab 內最嚴重（§1.2 排序最前）的 pane；沒有任何 session 資料時沿用 tab 的 herdr 粗狀態 */
+export function tabTone(tab: HerdrViewTab, now: number): Tone {
+  if (!tab.panes.some((p) => p.session)) return agentStatusPill(tab.status).tone
+  let best: HerdrViewPane | null = null
+  for (const p of tab.panes) if (!best || paneRank(p, now) < paneRank(best, now)) best = p
+  return best ? paneTone(best, now) : agentStatusPill(tab.status).tone
+}
+
+const byName = (p: HerdrViewPane) => p.name ?? p.agent ?? p.paneId
+
+/** 側欄 agents 段排序（§6.13）：依細狀態順序（等你 → 完成 → 閒置），同級依名稱；沒有 session 的 pane 以粗狀態對位 */
+export function sortAgents<T extends { pane: HerdrViewPane }>(agents: T[], now: number = Date.now()): T[] {
+  return [...agents].sort((a, b) => paneRank(a.pane, now) - paneRank(b.pane, now) || byName(a.pane).localeCompare(byName(b.pane)))
+}
+
+/** 依 §6.13 切成「需要你／工作中／其他」，0 個的組不出現；組內順序同 sortAgents */
+export function groupAgents<T extends { pane: HerdrViewPane }>(agents: T[], now: number = Date.now()): { group: AgentGroup; label: string; items: T[] }[] {
+  const sorted = sortAgents(agents, now)
+  return AGENT_GROUPS.map(({ group, label }) => ({ group, label, items: sorted.filter((a) => agentGroup(a.pane, now) === group) })).filter((g) => g.items.length > 0)
 }

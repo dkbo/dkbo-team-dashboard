@@ -1,4 +1,4 @@
-import type { HerdrView, HerdrViewPane, PaneStatus } from '@dash/shared'
+import type { HerdrView, HerdrViewPane, PaneStatus, SessionLive } from '@dash/shared'
 
 export const vpane = (id: string, rect: [number, number, number, number], status: PaneStatus = 'idle', over: Partial<HerdrViewPane> = {}): HerdrViewPane => ({
   paneId: id,
@@ -61,4 +61,15 @@ export const view: HerdrView = {
       ],
     },
   ],
+}
+
+/** 把 session 掛到指定 pane（paneId → SessionLive），其餘 pane 維持沒有 session */
+export function withSessions(v: HerdrView, sessions: Record<string, SessionLive>): HerdrView {
+  return {
+    ...v,
+    workspaces: v.workspaces.map((w) => ({
+      ...w,
+      tabs: w.tabs.map((t) => ({ ...t, panes: t.panes.map((p) => (sessions[p.paneId] ? { ...p, session: sessions[p.paneId] } : p)) })),
+    })),
+  }
 }

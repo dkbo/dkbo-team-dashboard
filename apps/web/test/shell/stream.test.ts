@@ -46,8 +46,9 @@ describe('openStream', () => {
     es.emit('task.updated', { project: 'a', dir: 'd' })
     es.emit('overview.updated', { generatedAt: 1 })
     es.emit('herdr.view', { generatedAt: 1 })
+    es.emit('sessions.updated', { generatedAt: 1, sessions: [] })
     es.listeners.get('task.updated')?.({ data: '{bad' } as MessageEvent)
-    expect(h.onEvent.mock.calls.map((c) => c[0].event)).toEqual(['pane.updated', 'task.updated', 'overview.updated', 'herdr.view'])
+    expect(h.onEvent.mock.calls.map((c) => c[0].event)).toEqual(['pane.updated', 'task.updated', 'overview.updated', 'herdr.view', 'sessions.updated'])
   })
 
   it('瀏覽器自己重連中（CONNECTING）不另開；CLOSED 時以指數退避重開，open 後退避歸零', () => {

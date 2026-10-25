@@ -1,9 +1,11 @@
-// server 入口：讀 env（PORT、DASHBOARD_CONFIG、DASH_HERDR_*、DASH_GIT_BIN、DASH_DATA_DIR／DASH_SAMPLE_MS／DASH_RETENTION_DAYS），只 listen 127.0.0.1。
+// server 入口：讀 env（PORT、DASHBOARD_CONFIG、DASH_HERDR_*、DASH_GIT_BIN、DASH_DATA_DIR／DASH_SAMPLE_MS／DASH_RETENTION_DAYS、
+// DASH_CLAUDE_DIR／DASH_CODEX_DIR／DASH_SESSIONS），只 listen 127.0.0.1。
 // SIGINT／SIGTERM：先收掉在途 dk-status 行程群組（SIGTERM，2 秒後 SIGKILL），再清本行程建的 overlay，才退出；總時限 5 秒內。
 import type { AddressInfo } from 'node:net';
 import { loadConfig } from './config.ts';
 import { herdrOptsFromEnv } from './herdr.ts';
 import { createDashServer, HOST, listen } from './server.ts';
+import { sessionOptsFromEnv } from './sessions.ts';
 import { usageOptsFromEnv } from './usage.ts';
 
 const port = Number(process.env.PORT ?? 4317);
@@ -11,6 +13,7 @@ const dash = createDashServer({
   config: loadConfig(),
   herdr: herdrOptsFromEnv(process.env),
   usage: usageOptsFromEnv(process.env),
+  sessions: sessionOptsFromEnv(process.env),
   gitBin: process.env.DASH_GIT_BIN || undefined,
 });
 process.on('exit', () => dash.overlays.cleanupSync());

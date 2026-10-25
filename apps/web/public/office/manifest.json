@@ -1,0 +1,146 @@
+{
+  "characters": {
+    "default": {
+      "url": "characters/character-male-a.glb",
+      "clips": {
+        "idle": "idle",
+        "walk": "walk",
+        "sit": "sit",
+        "type": "interact-right",
+        "wave": "interact-left",
+        "think": null,
+        "sleep": null,
+        "cheer": "jump"
+      }
+    },
+    "leader": {
+      "url": "characters/character-female-a.glb",
+      "clips": {
+        "idle": "idle",
+        "walk": "walk",
+        "sit": "sit",
+        "type": "interact-right",
+        "wave": "interact-left",
+        "think": null,
+        "sleep": null,
+        "cheer": "jump"
+      }
+    },
+    "backend": {
+      "url": "characters/character-male-b.glb",
+      "clips": {
+        "idle": "idle",
+        "walk": "walk",
+        "sit": "sit",
+        "type": "interact-right",
+        "wave": "interact-left",
+        "think": null,
+        "sleep": null,
+        "cheer": "jump"
+      }
+    },
+    "frontend": {
+      "url": "characters/character-female-b.glb",
+      "clips": {
+        "idle": "idle",
+        "walk": "walk",
+        "sit": "sit",
+        "type": "interact-right",
+        "wave": "interact-left",
+        "think": null,
+        "sleep": null,
+        "cheer": "jump"
+      }
+    },
+    "qa": {
+      "url": "characters/character-male-c.glb",
+      "clips": {
+        "idle": "idle",
+        "walk": "walk",
+        "sit": "sit",
+        "type": "interact-right",
+        "wave": "interact-left",
+        "think": null,
+        "sleep": null,
+        "cheer": "jump"
+      }
+    },
+    "reviewer": {
+      "url": "characters/character-female-c.glb",
+      "clips": {
+        "idle": "idle",
+        "walk": "walk",
+        "sit": "sit",
+        "type": "interact-right",
+        "wave": "interact-left",
+        "think": null,
+        "sleep": null,
+        "cheer": "jump"
+      }
+    },
+    "it": {
+      "url": "characters/character-male-d.glb",
+      "clips": {
+        "idle": "idle",
+        "walk": "walk",
+        "sit": "sit",
+        "type": "interact-right",
+        "wave": "interact-left",
+        "think": null,
+        "sleep": null,
+        "cheer": "jump"
+      }
+    },
+    "designer": {
+      "url": "characters/character-female-d.glb",
+      "clips": {
+        "idle": "idle",
+        "walk": "walk",
+        "sit": "sit",
+        "type": "interact-right",
+        "wave": "interact-left",
+        "think": null,
+        "sleep": null,
+        "cheer": "jump"
+      }
+    },
+    "pm": {
+      "url": "characters/character-female-e.glb",
+      "clips": {
+        "idle": "idle",
+        "walk": "walk",
+        "sit": "sit",
+        "type": "interact-right",
+        "wave": "interact-left",
+        "think": null,
+        "sleep": null,
+        "cheer": "jump"
+      }
+    }
+  },
+  "furniture": {
+    "bench": "furniture/bench.glb",
+    "bookcaseClosed": "furniture/bookcaseClosed.glb",
+    "books": "furniture/books.glb",
+    "cardboardBoxClosed": "furniture/cardboardBoxClosed.glb",
+    "chairDesk": "furniture/chairDesk.glb",
+    "coatRack": "furniture/coatRack.glb",
+    "computerKeyboard": "furniture/computerKeyboard.glb",
+    "computerScreen": "furniture/computerScreen.glb",
+    "desk": "furniture/desk.glb",
+    "kitchenCoffeeMachine": "furniture/kitchenCoffeeMachine.glb",
+    "lampSquareFloor": "furniture/lampSquareFloor.glb",
+    "laptop": "furniture/laptop.glb",
+    "loungeChair": "furniture/loungeChair.glb",
+    "loungeSofa": "furniture/loungeSofa.glb",
+    "plantSmall1": "furniture/plantSmall1.glb",
+    "pottedPlant": "furniture/pottedPlant.glb",
+    "rugRectangle": "furniture/rugRectangle.glb",
+    "sideTable": "furniture/sideTable.glb",
+    "speaker": "furniture/speaker.glb",
+    "tableCoffee": "furniture/tableCoffee.glb",
+    "tableRound": "furniture/tableRound.glb",
+    "televisionModern": "furniture/televisionModern.glb",
+    "trashcan": "furniture/trashcan.glb"
+  }
+}

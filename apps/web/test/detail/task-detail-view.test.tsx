@@ -74,7 +74,7 @@ describe('波次時間軸：時間倒序', () => {
 })
 
 describe('成員表', () => {
-  it('state 欄位＋herdr 即時狀態與 cost；對不到 pane 註「無 pane」', async () => {
+  it('state 欄位＋細狀態欄（沒有 session 時退回 herdr 粗狀態）與 cost；對不到 pane 註「無 session」', async () => {
     const user = userEvent.setup()
     view()
     const table = screen.getByTestId('member-table')
@@ -82,17 +82,17 @@ describe('成員表', () => {
     expect(backend).toHaveTextContent('寫 API 路由')
     expect(backend).toHaveTextContent('錯誤碼對齊')
     expect(within(backend).getByTestId('state-status')).toHaveTextContent('working')
-    const herdr = within(backend).getByTestId('herdr-status')
-    expect(herdr.querySelector('[data-slot="status-pill"]')).toHaveAttribute('data-tone', 'working')
-    // 複製指令收進 StatusPill 的 hover
-    await user.hover(herdr.querySelector('[data-slot="status-pill"]')!)
+    const sub = within(backend).getByTestId('member-substate')
+    expect(sub.querySelector('[data-slot="status-pill"]')).toHaveAttribute('data-tone', 'working')
+    // 複製指令收進膠囊的 hover
+    await user.hover(sub.querySelector('[data-slot="status-pill"]')!)
     expect(await screen.findByText('herdr agent focus w1-p2')).toBeInTheDocument()
-    expect(within(backend).getByTestId('watch-pane').getAttribute('href')).toContain('p=w1-p2')
+    expect(within(within(backend).getByTestId('herdr-status')).getByTestId('watch-pane').getAttribute('href')).toContain('p=w1-p2')
     expect(backend).toHaveTextContent('$1.25')
     expect(backend).toHaveTextContent('42%')
     const qa = within(table).getByTestId('member-qa')
     expect(qa).toHaveTextContent('backend 未完成')
-    expect(qa).toHaveTextContent('無 pane')
+    expect(qa).toHaveTextContent('無 session')
     expect(within(qa).queryByText(/herdr agent focus/)).toBeNull()
     expect(within(qa).queryByTestId('watch-pane')).toBeNull()
   })

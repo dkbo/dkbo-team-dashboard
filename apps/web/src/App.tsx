@@ -7,6 +7,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import GitPage from '@/pages/git/GitPage'
 import HerdrPage from '@/pages/herdr/HerdrPage'
 import HistoryPage from '@/pages/history/HistoryPage'
+import OfficePage from '@/pages/office/OfficePage'
 import OverviewPage from '@/pages/overview/OverviewPage'
 import TaskPage from '@/pages/task/TaskPage'
 import TrendsPage from '@/pages/trends/TrendsPage'
@@ -38,6 +39,7 @@ export function AppRoutes() {
     <Routes>
       <Route element={<AppLayout />}>
         <Route index element={<OverviewPage />} />
+        <Route path="office" element={<OfficePage />} />
         <Route path="p/:project/t/:dir" element={<TaskPage />} />
         <Route path="history" element={<HistoryPage />} />
         <Route path="trends" element={<TrendsPage />} />

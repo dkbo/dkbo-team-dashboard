@@ -1,5 +1,5 @@
 // 把各專案的 dk-status 結果與 herdr pane 合成 OverviewDoc。純函式，不碰 I/O。
-import type { AgentLive, HerdrState, KindUsage, OverviewDoc, PaneLive, ProjectKindsDown, ProjectView, TaskDetail } from '@dash/shared';
+import type { AgentLive, HerdrState, KindUsage, OverviewDoc, PaneLive, ProjectKindsDown, ProjectView, SessionLive, TaskDetail } from '@dash/shared';
 
 /** StatusCollector 交給 Aggregator 的每專案資料（ProjectView 去掉 pane 兩欄） */
 export type CollectedProject = Omit<ProjectView, 'panes' | 'otherPanes'>;
@@ -25,7 +25,14 @@ export function aggregate(
   panes: PaneLive[],
   herdr: { state: HerdrState; lastAt: number | null },
   now: number,
+  /** 給了就每個 pane 都帶 session（對不到為 null）；細狀態 error 的 pane status 改回 blocked（判斷 waiting 用的是 herdr 原值，不受這裡影響） */
+  sessionOf?: (paneId: string) => SessionLive | null,
 ): OverviewDoc {
+  if (sessionOf)
+    panes = panes.map((p) => {
+      const session = sessionOf(p.paneId);
+      return { ...p, status: session?.substate === 'error' ? 'blocked' : p.status, session };
+    });
   const byPane = new Map<string, MemberRef>();
   const byTab = new Map<string, { project: number; dir: string }>();
   projects.forEach((p, i) => {

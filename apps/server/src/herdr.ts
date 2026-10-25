@@ -8,7 +8,7 @@ import { createConnection, type Socket } from 'node:net';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import type { HerdrState, PaneLive } from '@dash/shared';
-import { parseSnapshot, toPaneLive, type HerdrPane } from './herdr-parse.ts';
+import { parseSnapshot, sessionIdOf, toPaneLive, type HerdrPane } from './herdr-parse.ts';
 
 export interface HerdrOpts {
   bin: string;
@@ -87,6 +87,16 @@ export class HerdrBridge extends EventEmitter {
     return this.live;
   }
 
+  /** paneId → herdr 給的 agent session id（只有 `kind: "id"` 的） */
+  sessionIds(): Map<string, string> {
+    const m = new Map<string, string>();
+    for (const p of this.raw.values()) {
+      const id = sessionIdOf(p);
+      if (id) m.set(p.pane_id, id);
+    }
+    return m;
+  }
+
   start(): void {
     if (!this.stopped) return;
     this.stopped = false;
@@ -111,7 +121,7 @@ export class HerdrBridge extends EventEmitter {
   /** raw → PaneLive；內容真的變了才發 change */
   private rebuild(): void {
     this.live = [...this.raw.values()].map((p) => toPaneLive(p, this.names.get(p.pane_id) ?? null));
-    const key = JSON.stringify(this.live);
+    const key = JSON.stringify([this.live, [...this.sessionIds()]]);
     if (key === this.liveKey) return;
     this.liveKey = key;
     this.emit('change');

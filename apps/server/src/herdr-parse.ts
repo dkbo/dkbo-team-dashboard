@@ -10,7 +10,13 @@ export interface HerdrPane {
   cwd?: string | null;
   foreground_cwd?: string | null;
   tokens?: Record<string, string>;
+  /** herdr 偵測到的 agent session；`kind: "id"` 時 value 是 transcript 的 session id */
+  agent_session?: { kind?: string; value?: string | null } | null;
 }
+
+/** agent_session 是 id 型才回 value */
+export const sessionIdOf = (p: HerdrPane): string | null =>
+  p.agent_session?.kind === 'id' && typeof p.agent_session.value === 'string' && p.agent_session.value ? p.agent_session.value : null;
 
 export interface HerdrAgent {
   pane_id: string;

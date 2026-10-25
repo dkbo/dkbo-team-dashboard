@@ -65,6 +65,26 @@
             "width": 60,
             "height": 15
           }
+        },
+        {
+          "pane_id": "wE:p4",
+          "focused": false,
+          "rect": {
+            "x": 60,
+            "y": 15,
+            "width": 60,
+            "height": 15
+          }
+        },
+        {
+          "pane_id": "wE:p5",
+          "focused": false,
+          "rect": {
+            "x": 0,
+            "y": 15,
+            "width": 60,
+            "height": 15
+          }
         }
       ]
     }
@@ -74,7 +94,7 @@
       "agent": "claude",
       "agent_status": "working",
       "cwd": "{{PROJECTS}}/teamflow",
-      "name": "leader-e2e",
+      "name": "leader-e2erun",
       "pane_id": "wE:p1",
       "tab_id": "wE:t1",
       "workspace_id": "wE",
@@ -88,7 +108,11 @@
         "usage_period_num": "40"
       },
       "focused": false,
-      "foreground_cwd": "{{PROJECTS}}/teamflow"
+      "foreground_cwd": "{{PROJECTS}}/teamflow",
+      "agent_session": {
+        "kind": "id",
+        "value": "e2e-claude-lead"
+      }
     },
     {
       "agent": "claude",
@@ -108,7 +132,11 @@
         "usage_period_num": "40"
       },
       "focused": false,
-      "foreground_cwd": "{{PROJECTS}}/teamflow"
+      "foreground_cwd": "{{PROJECTS}}/teamflow",
+      "agent_session": {
+        "kind": "id",
+        "value": "e2e-claude-fs"
+      }
     },
     {
       "agent": "claude",
@@ -128,7 +156,51 @@
         "usage_period_num": "40"
       },
       "focused": false,
+      "foreground_cwd": "{{PROJECTS}}/teamflow",
+      "agent_session": {
+        "kind": "id",
+        "value": "e2e-claude-be"
+      }
+    },
+    {
+      "agent": "codex",
+      "agent_status": "working",
+      "cwd": "{{PROJECTS}}/teamflow",
+      "name": "codex-helper",
+      "pane_id": "wE:p4",
+      "tab_id": "wE:t1",
+      "workspace_id": "wE",
+      "tokens": {
+        "cost": "$0.10",
+        "ctx": "5%",
+        "ctx_num": "5",
+        "effort": "high",
+        "model": "gpt-5.5",
+        "usage_session_num": "42",
+        "usage_period_num": "40"
+      },
+      "focused": false,
       "foreground_cwd": "{{PROJECTS}}/teamflow"
+    },
+    {
+      "agent": "claude",
+      "agent_status": "idle",
+      "cwd": "/tmp/e2e-outside-project",
+      "name": "outsider",
+      "pane_id": "wE:p5",
+      "tab_id": "wE:t1",
+      "workspace_id": "wE",
+      "tokens": {
+        "cost": "$0.00",
+        "ctx": "1%",
+        "ctx_num": "1",
+        "effort": "high",
+        "model": "sonnet 5",
+        "usage_session_num": "42",
+        "usage_period_num": "40"
+      },
+      "focused": false,
+      "foreground_cwd": "/tmp/e2e-outside-project"
     }
   ],
   "panes": [
@@ -136,7 +208,7 @@
       "agent": "claude",
       "agent_status": "working",
       "cwd": "{{PROJECTS}}/teamflow",
-      "name": "leader-e2e",
+      "name": "leader-e2erun",
       "pane_id": "wE:p1",
       "tab_id": "wE:t1",
       "workspace_id": "wE",
@@ -150,7 +222,11 @@
         "usage_period_num": "40"
       },
       "focused": false,
-      "foreground_cwd": "{{PROJECTS}}/teamflow"
+      "foreground_cwd": "{{PROJECTS}}/teamflow",
+      "agent_session": {
+        "kind": "id",
+        "value": "e2e-claude-lead"
+      }
     },
     {
       "agent": "claude",
@@ -170,7 +246,11 @@
         "usage_period_num": "40"
       },
       "focused": false,
-      "foreground_cwd": "{{PROJECTS}}/teamflow"
+      "foreground_cwd": "{{PROJECTS}}/teamflow",
+      "agent_session": {
+        "kind": "id",
+        "value": "e2e-claude-fs"
+      }
     },
     {
       "agent": "claude",
@@ -190,7 +270,51 @@
         "usage_period_num": "40"
       },
       "focused": false,
+      "foreground_cwd": "{{PROJECTS}}/teamflow",
+      "agent_session": {
+        "kind": "id",
+        "value": "e2e-claude-be"
+      }
+    },
+    {
+      "agent": "codex",
+      "agent_status": "working",
+      "cwd": "{{PROJECTS}}/teamflow",
+      "name": "codex-helper",
+      "pane_id": "wE:p4",
+      "tab_id": "wE:t1",
+      "workspace_id": "wE",
+      "tokens": {
+        "cost": "$0.10",
+        "ctx": "5%",
+        "ctx_num": "5",
+        "effort": "high",
+        "model": "gpt-5.5",
+        "usage_session_num": "42",
+        "usage_period_num": "40"
+      },
+      "focused": false,
       "foreground_cwd": "{{PROJECTS}}/teamflow"
+    },
+    {
+      "agent": "claude",
+      "agent_status": "idle",
+      "cwd": "/tmp/e2e-outside-project",
+      "name": "outsider",
+      "pane_id": "wE:p5",
+      "tab_id": "wE:t1",
+      "workspace_id": "wE",
+      "tokens": {
+        "cost": "$0.00",
+        "ctx": "1%",
+        "ctx_num": "1",
+        "effort": "high",
+        "model": "sonnet 5",
+        "usage_session_num": "42",
+        "usage_period_num": "40"
+      },
+      "focused": false,
+      "foreground_cwd": "/tmp/e2e-outside-project"
     }
   ]
 }
