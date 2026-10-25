@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-26
+
 ### 新增：辦公室大廳——頁面物件與角色互動事件（dkbo 任務 lobby）
 - `/office` 加六件頁面物件與數字標籤：任務白板（波數、E3 燈號，結案保留 10 分鐘）、監控牆（herdr pane／卡住數）、檔案室（已結案、今天 +N）、git 檔案櫃（衝突＞未推送＞未提交／detached，乾淨熄燈）、大廳公告板（進行中任務數）、茶水間電表（今日花費、最高額度、熔斷跳電）；點物件或標籤開對應頁。git 摘要每 30 秒、今日花費每分鐘，只在 3D 視圖開著且分頁可見時抓；值沒變不換參照，靜止時仍 0 幀。
 - 角色互動事件：reviewer 出動、審查通過／要修、ESCALATE 與解除、波關閉、結案；只播即時事件、不補播；事件寫進 `/office` 的 live region（`data-testid="office-live-region"`）。找人清單中有未解 ESCALATE 的 leader 列掛「!」（`finder-escalate`）。進 `/office` 時對每個進行中任務抓一次詳情。
@@ -110,6 +112,7 @@
 - 花費只算得到 dashboard 開著期間記錄的差額；「cost 在 session 重開後變小」是未實測的假設（見 README）。
 - Claude Code 是全螢幕 TUI，herdr 不保留其捲動歷史，歷史模式對 Claude pane 無作用。
 
+[0.5.0]: https://github.com/dkbo/dkbo-team-dashboard/releases/tag/v0.5.0
 [0.4.0]: https://github.com/dkbo/dkbo-team-dashboard/releases/tag/v0.4.0
 [0.3.0]: https://github.com/dkbo/dkbo-team-dashboard/releases/tag/v0.3.0
 [0.2.0]: https://github.com/dkbo/dkbo-team-dashboard/releases/tag/v0.2.0
