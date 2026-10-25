@@ -6,7 +6,6 @@ import { createPortal, useThree } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import type { OfficeSession, TaskDetail } from '@dash/shared'
 import { EventBadge, EventBubble } from '@/components/app/office'
-import { openEscalations } from '@/features/office/events/escalation'
 import { useMedia } from '@/features/office/hooks'
 import { useDashStore } from '@/store'
 import {
@@ -25,7 +24,7 @@ import { publishBoardFlashes } from './boardFx'
 import { Confetti, BoardSpark } from './Effects'
 import { createBubbleRegistry, type BubbleRegistry, type Rect } from './bubbleLayout'
 import { PlacedBubble } from './PlacedBubble'
-import { badgeLeaders, waveHasVerdict, type MotionMs } from './plan'
+import { escalationBadgeIds, waveHasVerdict, type MotionMs } from './plan'
 import { createRuntime, type BubbleState } from './runtime'
 
 /** 頭頂疊層在一般標記之上、alert 標記同層（E16） */
@@ -143,15 +142,8 @@ export default function EventDirector({ events, tickets }: EventDirectorProps) {
   }, [snap.boards])
   useEffect(() => () => publishBoardFlashes(new Map()), [])
 
-  // 「!」：detail 有未解 ESCALATE，或即時事件比解除多；掛在該任務的 leader 頭上
-  const badges = useMemo(() => {
-    const open = new Set<string>()
-    for (const [dir, d] of byDir) if (openEscalations(d).length > 0) open.add(dir)
-    const leaders: Record<string, string[]> = {}
-    for (const s of sessions ?? []) if (s.leader && s.taskDir) (leaders[s.taskDir] ??= []).push(s.id)
-    for (const [dir, ids] of snap.escalationActors) leaders[dir] = [...new Set([...(leaders[dir] ?? []), ...ids])]
-    return badgeLeaders(leaders, open, snap.liveEscalations)
-  }, [byDir, sessions, snap.liveEscalations, snap.escalationActors])
+  // 「!」：只看 store 的 detail 有沒有未解 ESCALATE（與找人清單同一份判定）；掛在該任務的 leader 頭上
+  const badges = useMemo(() => escalationBadgeIds(byDir, sessions ?? [], snap.escalationActors), [byDir, sessions, snap.escalationActors])
 
   // DOM 疊層新增時補畫一格（drei <Html> 只在 render 時定位）；移除不用畫，不浪費一格
   const shown = useRef(new Set<string>())

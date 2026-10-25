@@ -173,8 +173,10 @@ function diffTask(p: TaskSnap, n: TaskSnap, sessions: OfficeSession[], now: numb
     if (before.has(k) || now - e.at > STALE_MS) continue
     push('escalate', k, null, { actors: cast.leader, target: board }, '有 ESCALATE 待決定')
   }
-  for (const k of before.keys()) {
-    if (!after.has(k)) push('escalate-resolved', k, null, { actors: cast.leader, target: board }, 'ESCALATE 已決定')
+  // openEscalations 每人只留最晚一筆：同一人未解又送一則時舊 key 會消失，但人還在清單裡，不算解除
+  const stillOpen = new Set([...after.values()].map((e) => e.from))
+  for (const [k, e] of before) {
+    if (!stillOpen.has(e.from)) push('escalate-resolved', k, null, { actors: cast.leader, target: board }, 'ESCALATE 已決定')
   }
   return out
 }

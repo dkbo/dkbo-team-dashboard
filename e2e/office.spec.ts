@@ -5,13 +5,19 @@ import { cl, claudeFile, lines } from '../apps/server/test/session-fixtures.ts'
 import type { OfficeSession, SessionsDoc } from '../packages/shared/src/index.ts'
 import { claudeDir, projectsDir, snapshotFile } from './fixtures/paths'
 import { RUNNING_DIR } from './fixtures/projects'
-import { CROWD, SID, crowdFile, crowdSid } from './fixtures/sessions'
+import { CROWD, SID, crowdFile, crowdSid, refreshSessions } from './fixtures/sessions'
 
 // 辦公室 3D 視圖（任務 office）AC16：fixture 在 playwright.config.ts 載入時以 Date.now() 為基準產生（e2e/fixtures/sessions.ts）。
 // 有 WebGL 的 chromium：3D 斷言照常；沒有 WebGL 時 3D 相關斷言改驗落到清單＋office-fallback-banner（見 has3D）。
 // 截圖存在每條測試的 outputPath（DASH_E2E_OUT 可指到 repo 外）。
 
 const shotPath = (name: string) => test.info().outputPath(`${name}.png`)
+
+// 全套裡這個檔排在長的 lobby.spec.ts 之後，config 載入時生成的 fixture 已超過 10 分鐘（subagent、人群轉閒置）：開跑前重生成
+test.beforeAll(async () => {
+  test.setTimeout(90_000)
+  await refreshSessions()
+})
 
 /** 此瀏覽器能不能開 WebGL（與頁面 hasWebGL 同一個問題；頁面用它決定要不要落到清單） */
 const canWebGL = (page: Page) =>

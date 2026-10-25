@@ -1,6 +1,7 @@
 // 事件 → 角色動作規劃（§6.17、E6–E8）：純函式，EventDirector 照它寫覆寫、掛 bubble、持票。
 // 細狀態優先：等你／錯誤的角色不起身不比讚，只出 bubble；找不到演員（預設 5）不播也不掛。
-import type { Substate, TaskDetail } from '@dash/shared'
+import type { OfficeSession, Substate, TaskDetail } from '@dash/shared'
+import { openEscalations } from '@/features/office/events/escalation'
 import type { OfficeEvent } from '@/features/office/events/types'
 import type { CharacterOverride, Vec3 } from '../anchors'
 import { WALK_SPEED } from '../motion'
@@ -231,16 +232,28 @@ export function reconcileOut(
 }
 
 /**
- * 哪些 leader 掛「!」：store 的 detail 有未解 ESCALATE（openEscalations），或即時 escalate 事件比解除多（store 還沒 detail 時）。
+ * 哪些 leader 掛「!」：只看 store 的 detail 有沒有未解 ESCALATE（openEscalations，與找人清單同一份判定）。
+ * 不另外數即時 escalate／解除事件：背景分頁、斷線期間的解除引擎只當基準、不發事件，計數會永遠停在 1（I1）。
  */
-export function badgeLeaders(
-  leadersByTask: Readonly<Record<string, string[]>>,
-  storeOpen: ReadonlySet<string>,
-  liveOpen: ReadonlyMap<string, number>,
-): Set<string> {
+export function badgeLeaders(leadersByTask: Readonly<Record<string, string[]>>, storeOpen: ReadonlySet<string>): Set<string> {
   const out = new Set<string>()
-  for (const [dir, ids] of Object.entries(leadersByTask)) {
-    if (storeOpen.has(dir) || (liveOpen.get(dir) ?? 0) > 0) for (const id of ids) out.add(id)
-  }
+  for (const [dir, ids] of Object.entries(leadersByTask)) if (storeOpen.has(dir)) for (const id of ids) out.add(id)
   return out
+}
+
+/**
+ * 「!」掛在哪些角色頭上：detail 有未解 ESCALATE 的任務，其 leader 的 session。
+ * `actors`（即時 escalate 事件的演員）只在 store 還沒有該 leader 的 session 時補定位，不決定有無徽章。
+ */
+export function escalationBadgeIds(
+  details: ReadonlyMap<string, TaskDetail>,
+  sessions: readonly OfficeSession[],
+  actors: ReadonlyMap<string, readonly string[]>,
+): Set<string> {
+  const open = new Set<string>()
+  for (const [dir, d] of details) if (openEscalations(d).length > 0) open.add(dir)
+  const leaders: Record<string, string[]> = {}
+  for (const s of sessions) if (s.leader && s.taskDir) (leaders[s.taskDir] ??= []).push(s.id)
+  for (const [dir, ids] of actors) leaders[dir] = [...new Set([...(leaders[dir] ?? []), ...ids])]
+  return badgeLeaders(leaders, open)
 }

@@ -6,9 +6,6 @@ import type { CharacterOverride } from '../anchors'
 import type { Tickets } from '../tickets'
 import { planEvent, reconcileOut, type BoardFx, type BubbleSpec, type PlanCtx, type ReviewerOut } from './plan'
 
-/** 掛載時已經存在、超過這麼久的事件當成已播（event-live-window；清單 ↔ 3D 重掛不補播，E7） */
-export const STALE_ON_MOUNT_MS = 10_000
-
 export interface RuntimeDeps {
   tickets: Tickets
   setOverride(id: string, o: CharacterOverride | null): void
@@ -34,8 +31,7 @@ export interface BubbleState {
 export interface RuntimeSnapshot {
   bubbles: ReadonlyMap<string, BubbleState>
   boards: ReadonlyMap<string, BoardFx & { key: string }>
-  liveEscalations: ReadonlyMap<string, number>
-  /** 即時 escalate 事件的演員（leader）；store 還沒有 session 時拿來掛「!」 */
+  /** 即時 escalate 事件的演員（leader）；store 還沒有 session 時拿來定位「!」（有無「!」只看 store） */
   escalationActors: ReadonlyMap<string, readonly string[]>
 }
 
@@ -56,7 +52,6 @@ export function createRuntime(deps: RuntimeDeps): Runtime {
   const releases = new Set<() => void>()
   let bubbles = new Map<string, BubbleState>()
   let boards = new Map<string, BoardFx & { key: string }>()
-  let liveEsc = new Map<string, number>()
   let escActors = new Map<string, readonly string[]>()
   /** 寫過覆寫的角色（dispose 時清掉） */
   const owned = new Set<string>()
@@ -87,8 +82,6 @@ export function createRuntime(deps: RuntimeDeps): Runtime {
   const play = (e: OfficeEvent) => {
     let changed = false
     if (e.kind === 'escalate' || e.kind === 'escalate-resolved') {
-      const n = liveEsc.get(e.taskDir) ?? 0
-      liveEsc = new Map(liveEsc).set(e.taskDir, Math.max(0, n + (e.kind === 'escalate' ? 1 : -1)))
       if (e.actors.length > 0) escActors = new Map(escActors).set(e.taskDir, e.actors)
       changed = true
     }
@@ -141,7 +134,8 @@ export function createRuntime(deps: RuntimeDeps): Runtime {
       for (const e of events) {
         if (played.has(e.id)) continue
         played.add(e.id)
-        if (e.at < mountedAt - STALE_ON_MOUNT_MS) continue
+        // 掛載前就存在的事件當成已播（清單 ↔ 3D 重掛不補播，E7）；e.at 是引擎觀察到的時刻，與 now() 同一個時鐘
+        if (e.at < mountedAt) continue
         changed = play(e) || changed
       }
       if (changed) deps.onChange()
@@ -155,7 +149,7 @@ export function createRuntime(deps: RuntimeDeps): Runtime {
         } else paused.set(a.id, a.paused)
       }
     },
-    snapshot: () => ({ bubbles, boards, liveEscalations: liveEsc, escalationActors: escActors }),
+    snapshot: () => ({ bubbles, boards, escalationActors: escActors }),
     dispose() {
       for (const t of timers) clearTimeout(t)
       timers.clear()

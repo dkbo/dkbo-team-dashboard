@@ -118,6 +118,14 @@ describe('ESCALATE', () => {
     expect(step(a, b)).toMatchObject([{ kind: 'escalate-resolved', actors: ['p-ld'], announce: 'teamflow 示範任務：ESCALATE 已決定' }])
   })
 
+  it('同一人前一則 ESCALATE 未解又送一則 → 只播 escalate，不播 escalate-resolved', () => {
+    const esc2 = msg('demo-backend', 'leader-demo', 'ESCALATE', '又一件', NOW + MIN)
+    const a = doc(detail({ messages: [esc] }))
+    const b = doc(detail({ messages: [esc, esc2] }))
+    const kinds = step(a, b, { now: NOW + MIN }).map((e) => e.kind)
+    expect(kinds).toEqual(['escalate'])
+  })
+
   it('ruling 也解除', () => {
     const a = doc(detail({ messages: [esc] }))
     const b = doc(detail({ messages: [esc], rulings: [{ ts: ts(NOW), text: 'x', autonomous: false }] }))

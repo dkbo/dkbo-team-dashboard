@@ -344,6 +344,13 @@ test.describe('事件四幕與 live region（AC13 / AC5 / AC6 / AC10）', () => 
     await expect(label(page, 'board', RUNNING_DIR).locator('a')).toHaveAttribute('aria-label', /波 2／3/, { timeout: 10_000 })
     await page.screenshot({ path: shotPath('office-event-3-wave-closed-1440-light') })
 
+    // DECISION 後解除（I1：3D 的「!」要依 store 的未解判定收回，不能因事件流錯過而永久留著）
+    restores.push(act.decision())
+    await expect(live(page)).toContainText('ESCALATE 已決定', { timeout: 15_000 })
+    await expect(page.locator('[data-testid=event-badge][data-kind=escalate]'), 'DECISION 後 leader 頭上的 EventBadge 消失').toHaveCount(0, { timeout: 15_000 })
+    await expect(page.locator('[data-testid=finder-escalate]'), 'DECISION 後找人清單的 finder-escalate 消失').toHaveCount(0, { timeout: 15_000 })
+    await expect(label(page, 'board', RUNNING_DIR), 'DECISION 後白板不再 warn').not.toHaveAttribute('data-tone', 'warn', { timeout: 10_000 })
+
     restores.push(act.taskDone())
     await expect(live(page)).toContainText('任務結案', { timeout: 15_000 })
     // 結案保留 10 分鐘（E8）：白板仍在、標成結案
@@ -365,6 +372,90 @@ test.describe('事件四幕與 live region（AC13 / AC5 / AC6 / AC10）', () => 
     await baselineSettled(page)
     restores.push(act.reviewSpawned())
     await expect(live(page)).toContainText('審查開始', { timeout: 15_000 })
+  })
+
+  // 整枝評議修復（I1、M-A、M-B）：下面三條在修前的碼上必紅（qa 以 git archive HEAD 解到 scratchpad 實測）。
+  test('I1：背景分頁期間解除 ESCALATE，切回後 3D 的「!」與找人清單一致消失', async ({ page }) => {
+    test.setTimeout(120_000)
+    await page.setViewportSize(VIEW)
+    await openOffice(page)
+    await page.mouse.move(700, 20)
+    await baselineSettled(page)
+    const badge = page.locator('[data-testid=event-badge][data-kind=escalate]')
+    await expect(badge, '基準：leader 頭上有「!」').toHaveCount(1, { timeout: 15_000 })
+    await expect(page.locator('[data-testid=finder-escalate]')).toHaveCount(1)
+    // 另一位送出 ESCALATE：引擎播出即時 escalate 事件（修前的 runtime 計數 +1），之後在背景分頁解除就不會有 resolved 事件把它扣回
+    restores.push(act.escalateAgain('e2erun-frontend'))
+    await expect(live(page)).toContainText('待決定', { timeout: 30_000 })
+    await expect(badge).toHaveCount(1)
+    const setVisibility = (state: 'hidden' | 'visible') =>
+      page.evaluate((s) => {
+        Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => s })
+        document.dispatchEvent(new Event('visibilitychange'))
+      }, state)
+    await setVisibility('hidden')
+    restores.push(act.decision('e2erun-backend', 'e2erun-frontend'))
+    // store 仍經 SSE 更新：找人清單先消失，證明 detail 已無未解 ESCALATE；此時引擎因分頁隱藏不發事件
+    await expect(page.locator('[data-testid=finder-escalate]'), '隱藏期間 DECISION 已進 store').toHaveCount(0, { timeout: 30_000 })
+    await page.waitForTimeout(1_000)
+    await setVisibility('visible')
+    await expect(badge, '切回後「!」依 store 收回（修前計數停在 1，永久留著）').toHaveCount(0, { timeout: 10_000 })
+    await page.waitForTimeout(2_000)
+    await expect(badge).toHaveCount(0)
+    await expect(page.locator('[data-testid=finder-escalate]')).toHaveCount(0)
+  })
+
+  test('M-A：清單 ↔ 3D 重掛不重播掛載前已存在的事件', async ({ page }) => {
+    test.setTimeout(150_000)
+    await page.setViewportSize(VIEW)
+    await openOffice(page)
+    await page.mouse.move(700, 20)
+    await baselineSettled(page)
+    restores.push(act.reviewSpawned())
+    await expect(live(page)).toContainText('波 2 審查開始', { timeout: 15_000 })
+    // 頁內錄製器：每 40 ms 記氣泡數（清單模式沒有氣泡，3D 重掛後才可能重播）
+    await page.evaluate(() => {
+      const w = window as unknown as { __mA: { t: number; n: number }[]; __mAT: number }
+      w.__mA = []
+      w.__mAT = window.setInterval(() => w.__mA.push({ t: performance.now(), n: document.querySelectorAll('[data-testid=event-bubble]').length }), 40)
+    })
+    restores.push(act.reviewFix(2))
+    await expect(live(page)).toContainText('審查要修 2 條', { timeout: 20_000 })
+    // 事件剛發生就切清單再切回 3D（遠在事件保留的 30 秒內、也在舊碼的 10 秒寬限內）
+    // 點工具列的視圖切換（鍵盤 l 在機器忙時會漏掉第二次，整頁停在清單）
+    const viewGroup = page.getByRole('group', { name: '視圖' })
+    await viewGroup.getByRole('button', { name: '清單' }).click()
+    await expect(page.getByTestId('office-list')).toBeVisible({ timeout: 15_000 })
+    await viewGroup.getByRole('button', { name: '3D' }).click()
+    await expect(page.getByTestId('office-canvas').locator('canvas')).toBeVisible({ timeout: 30_000 })
+    const remountedAt = await page.evaluate(() => performance.now())
+    await page.waitForTimeout(6_000)
+    const after = await page.evaluate((t0) => (window as unknown as { __mA: { t: number; n: number }[] }).__mA.filter((r) => r.t >= t0).map((r) => r.n), remountedAt)
+    await page.evaluate(() => clearInterval((window as unknown as { __mAT: number }).__mAT))
+    expect(after.length, '錄製器有在跑').toBeGreaterThan(50)
+    expect(Math.max(...after), '重掛後不得重播掛載前的事件氣泡').toBe(0)
+  })
+
+  test('M-B：同一人前一則 ESCALATE 未解又送一則，不播「ESCALATE 已決定」', async ({ page }) => {
+    test.setTimeout(90_000)
+    await page.setViewportSize(VIEW)
+    await openOffice(page)
+    await page.mouse.move(700, 20)
+    await baselineSettled(page)
+    const badge = page.locator('[data-testid=event-badge][data-kind=escalate]')
+    await expect(badge, '基準：leader 頭上有「!」').toHaveCount(1, { timeout: 15_000 })
+    await page.evaluate(() => {
+      const w = window as unknown as { __lv: string[] }
+      w.__lv = []
+      const el = document.querySelector('[data-testid=office-live-region]')!
+      new MutationObserver(() => w.__lv.push((el.textContent ?? '').trim())).observe(el, { childList: true, characterData: true, subtree: true })
+    })
+    restores.push(act.escalateAgain())
+    const lv = () => page.evaluate(() => (window as unknown as { __lv: string[] }).__lv)
+    await expect.poll(async () => (await lv()).some((t) => t.includes('待決定')), { timeout: 30_000, intervals: [250], message: '新的 ESCALATE 應被播報' }).toBe(true)
+    await page.waitForTimeout(3_000)
+    expect((await lv()).filter((t) => t.includes('已決定')), '前一則未解，不得播「已決定」').toEqual([])
+    await expect(badge, '「!」仍在').toHaveCount(1)
   })
 
   test('view=list 也播報、且不載入物件 chunk', async ({ page }) => {

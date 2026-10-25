@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import type { Substate } from '@dash/shared'
+import type { OfficeSession, Substate, TaskDetail } from '@dash/shared'
 import type { OfficeEvent } from '@/features/office/events/types'
 import type { Vec3 } from '@/features/office-scene/anchors'
-import { badgeLeaders, planEvent, reconcileOut, waveHasVerdict, type PlanCtx, type ReviewerOut } from '@/features/office-scene/director/plan'
+import { badgeLeaders, escalationBadgeIds, planEvent, reconcileOut, waveHasVerdict, type PlanCtx, type ReviewerOut } from '@/features/office-scene/director/plan'
 
 const MS = { thumb: 1500, headDown: 2000, nod: 1200, celebrate: 3000, waveFill: 600, spark: 1200, walkMax: 4000 }
 
@@ -243,14 +243,33 @@ describe('waveHasVerdict：store 的該波已審完', () => {
   })
 })
 
-describe('badgeLeaders：「!」常駐到解除', () => {
+describe('badgeLeaders：「!」常駐到解除，只看 store', () => {
   const leaders = { t1: ['lead'], t2: ['lead2'] }
-  it('store 未解 ESCALATE 的任務 leader 掛徽章', () => {
-    expect([...badgeLeaders(leaders, new Set(['t1']), new Map())]).toEqual(['lead'])
+  it('store 有未解 ESCALATE 的任務，其 leader 掛徽章', () => {
+    expect([...badgeLeaders(leaders, new Set(['t1']))]).toEqual(['lead'])
   })
-  it('即時 escalate 事件也掛（store 還沒 detail 時）；解除事件拿掉', () => {
-    const live = new Map([['t2', 1]])
-    expect([...badgeLeaders(leaders, new Set(), live)]).toEqual(['lead2'])
-    expect([...badgeLeaders(leaders, new Set(), new Map([['t2', 0]]))]).toEqual([])
+  it('store 沒有未解 ESCALATE：不掛，不管有沒有收過 escalate 事件', () => {
+    expect([...badgeLeaders(leaders, new Set())]).toEqual([])
+  })
+})
+
+describe('escalationBadgeIds：由 store 的 detail 與 openEscalations 決定', () => {
+  const msg = (type: string, from: string, to: string, ts: string) => ({ type, from, to, ts, text: '' })
+  const detail = (messages: ReturnType<typeof msg>[]) => ({ messages, rulings: [], panes: [] }) as unknown as TaskDetail
+  const sessions = [{ id: 'p-ld', leader: true, taskDir: 't1' }, { id: 'p-dev', leader: false, taskDir: 't1' }] as OfficeSession[]
+  const asked = msg('ESCALATE', 'lead', 'leader', '2026-10-25T12:00')
+
+  it('未解 ESCALATE：leader 掛徽章；DECISION 之後：不掛', () => {
+    const open = new Map([['t1', detail([asked])]])
+    expect([...escalationBadgeIds(open, sessions, new Map())]).toEqual(['p-ld'])
+    const decided = new Map([['t1', detail([asked, msg('DECISION', 'leader', 'lead', '2026-10-25T12:05')])]])
+    expect([...escalationBadgeIds(decided, sessions, new Map())]).toEqual([])
+  })
+  it('即時事件記下的演員只用來補 leader 定位（store 沒有該 session 時），不決定有無徽章', () => {
+    const open = new Map([['t1', detail([asked])]])
+    const actors = new Map([['t1', ['ghost-ld']]])
+    expect([...escalationBadgeIds(open, [], actors)]).toEqual(['ghost-ld'])
+    const decided = new Map([['t1', detail([asked, msg('DECISION', 'leader', 'lead', '2026-10-25T12:05')])]])
+    expect([...escalationBadgeIds(decided, sessions, actors)]).toEqual([])
   })
 })

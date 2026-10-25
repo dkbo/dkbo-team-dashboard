@@ -1,8 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { Substate } from '@dash/shared'
+import type { OfficeSession, Substate, TaskDetail } from '@dash/shared'
 import type { OfficeEvent } from '@/features/office/events/types'
 import type { CharacterOverride, Vec3 } from '@/features/office-scene/anchors'
 import { createTickets } from '@/features/office-scene/tickets'
+import { escalationBadgeIds } from '@/features/office-scene/director/plan'
 import { createRuntime, type RuntimeDeps } from '@/features/office-scene/director/runtime'
 
 const MS = { thumb: 1500, headDown: 2000, nod: 1200, celebrate: 3000, waveFill: 600, spark: 1200, walkMax: 4000 }
@@ -80,10 +81,17 @@ describe('createRuntime', () => {
     expect(overrides.size).toBe(0)
   })
 
-  it('掛載前就存在、超過 10 秒的事件當成已播（清單 ↔ 3D 重掛不補播）', () => {
+  it('M-A：掛載前就存在的事件當成已播（清單 ↔ 3D 重掛，10 秒內也不補播）', () => {
+    const before = [ev('review-pass', { actors: ['dev1'], at: Date.now() - 3_000 }), ev('review-fix', { actors: ['dev1'], count: 1, at: Date.now() - 11_000 })]
     const { rt, overrides } = setup()
-    rt.feed([ev('review-pass', { actors: ['dev1'], at: Date.now() - 11_000 })])
+    rt.feed(before)
     expect(overrides.size).toBe(0)
+    expect(rt.snapshot().bubbles.size).toBe(0)
+    // 掛載後新出現的照播；同一批再餵一次也不會補播剛才略過的
+    vi.advanceTimersByTime(500)
+    rt.feed([...before, ev('review-pass', { actors: ['dev1'] })])
+    expect(overrides.get('dev1')?.gesture).toBe('thumbs-up')
+    expect(rt.snapshot().bubbles.get('dev1')?.kind).toBe('review-pass')
   })
 
   it('bubble 一人一顆、新事件頂替；到期移除', () => {
@@ -117,12 +125,26 @@ describe('createRuntime', () => {
     expect(tickets.count()).toBe(0)
   })
 
-  it('ESCALATE 即時計數：escalate +1、解除 -1', () => {
+  it('I1：runtime 不維護即時 ESCALATE 計數（徽章只看 store）；演員仍記下供定位', () => {
     const { rt } = setup()
     rt.feed([ev('escalate', { actors: ['lead'] })])
-    expect(rt.snapshot().liveEscalations.get('t1')).toBe(1)
-    rt.feed([ev('escalate-resolved', { actors: ['lead'] })])
-    expect(rt.snapshot().liveEscalations.get('t1')).toBe(0)
+    // 之後解除發生在背景分頁／斷線期間，引擎只當基準、不會發 escalate-resolved；不能有東西停在「1」
+    expect('liveEscalations' in rt.snapshot()).toBe(false)
+    expect(rt.snapshot().escalationActors.get('t1')).toEqual(['lead'])
+  })
+
+  it('I1：隱藏／斷線期間解除（沒有 escalate-resolved 事件）→ 徽章消失', () => {
+    const { rt } = setup()
+    const msg = (type: string, from: string, to: string, ts: string) => ({ type, from, to, ts, text: '' })
+    const asked = msg('ESCALATE', 'lead', 'leader', '2026-10-25T12:00')
+    const detail = (messages: (typeof asked)[]) => ({ messages, rulings: [], panes: [] }) as unknown as TaskDetail
+    const sessions = [{ id: 'lead', leader: true, taskDir: 't1' }] as OfficeSession[]
+    const badges = (messages: (typeof asked)[]) =>
+      [...escalationBadgeIds(new Map([['t1', detail(messages)]]), sessions, rt.snapshot().escalationActors)]
+    rt.feed([ev('escalate', { actors: ['lead'] })])
+    expect(badges([asked])).toEqual(['lead'])
+    // 解除沒有事件（切回分頁後第一份只當基準）：store 的 detail 已有 DECISION
+    expect(badges([asked, msg('DECISION', 'leader', 'lead', '2026-10-25T12:05')])).toEqual([])
   })
 
   it('reviewer 走路中途變等你：停下揮手；恢復後清覆寫', () => {

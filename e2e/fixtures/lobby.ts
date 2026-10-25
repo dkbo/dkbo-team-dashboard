@@ -109,6 +109,19 @@ export const act = {
       t.waves_closed = 2
       s.waves_closed = 2
     }),
+  /** 解除未解 ESCALATE：leader 對每位送出者各回一則 [DECISION]（openEscalations 的解除條件）；預設只有基準那位 e2erun-backend */
+  decision: (...tos: string[]) =>
+    mutateRunning((t) => {
+      for (const to of tos.length ? tos : ['e2erun-backend']) t.messages.push({ ts: localTs(Date.now()), from: 'leader-e2erun', to, type: 'DECISION', text: 'e2e：准' })
+    }),
+  /**
+   * 又一則 ESCALATE。預設是基準那位（e2erun-backend）在前一則未解時再送（M-B：latestPer 讓 key 換成較晚的時間）；
+   * 傳別人（如 e2erun-frontend）則是新的送出者，引擎會播出即時的 escalate 事件（I1 要有即時事件才會留下殘計數）。
+   */
+  escalateAgain: (from = 'e2erun-backend') =>
+    mutateRunning((t) => {
+      t.messages.push({ ts: localTs(Date.now()), from, to: 'leader-e2erun', type: 'ESCALATE', text: 'e2e：再一則' })
+    }),
   /** 幕四：結案 done（以 list 的 close_result 判定；任務離開進行中） */
   taskDone: () =>
     mutateRunning((t, s) => {
