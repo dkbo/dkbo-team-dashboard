@@ -36,7 +36,7 @@ const DOT: Record<Tone, string> = {
 
 /** 「dev-a，等你，已等 3 分 12 秒」 */
 export function markerLabel(s: OfficeSession, sub: Substate, now: number): string {
-  const timer = timerText(s, now, { long: true })
+  const timer = timerText(s, now, { long: true, hasPane: s.paneId != null })
   return [sessionName(s), substateLabel(sub, s.tool?.name), timer].filter(Boolean).join('，')
 }
 
@@ -192,7 +192,7 @@ export function AgentHoverCard({
   const where = [session.project, task?.display, task?.wave ? `波 ${task.wave.current}` : null].filter(Boolean).join(' · ')
   const err = substate === 'error' ? session.error : null
   const tool = session.tool ? [session.tool.name, session.tool.summary].filter(Boolean).join(' ') : null
-  const timer = timerText(session, now)
+  const timer = timerText(session, now, { hasPane: session.paneId != null })
   const danger = SUBSTATE_META[substate].tone === 'danger'
   return (
     <div
@@ -238,7 +238,22 @@ export function AgentHoverCard({
 
 const ZONE_ICON = { project: FolderKanban, hot: Laptop, lounge: Coffee }
 
-export function ZoneSign({ kind, title, subtitle, count, needs }: { kind: 'project' | 'hot' | 'lounge'; title: string; subtitle: string | null; count: number; needs: boolean }) {
+export function ZoneSign({
+  kind,
+  title,
+  subtitle,
+  count,
+  needs,
+  overflow = 0,
+}: {
+  kind: 'project' | 'hot' | 'lounge'
+  title: string
+  subtitle: string | null
+  count: number
+  needs: boolean
+  /** AC9：桌群坐不下、坐到散座區的人數 */
+  overflow?: number
+}) {
   const Icon = ZONE_ICON[kind]
   return (
     <div
@@ -250,6 +265,7 @@ export function ZoneSign({ kind, title, subtitle, count, needs }: { kind: 'proje
       <span className="text-xs font-bold">{title}</span>
       {subtitle && <span className="text-2xs text-muted-foreground">{subtitle}</span>}
       <Tag>{count}</Tag>
+      {overflow > 0 && <span className="text-2xs text-muted-foreground">+{overflow} 在散座</span>}
       {needs && <span role="img" aria-label="有人等你" className="size-2 rounded-full bg-status-danger" />}
     </div>
   )

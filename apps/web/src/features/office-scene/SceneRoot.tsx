@@ -1,15 +1,20 @@
 // <Canvas> 裡的一切：色盤與材質、燈光、房間、家具、角色、標記、鏡頭、render 量測（§4.3、§4.7）。
-import { Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { AdaptiveDpr, Html, PerformanceMonitor } from '@react-three/drei'
 import * as THREE from 'three'
 import type { OfficeSession, Substate } from '@dash/shared'
+import type { OfficeObjects } from '@/features/office/sceneTypes'
+import type { OfficeEvent } from '@/features/office/events/types'
 import { sessionName } from '@/components/app/SessionRow'
 import { rankOf, type Rank } from '@/lib/rank'
 import { effectiveSubstate, SUBSTATE_META } from '@/lib/substate'
 import { useNow } from '@/hooks/useNow'
 import { useDashStore } from '@/store'
 import { CameraRig, type CameraView } from './CameraRig'
+import type { SettledView } from './objects/Lobby'
+import { retryableImport } from './objects/retry'
+import type { Box } from './objects/placement'
 import { Character, HEAD_Y } from './Character'
 import { makeRankMaterial } from './cloth'
 import { computeLayout, type OfficeLayout, type TaskInfo } from './layout'
@@ -23,7 +28,8 @@ import { assetUrl, characterKey, type OfficeManifest } from './model-map'
 import { THEME_LERP_MS } from './motion'
 import { ScenePalette, type Theme } from './palette'
 import { Furniture, RoomShell } from './Room'
-import { createTickets } from './tickets'
+import { clearCharacterOverrides, publishSceneAnchors, useScreenOffIds } from './anchors'
+import { createTickets, TicketsContext } from './tickets'
 import { useVisibilityFrameloop } from './visibility'
 
 export interface OffscreenAlert {
@@ -58,6 +64,29 @@ export interface SceneRootProps {
   manifest: OfficeManifest
   onOffscreen(alerts: OffscreenAlert[]): void
   onHoverCard(anchor: HoverCardAnchor | null): void
+  objects: OfficeObjects | null
+  events: OfficeEvent[]
+  onOpenObject(href: string): void
+}
+
+/**
+ * 第二包（AC11）：場景第一次 render 後才 import()——頁面物件與標籤（AC7／AC8）、事件動畫（frontend-motion 的 default export）。
+ * 失敗過就換 URL 重抓；lazy 每次掛載重建，「再試 3D」重掛場景時才會真的再抓一次。
+ */
+const loadEventDirector = retryableImport(() => import('./director/EventDirector'))
+const loadLobby = retryableImport(() => import('./objects/Lobby'))
+
+/** 第一次 render 完成之後才變 true（第二包延到這之後才載） */
+function useAfterFirstFrame(): boolean {
+  const [ready, setReady] = useState(false)
+  const done = useRef(false)
+  useFrame(() => {
+    if (done.current) return
+    done.current = true
+    // 交給下一個 task，不在 render loop 內 setState
+    setTimeout(() => setReady(true), 0)
+  })
+  return ready
 }
 
 declare global {
@@ -73,6 +102,14 @@ const Z_SIGN: [number, number] = [99, 0]
 const RANKS: Rank[] = ['senior', 'mid', 'junior', 'visitor']
 /** 估計標記尺寸（px），碰撞用 */
 const MARKER_SIZE = { alert: [96, 34], line: [104, 30], bubble: [56, 34], soft: [72, 30] } as const
+
+/**
+ * 場景畫的細狀態（AC2）：套 hasPane；無 pane 的錯誤不算需要你（process 11:57 ruling），10 分內照「中斷」畫（不畫紅圈與 alert 標記）。
+ */
+export function sceneSubstate(s: OfficeSession, now: number): Substate {
+  const sub = effectiveSubstate(s, now, { hasPane: s.paneId != null })
+  return sub === 'error' && s.paneId == null ? 'interrupted' : sub
+}
 
 /** hover 150ms 後開、離開 100ms 後關（§6.8） */
 function useDelayedHover(id: string | null) {
@@ -172,7 +209,7 @@ export function SceneRoot(props: SceneRootProps) {
   const subsRef = useRef<Record<string, Substate>>({})
   const subs = useMemo(() => {
     const out: Record<string, Substate> = {}
-    for (const s of sessions) out[s.id] = effectiveSubstate(s, now)
+    for (const s of sessions) out[s.id] = sceneSubstate(s, now)
     const prev = subsRef.current
     const same = Object.keys(out).length === Object.keys(prev).length && Object.entries(out).every(([k, v]) => prev[k] === v)
     if (!same) subsRef.current = out
@@ -193,6 +230,19 @@ export function SceneRoot(props: SceneRootProps) {
   const gate = useMemo(() => createLiveGate(), [])
   useEffect(() => void gate.update(sse, sessions), [gate, sse, sessions])
   const isLive = useCallback(() => gate.isLive(), [gate])
+
+  // 共用契約「場景錨點」：motion 讀的 layout／細狀態
+  useEffect(() => publishSceneAnchors({ layout, subs, boards: layout.boards }), [layout, subs])
+  useEffect(
+    () => () => {
+      publishSceneAnchors(null)
+      clearCharacterOverrides()
+    },
+    [],
+  )
+  const secondReady = useAfterFirstFrame()
+  const [{ Lobby, EventDirector }] = useState(() => ({ Lobby: lazy(loadLobby), EventDirector: lazy(loadEventDirector) }))
+  const screenOff = useScreenOffIds()
 
   // 陰影不自動更新；座位或人數變了才重算（§4.7）
   useLayoutEffect(() => {
@@ -255,7 +305,13 @@ export function SceneRoot(props: SceneRootProps) {
   )
 
   // 鏡頭停下後：標記縮放、互撞縮點、畫面外的 alert
-  const [view, setView] = useState<{ distance: number; fitDistance: number; dots: Set<string> }>({ distance: 1, fitDistance: 1, dots: new Set() })
+  const [view, setView] = useState<{ distance: number; fitDistance: number; dots: Set<string>; settled: SettledView | null; boxes: Box[] }>({
+    distance: 1,
+    fitDistance: 1,
+    dots: new Set(),
+    settled: null,
+    boxes: [],
+  })
   const viewRef = useRef<CameraView | null>(null)
   const markerShown = useCallback(
     (s: OfficeSession) => !SUBSTATE_META[subs[s.id]].hiddenByDefault || s.id === selectedId || s.id === hoveredId,
@@ -284,7 +340,10 @@ export function SceneRoot(props: SceneRootProps) {
         const focused = s.id === selectedId || s.id === hoveredId
         boxes.push({ id: s.id, x: sx - w / 2, y: sy - h, w, h, priority: markerPriority(sub, focused), alert })
       }
-      setView({ distance: v.distance, fitDistance: v.fitDistance, dots: resolveCollisions(boxes) })
+      const dots = resolveCollisions(boxes)
+      // 物件標籤讓位看的是縮點之後還保留的角色標記（alert 永遠保留）
+      const kept: { x: number; y: number; w: number; h: number }[] = boxes.filter((b) => !dots.has(b.id))
+      setView({ distance: v.distance, fitDistance: v.fitDistance, dots, settled: { distance: v.distance, fitDistance: v.fitDistance, camera: v.camera, size: v.size }, boxes: kept })
       // 同一邊的 chip 往下錯開，不疊在一起
       off.sort((a, b) => a.y - b.y)
       for (let i = 1; i < off.length; i++) if (Math.abs(off[i].x - off[i - 1].x) < 120 && off[i].y < off[i - 1].y + 34) off[i].y = off[i - 1].y + 34
@@ -361,7 +420,7 @@ export function SceneRoot(props: SceneRootProps) {
   const select = useCallback((id: string | null) => onSelect(id), [onSelect])
 
   return (
-    <>
+    <TicketsContext.Provider value={tickets}>
       <RenderStats quality={quality} />
       <PerformanceMonitor onDecline={() => setQuality('low')} />
       <AdaptiveDpr pixelated />
@@ -383,12 +442,12 @@ export function SceneRoot(props: SceneRootProps) {
         onSettled={recompute}
       />
       <RoomShell layout={layout} mats={mats} />
-      <Furniture layout={layout} mats={mats} manifest={manifest} substates={subs} />
+      <Furniture layout={layout} mats={mats} manifest={manifest} substates={subs} screenOff={screenOff} />
       <primitive object={contact} />
       <Decor layout={layout} subs={subs} mats={mats} dark={theme === 'dark'} />
       {layout.zones.map((z) => (
         <Html key={`${z.kind}:${z.key}`} position={z.sign} zIndexRange={Z_SIGN}>
-          <ZoneSign kind={z.kind} title={z.title} subtitle={z.subtitle} count={z.count} needs={z.needs} />
+          <ZoneSign kind={z.kind} title={z.title} subtitle={z.subtitle} count={z.count} needs={z.needs} overflow={z.overflow} />
         </Html>
       ))}
       {ordered.map((s) => {
@@ -442,6 +501,21 @@ export function SceneRoot(props: SceneRootProps) {
           </Suspense>
         )
       })}
-    </>
+      {secondReady && (
+        <Suspense fallback={null}>
+          <Lobby
+            layout={layout}
+            objects={props.objects}
+            manifest={manifest}
+            palette={palette}
+            mats={mats}
+            view={view.settled}
+            markerBoxes={view.boxes}
+            onOpenObject={props.onOpenObject}
+          />
+          <EventDirector events={props.events} tickets={tickets} />
+        </Suspense>
+      )}
+    </TicketsContext.Provider>
   )
 }

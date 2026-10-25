@@ -192,3 +192,30 @@ describe('TaskBoardLabel · 互動與 a11y', () => {
     expect(bar).toHaveAttribute('aria-valuemax', '5')
   })
 })
+
+describe('TaskBoardLabel · placement', () => {
+  const kids = (c: HTMLElement) => [...root(c).children].map((e) => e.getAttribute('data-slot'))
+
+  it('預設 above：-translate-y-full、三角在卡下方、data-placement=above', () => {
+    const { container } = render(<TaskBoardLabel {...base} />)
+    expect(cls(root(container))).toContain('-translate-y-full')
+    expect(kids(container)).toEqual(['task-board-card', 'task-board-pointer'])
+    expect(root(container)).toHaveAttribute('data-placement', 'above')
+  })
+
+  it('below：不加 -translate-y-full、三角翻轉且在上方（full 與 compact 都是）', () => {
+    const { container, rerender } = render(<TaskBoardLabel {...base} placement="below" />)
+    expect(cls(root(container))).not.toContain('-translate-y-full')
+    expect(cls(root(container))).toContain('-translate-x-1/2')
+    expect(kids(container)).toEqual(['task-board-pointer', 'task-board-card'])
+    expect(cls(container.querySelector('[data-slot="task-board-pointer"]'))).toContain('rotate-180')
+    expect(root(container)).toHaveAttribute('data-placement', 'below')
+    rerender(<TaskBoardLabel {...base} density="compact" placement="below" />)
+    expect(kids(container)).toEqual(['task-board-pointer', 'task-board-pill'])
+  })
+
+  it('above 的三角不翻轉', () => {
+    const { container } = render(<TaskBoardLabel {...base} placement="above" />)
+    expect(cls(container.querySelector('[data-slot="task-board-pointer"]'))).not.toContain('rotate-180')
+  })
+})

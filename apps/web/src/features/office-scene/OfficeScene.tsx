@@ -4,42 +4,18 @@ import { Suspense, useEffect, useRef, useState } from 'react'
 import type { OfficeSession } from '@dash/shared'
 import { AssetBoundary } from './AssetBoundary'
 import { CAMERA } from './camera'
-import type { TaskInfo } from './layout'
 import { AgentHoverCard, EdgeAlertChip } from './Marker'
 import { useLingerId } from './hover'
 import { loadManifest, type OfficeManifest } from './model-map'
 import { SlimCanvas } from './SlimCanvas'
-import { SceneRoot, type HoverCardAnchor, type OffscreenAlert } from './SceneRoot'
-import { effectiveSubstate } from '@/lib/substate'
+import { SceneRoot, sceneSubstate, type HoverCardAnchor, type OffscreenAlert } from './SceneRoot'
+import type { FallbackReason, OfficeSceneProps } from '@/features/office/sceneTypes'
+import { hasWebGL } from '@/features/office/webgl'
 
 /** 高於 drei <Html> 標記的 zIndexRange（alert 最高 399） */
 const HOVER_CARD_Z = 600
 
-export type FallbackReason = 'webgl' | 'assets' | 'context-lost'
-
-export interface OfficeSceneProps {
-  sessions: OfficeSession[]
-  tasks: Record<string, TaskInfo>
-  selectedId: string | null
-  hoveredId: string | null
-  onSelect(id: string | null): void
-  onHover(id: string | null): void
-  focusRequest: { id: string; nonce: number } | null
-  resetRequest: number
-  theme: 'light' | 'dark'
-  reducedMotion: boolean
-  onFallback(reason: FallbackReason): void
-  onUserMovedCamera(moved: boolean): void
-}
-
-export function hasWebGL(): boolean {
-  try {
-    const c = document.createElement('canvas')
-    return !!(c.getContext('webgl2') ?? c.getContext('webgl'))
-  } catch {
-    return false
-  }
-}
+export type { FallbackReason, OfficeSceneProps }
 
 export default function OfficeScene(props: OfficeSceneProps) {
   const [webgl] = useState(hasWebGL)
@@ -107,7 +83,7 @@ export default function OfficeScene(props: OfficeSceneProps) {
         <div className="pointer-events-none absolute" style={{ left: card.x, top: card.y, zIndex: HOVER_CARD_Z }}>
           <AgentHoverCard
             session={hovered}
-            substate={effectiveSubstate(hovered, Date.now())}
+            substate={sceneSubstate(hovered, Date.now())}
             task={hovered.taskDir && props.tasks[hovered.taskDir] ? { display: props.tasks[hovered.taskDir].display, wave: props.tasks[hovered.taskDir].wave } : null}
             now={Date.now()}
             flip={card.flip}

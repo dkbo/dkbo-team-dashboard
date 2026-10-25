@@ -1,4 +1,6 @@
 // 動畫票（§4.7、E15）：> 0 時 render loop 連續跑，= 0 時停（frameloop demand 回到靜止 0 幀）。
+// 共用契約「場景錨點」：SceneRoot 的那一份由 TicketsContext 傳出，motion 用 useTickets() 或 EventDirector 的 tickets prop 拿。
+import { createContext, useContext } from 'react'
 
 export interface Tickets {
   /** 拿一張票，回傳歸還函式（重複呼叫只歸還一次） */
@@ -52,4 +54,13 @@ export function createTickets(onChange?: (count: number) => void): Tickets {
       if (n !== 0) set(0)
     },
   }
+}
+
+export const TicketsContext = createContext<Tickets | null>(null)
+
+/** 場景的動畫票（SceneRoot 之內才有）；播放期間 hold()、播完呼叫回傳的 release */
+export function useTickets(): Tickets {
+  const t = useContext(TicketsContext)
+  if (!t) throw new Error('useTickets() 只能在 SceneRoot 之內用')
+  return t
 }

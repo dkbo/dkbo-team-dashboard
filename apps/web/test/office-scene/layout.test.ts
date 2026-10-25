@@ -137,14 +137,14 @@ describe('computeLayout 座位', () => {
     expect(l.zones.find((z) => z.kind === 'hot')!.count).toBe(5)
   })
 
-  it('成員超過 8 位：第 9 位起進散座區', () => {
-    const members = Array.from({ length: 9 }, (_, i) => `m${i}`)
+  it('成員超過 12 位（AC9，N ≤ 6）：第 13 位起進散座區', () => {
+    const members = Array.from({ length: 13 }, (_, i) => `m${i}`)
     const l = computeLayout({
       sessions: members.map((m) => s(m, { taskDir: 'atlas/t1', member: m })),
       tasks: { 'atlas/t1': task('atlas', members) },
     })
-    expect(l.places.m7.area).toBe('task')
-    expect(l.places.m8.area).toBe('hot')
+    expect(l.places.m11.area).toBe('task')
+    expect(l.places.m12.area).toBe('hot')
   })
 
   it('done 去休息區（先到先佔），home 仍是自己座位；等你站在座位旁', () => {

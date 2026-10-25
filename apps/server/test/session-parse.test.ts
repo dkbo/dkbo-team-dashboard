@@ -138,6 +138,11 @@ describe('文字截斷與摘要', () => {
     expect(toolSummary('Unknown', {})).toBeNull();
   });
 
+  it('提示詞（prompt 鍵）不進摘要：Task 類工具只取 description，沒有就 null', () => {
+    expect(toolSummary('Task', { description: 'review the diff', prompt: 'SECRET PROMPT' })).toBe('review the diff');
+    expect(toolSummary('Task', { prompt: 'SECRET PROMPT' })).toBeNull();
+  });
+
   it('畫面取最後一句問句，≤ 200 字', () => {
     const ansi = '\u001b[1m╭────╮\u001b[0m\n│ Bash command  │\n│ rm -r build │\n│ Do you want to proceed? │\n│ ❯ 1. Yes │\n╰────╯';
     expect(questionFromScreen(ansi)).toBe('Do you want to proceed?');

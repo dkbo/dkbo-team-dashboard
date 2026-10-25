@@ -51,4 +51,17 @@ describe('createLiveGate（I2）', () => {
     g.update('open', A)
     expect(g.update('closed', A)).toBe(false)
   })
+
+  it('AC12 live.ts:24：重連後內容相同的新陣列不算補抓（不靠陣列參照）', () => {
+    const g = createLiveGate()
+    const s1 = [{ id: 'a', substate: 'running', substateSince: 1, lastEventAt: 1 }]
+    g.update('open', s1)
+    g.update('connecting', s1)
+    expect(g.update('open', s1)).toBe(false)
+    // 父層重算出一份內容相同的新陣列：還沒補抓到，仍不即時
+    expect(g.update('open', s1.map((x) => ({ ...x })))).toBe(false)
+    // 補抓到的那份（內容變了）畫成最終狀態，之後才算即時
+    const s2 = [{ id: 'a', substate: 'waiting', substateSince: 2, lastEventAt: 2 }]
+    expect(g.update('open', s2)).toBe(true)
+  })
 })

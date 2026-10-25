@@ -6,6 +6,8 @@ export type ClipName = 'idle' | 'walk' | 'sit' | 'type' | 'wave' | 'think' | 'sl
 export interface OfficeManifest {
   characters: Record<string, { url: string; clips: Record<ClipName, string | null> }>
   furniture: Record<string, string>
+  /** 頁面物件模型（共用契約「物件素材」）；沒有的鍵由 scene 用盒子拼 */
+  objects?: { board?: string; corkboard?: string; meter?: string; cabinet?: string; screen?: string; bookcase?: string }
 }
 
 export const ASSET_BASE = '/office/'

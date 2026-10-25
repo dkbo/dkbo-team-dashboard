@@ -60,6 +60,8 @@ export interface Zone {
   sign: [number, number, number]
   /** project 區才有：區內各任務 dir */
   tasks: string[]
+  /** AC9：桌群坐不下（第 13 位以後）而坐到散座區的人數，區牌顯示「+K 在散座」 */
+  overflow: number
 }
 
 export type Tier = 'small' | 'medium'
@@ -80,6 +82,8 @@ export interface OfficeLayout {
   homes: Record<string, Place>
   /** 休息區先到先佔的順序 */
   loungeOrder: string[]
+  /** 任務白板中心（板面朝 +z，§4.6：桌群原點 +(0.2, 5.6) 起、寬 1.8） */
+  boards: Record<string, { x: number; z: number }>
 }
 
 export const PAD = 0.4
@@ -95,7 +99,11 @@ export const UNITS_PER_ROW = 3
 export const SMALL_MAX = 12
 export const MEMBER_DESK = { w: 1.4, d: 0.8 }
 export const LEADER_DESK = { w: 1.9, d: 1.0 }
-const MAX_MEMBERS = 8
+export const BOARD = { x: 0.2, z: 5.6, w: 1.8 }
+/** AC9：成員桌 2 × N，N 預設 ≤ 4（區寬 9.2），最多 6（區依需要加寬） */
+const BASE_COLS = 4
+const MAX_COLS = 6
+const MAX_MEMBERS = MAX_COLS * 2
 const MEMBER_PITCH = 1.8
 const HOT_PER_ROW = 4
 const HOT_PITCH_X = 2.3
@@ -116,12 +124,16 @@ function seatOf(desk: Desk, area: Area): Place {
   return { x: desk.x, z: desk.z + dz, rotY: desk.rotY, deskId: desk.id, area, pose: 'sit' }
 }
 
+const colsOf = (task: TaskInfo) => Math.max(1, Math.ceil(Math.min(MAX_MEMBERS, task.members.length) / 2))
+
+/** 一個桌群單位的寬：N > 4 時每多一欄加一個桌距 */
+export const unitWidth = (task: TaskInfo) => ZONE_W + Math.max(0, colsOf(task) - BASE_COLS) * MEMBER_PITCH
+
 function taskDesks(dir: string, task: TaskInfo, ux: number, uz: number): Desk[] {
   const desks: Desk[] = [
     { id: `${dir}#leader`, group: dir, kind: 'leader', x: ux + 1.35, z: uz + 4.9, ...LEADER_DESK, rotY: FACE_FRONT, occupant: null },
   ]
-  const n = Math.min(MAX_MEMBERS, task.members.length)
-  const cols = Math.max(1, Math.ceil(n / 2))
+  const cols = colsOf(task)
   for (let i = 0; i < cols * 2; i++) {
     const col = Math.floor(i / 2)
     const back = i % 2 === 0
@@ -162,23 +174,32 @@ export function computeLayout({ sessions, tasks }: { sessions: LayoutSession[]; 
   }
   const zones: Zone[] = []
   const desks: Desk[] = []
+  const boards: Record<string, { x: number; z: number }> = {}
   let row = 0
   let used = 0
   let rowsUsed = 0
   let maxRowW = 0
+  let rowX = PAD
   for (const project of [...byProject.keys()].sort(byName)) {
     const dirs = byProject.get(project)!
     if (used > 0 && used + dirs.length > UNITS_PER_ROW) {
       row++
       used = 0
     }
-    const x = PAD + used * (ZONE_W + AISLE)
+    if (used === 0) rowX = PAD
+    const x = rowX
     const z = PAD + row * (ZONE_D + AISLE)
-    const rect = { x, z, w: dirs.length * ZONE_W, d: ZONE_D }
-    dirs.forEach((dir, i) => desks.push(...taskDesks(dir, tasks[dir], x + i * ZONE_W, z)))
+    let ux = x
+    for (const dir of dirs) {
+      desks.push(...taskDesks(dir, tasks[dir], ux, z))
+      boards[dir] = { x: ux + BOARD.x + BOARD.w / 2, z: z + BOARD.z }
+      ux += unitWidth(tasks[dir])
+    }
+    const rect = { x, z, w: ux - x, d: ZONE_D }
+    rowX = ux + AISLE
     const only = dirs.length === 1 ? tasks[dirs[0]] : null
     const subtitle = only ? (only.wave ? `${only.display} · 波 ${only.wave.current}` : only.display) : `${dirs.length} 個任務`
-    zones.push({ key: project, kind: 'project', title: project, subtitle, count: 0, needs: false, rect, sign: [x + 0.5, row === 0 ? 2.25 : 1.2, z], tasks: dirs })
+    zones.push({ key: project, kind: 'project', title: project, subtitle, count: 0, needs: false, rect, sign: [x + 0.5, row === 0 ? 2.25 : 1.2, z], tasks: dirs, overflow: 0 })
     used += dirs.length
     rowsUsed = row + 1
     maxRowW = Math.max(maxRowW, x + rect.w - PAD)
@@ -199,7 +220,13 @@ export function computeLayout({ sessions, tasks }: { sessions: LayoutSession[]; 
     if (desk && desk.occupant == null) {
       desk.occupant = s.id
       homes[s.id] = seatOf(desk, 'task')
-    } else hot.push(s)
+    } else {
+      hot.push(s)
+      if (task) {
+        const z = zones.find((z) => z.kind === 'project' && z.key === task.project)
+        if (z) z.overflow++
+      }
+    }
   }
 
   // 3. 前排：散座區（一排 4 桌，依專案名）＋休息區
@@ -253,6 +280,7 @@ export function computeLayout({ sessions, tasks }: { sessions: LayoutSession[]; 
     rect: hotRect,
     sign: [hotRect.x + 1.4, 0, hotRect.z + hotRect.d - 0.3],
     tasks: [],
+    overflow: 0,
   }
   const loungeZone: Zone = {
     key: 'lounge',
@@ -264,6 +292,7 @@ export function computeLayout({ sessions, tasks }: { sessions: LayoutSession[]; 
     rect: loungeRect,
     sign: [loungeRect.x + 1.2, 0, loungeRect.z + loungeRect.d - 0.3],
     tasks: [],
+    overflow: 0,
   }
   zones.push(hotZone, loungeZone)
   const zoneByKey = new Map(zones.filter((z) => z.kind !== 'lounge').map((z) => [z.key, z]))
@@ -287,5 +316,6 @@ export function computeLayout({ sessions, tasks }: { sessions: LayoutSession[]; 
     places,
     homes,
     loungeOrder,
+    boards,
   }
 }

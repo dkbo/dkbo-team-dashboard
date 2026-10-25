@@ -18,6 +18,8 @@ export interface TaskBoardLabelProps extends LabelInteraction {
   /** 波關閉時新填的那一段（0 起算）外框閃一次 */
   flashIndex?: number | null
   yielded?: LabelYield
+  /** above（預設）：標籤在錨點上方、三角朝下；below：在錨點下方、三角翻轉在上（不加 -translate-y-full），同 ObjectLabel */
+  placement?: 'above' | 'below'
   /** 覆寫自動組出的 aria-label */
   label?: string
 }
@@ -47,6 +49,7 @@ export function TaskBoardLabel({
   density,
   flashIndex = null,
   yielded = 'none',
+  placement = 'above',
   label,
   href,
   onOpen,
@@ -54,6 +57,7 @@ export function TaskBoardLabel({
   className,
 }: TaskBoardLabelProps) {
   const full = density === 'full'
+  const above = placement === 'above'
   const hasPlan = wavesPlanned > 0
   const closedCount = closed === 'done' ? wavesPlanned : Math.min(wavesClosed, wavesPlanned)
   const srOnly = yielded === 'hidden'
@@ -166,6 +170,8 @@ export function TaskBoardLabel({
     />
   )
 
+  const pointer = <LabelPointer slot="task-board-pointer" stroke={STROKE[tone ?? 'none']} flip={!above} />
+
   return (
     <a
       href={href}
@@ -173,6 +179,7 @@ export function TaskBoardLabel({
       data-density={density}
       data-tone={tone ?? undefined}
       data-yielded={yielded}
+      data-placement={placement}
       data-closed={closed ?? undefined}
       aria-label={ariaLabel}
       title={title}
@@ -186,7 +193,8 @@ export function TaskBoardLabel({
       onFocus={() => onActiveChange?.(true)}
       onBlur={() => onActiveChange?.(false)}
       className={cn(
-        'pointer-events-auto flex -translate-x-1/2 -translate-y-full cursor-pointer flex-col items-center rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-ring/50',
+        'pointer-events-auto flex -translate-x-1/2 cursor-pointer flex-col items-center rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-ring/50',
+        above && '-translate-y-full',
         srOnly && 'sr-only focus-visible:not-sr-only',
         className,
       )}
@@ -195,8 +203,9 @@ export function TaskBoardLabel({
         dot
       ) : (
         <>
+          {!above && pointer}
           {full ? card : pill}
-          <LabelPointer slot="task-board-pointer" stroke={STROKE[tone ?? 'none']} />
+          {above && pointer}
         </>
       )}
     </a>
