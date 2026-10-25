@@ -34,4 +34,11 @@ export function applyProcedural(action: Action, bones: PoseBones, rest: RestPose
   }
   if (action.think) head?.rotateY((8 * Math.PI) / 180 * (playing ? Math.sin(t * 2) : 1))
   if (action.doze) head?.rotateX(0.3)
+  // 拿板子：低頭看板、上身微後仰
+  if (action.board) {
+    torso?.rotateX(-0.08)
+    head?.rotateX(0.28)
+  }
+  // 點頭兩下後停在微低頭
+  if (action.nod) head?.rotateX(playing ? 0.25 * Math.max(0, Math.sin(t * 9)) : 0.08)
 }

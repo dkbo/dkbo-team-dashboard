@@ -142,5 +142,11 @@
     "tableRound": "furniture/tableRound.glb",
     "televisionModern": "furniture/televisionModern.glb",
     "trashcan": "furniture/trashcan.glb"
+  },
+  "objects": {
+    "meter": "objects/meter.glb",
+    "cabinet": "objects/cabinet.glb",
+    "screen": "objects/screen.glb",
+    "bookcase": "furniture/bookcaseClosed.glb"
   }
 }

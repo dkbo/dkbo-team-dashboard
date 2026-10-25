@@ -7,7 +7,8 @@ import { notifyEnabled } from './notify'
 
 /**
  * 全站提醒（AC13）：分頁標題「(N) 需要你 · 」；有人新變成等你／出錯時發桌面通知（點了跳到 /office 該人，config 外的 pane 跳 herdr 頁）。
- * 基準：overview 與 sessions 都到齊的第一份不通知；SSE 斷線後重連，要等兩者都重抓過一次再當新基準。
+ * 基準：overview 與 sessions 都到齊的第一份不通知；SSE 斷線後重連，要等兩者都重抓過一次再當新基準
+ * （斷線前就有的 sessionsError 不算「重抓過」，免得拿斷線前的舊 sessions 當基準、重抓回來多發通知）。
  */
 export function useBlockedAlerts(): void {
   const overview = useDashStore((s) => s.overview)
@@ -16,8 +17,8 @@ export function useBlockedAlerts(): void {
   const sse = useDashStore((s) => s.sse)
   const navigate = useNavigate()
   const prev = useRef<Map<string, AttentionKind> | null>(null)
-  // 斷線當下的資料物件；重連後兩者都換成新物件才定新基準
-  const stale = useRef<{ overview: OverviewDoc | null; sessions: SessionsDoc | null } | null>(null)
+  // 斷線當下的資料物件；重連後兩者都換成新物件（sessions 抓失敗則錯誤要是新的）才定新基準
+  const stale = useRef<{ overview: OverviewDoc | null; sessions: SessionsDoc | null; sessionsError: string | null } | null>(null)
   const lastSse = useRef(sse)
   const baseTitle = useRef<string>(typeof document === 'undefined' ? '' : document.title)
 
@@ -30,7 +31,7 @@ export function useBlockedAlerts(): void {
     if (lastSse.current === 'open' && sse !== 'open') {
       prev.current = null
       const s = useDashStore.getState()
-      stale.current = { overview: s.overview, sessions: s.sessions }
+      stale.current = { overview: s.overview, sessions: s.sessions, sessionsError: s.sessionsError }
     }
     lastSse.current = sse
   }, [sse])
@@ -41,7 +42,9 @@ export function useBlockedAlerts(): void {
     const ready =
       overview != null &&
       (sessions != null || sessionsError != null) &&
-      (!stale.current || (overview !== stale.current.overview && (sessions !== stale.current.sessions || sessionsError != null)))
+      (!stale.current ||
+        (overview !== stale.current.overview &&
+          (sessions !== stale.current.sessions || (sessionsError != null && sessionsError !== stale.current.sessionsError))))
     if (!ready) return
     stale.current = null
     const fresh = newAttention(prev.current, items)

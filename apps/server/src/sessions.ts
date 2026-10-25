@@ -25,6 +25,8 @@ export interface SessionOpts {
   initialTailBytes?: number;
   /** subagent 檔超過這麼久沒動就不算執行中 */
   subagentStaleMs?: number;
+  /** herdr 回報零 pane 之後，隔這麼久才出現的 pane 才算真的新開（更早的視為 snapshot 還沒 rebuild 的空清單） */
+  baselineGraceMs?: number;
   now?: () => number;
 }
 
@@ -166,6 +168,12 @@ export class SessionTracker extends EventEmitter {
   private match = new Map<string, string>();
   private readonly firstSeen = new Map<string, number | null>();
   private baselined = false;
+  /** 已 up 但 pane 清單為空的起點；pane 隔夠久才出現就視為真的新開（herdr 一開始就是零 pane） */
+  private emptySince: number | null = null;
+  /** sessionId → 最新的檔；檔集合或 mtime 變了才重建（paneSession 對每個 pane 各問一次，不能每次都掃全部檔） */
+  private byIdCache: Map<string, FileEntry> | null = null;
+  /** start() 的世代：stop→start 之後在途的舊迴圈看到世代不同就不再續排 */
+  private gen = 0;
   private readonly blocked = new Map<string, { since: number; question: string | null }>();
   private readonly prevRaw = new Map<string, PaneStatus>();
   private readonly subCache = new Map<string, { mtime: number; active: boolean }>();
@@ -189,6 +197,7 @@ export class SessionTracker extends EventEmitter {
       windowMs: DAY,
       initialTailBytes: 4 * 1024 * 1024,
       subagentStaleMs: 10 * 60_000,
+      baselineGraceMs: 3000,
       now: Date.now,
       ...opts,
     };
@@ -202,16 +211,18 @@ export class SessionTracker extends EventEmitter {
     if (this.o.off || !this.stopped) return;
     this.stopped = false;
     this.halted = false;
+    const gen = ++this.gen;
+    const live = () => !this.stopped && gen === this.gen;
     const scanLoop = async () => {
       await this.scan();
-      if (!this.stopped) this.scanTimer = setTimeout(scanLoop, this.o.scanMs);
+      if (live()) this.scanTimer = setTimeout(scanLoop, this.o.scanMs);
     };
     const pollLoop = async () => {
       await this.poll();
-      if (!this.stopped) this.pollTimer = setTimeout(pollLoop, this.o.pollMs);
+      if (live()) this.pollTimer = setTimeout(pollLoop, this.o.pollMs);
     };
     void scanLoop().then(() => {
-      if (!this.stopped) this.pollTimer = setTimeout(pollLoop, this.o.pollMs);
+      if (live()) this.pollTimer = setTimeout(pollLoop, this.o.pollMs);
     });
   }
 
@@ -326,11 +337,13 @@ export class SessionTracker extends EventEmitter {
     for (const path of [...this.files.keys()])
       if (!keep.has(path)) {
         this.files.delete(path);
+        this.byIdCache = null;
         changed = true;
       }
     for (const [path, k] of keep) {
       if (this.files.has(path)) continue;
       this.files.set(path, { ...k, size: 0, offset: 0, rest: Buffer.alloc(0), reducer: new SessionReducer(k.kind, k.sessionId), read: false, subagents: 0, busy: false });
+      this.byIdCache = null;
       changed = true;
     }
     if (changed) this.changed();
@@ -360,11 +373,17 @@ export class SessionTracker extends EventEmitter {
     if (!up) {
       // herdr 掛了：恢復後第一份 snapshot 重新當基準
       this.baselined = false;
+      this.emptySince = null;
       return;
     }
     const present = new Set(panes.map((p) => p.paneId));
+    // 至少看到一個 pane 才定基準：HerdrBridge 會在 snapshot 成功、pane 還沒 rebuild 前先發一次 change（空清單）。
+    // 但 herdr 真的一個 pane 都沒有時基準不能永遠等：空清單持續超過 baselineGraceMs 後才出現的 pane 就是新開的
+    if (!this.baselined) {
+      if (!panes.length) this.emptySince ??= now;
+      else if (this.emptySince !== null && now - this.emptySince >= this.o.baselineGraceMs) this.baselined = true;
+    }
     for (const p of panes) if (!this.firstSeen.has(p.paneId)) this.firstSeen.set(p.paneId, this.baselined ? now : null);
-    // 至少看到一個 pane 才定基準：HerdrBridge 會在 snapshot 成功、pane 還沒 rebuild 前先發一次 change（空清單）
     if (panes.length) this.baselined = true;
     for (const id of [...this.firstSeen.keys()]) if (!present.has(id)) this.firstSeen.delete(id);
 
@@ -436,6 +455,7 @@ export class SessionTracker extends EventEmitter {
   private async tail(f: FileEntry): Promise<boolean> {
     const st = await mtimeOf(f.path);
     if (!st) return false;
+    if (f.mtime !== st.mtime) this.byIdCache = null;
     f.mtime = st.mtime;
     if (st.size < f.offset) {
       // 檔案變小（被截斷或換檔）：從頭重讀
@@ -521,6 +541,10 @@ export class SessionTracker extends EventEmitter {
     return m;
   }
 
+  private index(): Map<string, FileEntry> {
+    return (this.byIdCache ??= this.bySession());
+  }
+
   /** 專案的角色名集合（`.dkbo/roles/*.md`）；探索過才有 */
   roles(project: string): Set<string> | undefined {
     return this.roleNames.get(project);
@@ -530,14 +554,14 @@ export class SessionTracker extends EventEmitter {
   paneSession(paneId: string): SessionLive | null {
     if (this.o.off) return null;
     const sid = this.match.get(paneId);
-    const f = sid ? this.bySession().get(sid) : undefined;
+    const f = sid ? this.index().get(sid) : undefined;
     return f ? this.liveOf(f, paneId) : null;
   }
 
   sessions(): TrackedSession[] {
     if (this.o.off) return [];
     const paneOf = new Map([...this.match].map(([p, s]) => [s, p]));
-    return [...this.bySession().values()].map((f) => {
+    return [...this.index().values()].map((f) => {
       const paneId = paneOf.get(f.sessionId) ?? null;
       return {
         live: this.liveOf(f, paneId),

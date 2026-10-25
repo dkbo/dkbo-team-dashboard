@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router'
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useNavigate, useSearchParams } from 'react-router'
 import type { OfficeSession } from '@dash/shared'
 import { Banner, BannerAction } from '@/components/app/Banner'
 import { EmptyState } from '@/components/app/EmptyState'
@@ -8,10 +8,12 @@ import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AgentDetailPane } from '@/features/office/AgentDetailPane'
 import { FinderPanel } from '@/features/office/FinderPanel'
+import { useOfficeEvents } from '@/features/office/events/useOfficeEvents'
 import { useHtmlTheme, useMedia, useStoredFlag } from '@/features/office/hooks'
 import {
   buildTasks,
   kindCounts,
+  offDutyOf,
   parseOfficeParams,
   sceneSessions,
   stateCounts,
@@ -21,14 +23,15 @@ import {
   type SceneTask,
 } from '@/features/office/model'
 import { OfficeCanvas } from '@/features/office/OfficeCanvas'
+import { escalatedLeaders } from '@/features/office/objects'
 import { OfficeList } from '@/features/office/OfficeList'
 import { OfficeToolbar } from '@/features/office/OfficeToolbar'
 import { Legend, StateCounts, ViewControls } from '@/features/office/Overlays'
 import type { FallbackReason } from '@/features/office/sceneTypes'
+import { useCachedDetails, useOfficeObjects } from '@/features/office/useOfficeObjects'
 import { hasWebGL } from '@/features/office/webgl'
 import { useNow } from '@/hooks/useNow'
 import { formatEpochMs } from '@/lib/format'
-import { isOffDuty } from '@/lib/substate'
 import { cn } from '@/lib/utils'
 import { useDashStore, useSessions } from '@/store'
 
@@ -62,6 +65,52 @@ function useStableList<T>(list: T[]): T[] {
   return ref.current
 }
 
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])'
+
+/** 768–1023 的底部詳情 Sheet（§6.9）：開啟時焦點移進來、Tab／Shift+Tab 圈在裡面；Esc 由頁面鍵盤處理（取消選取） */
+function DetailSheet({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const back = document.activeElement as HTMLElement | null
+    el.focus()
+    return () => back?.focus?.()
+  }, [])
+  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== 'Tab') return
+    const items = [...e.currentTarget.querySelectorAll<HTMLElement>(FOCUSABLE)]
+    if (items.length === 0) {
+      e.preventDefault()
+      return
+    }
+    const first = items[0]
+    const last = items[items.length - 1]
+    const active = document.activeElement
+    if (e.shiftKey && (active === first || active === e.currentTarget)) {
+      e.preventDefault()
+      last.focus()
+    } else if (!e.shiftKey && active === last) {
+      e.preventDefault()
+      first.focus()
+    }
+  }
+  return (
+    <div
+      ref={ref}
+      role="dialog"
+      aria-modal="true"
+      aria-label="詳情"
+      tabIndex={-1}
+      onKeyDown={onKeyDown}
+      className="fixed inset-x-0 bottom-0 z-30 flex h-(--sheet-h) flex-col rounded-t-xl bg-card shadow-pop outline-none"
+    >
+      <span aria-hidden className="mx-auto mt-2 h-1 w-10 shrink-0 rounded-full bg-muted-foreground/40" />
+      {children}
+    </div>
+  )
+}
+
 /** /office：3D 辦公室（延遲載入）＋清單退路（AC8、AC9）。篩選與選取只存在網址 */
 export default function OfficePage() {
   const { data: doc, error } = useSessions()
@@ -90,10 +139,28 @@ export default function OfficePage() {
   const all = useMemo(() => doc?.sessions ?? [], [doc])
   const counts = kindCounts(all, params, minute)
   const scene = useStableList(useMemo(() => sceneSessions(all, params, minute), [all, params.kind, params.project, params.needs, minute])) // eslint-disable-line react-hooks/exhaustive-deps
-  const offDuty = useMemo(() => all.filter((s) => isOffDuty(s, minute) && (!params.project || s.project === params.project)), [all, params.project, minute])
-  const tasks = useStableTasks(useMemo(() => buildTasks(overview), [overview]))
+  const offDuty = useMemo(() => all.filter((s) => offDutyOf(s, minute) && (!params.project || s.project === params.project)), [all, params.project, minute])
+  const details = useCachedDetails()
+  // E8：結案 10 分鐘內的任務仍留桌群（成員用快取 detail，沒有就看仍開著的 session）
+  const tasks = useStableTasks(useMemo(() => buildTasks(overview, minute, { details, sessions: all }), [overview, minute, details, all]))
   const projects = useMemo(() => [...new Set([...(overview?.projects.map((p) => p.name) ?? []), ...all.map((s) => s.project)])].sort(), [overview, all])
-  const anyone = all.some((s) => !isOffDuty(s, minute))
+  const anyone = all.some((s) => !offDutyOf(s, minute))
+
+  // AC6：store.details 只裝開過任務頁的 detail；直接進 /office 時對每個進行中任務抓一次，之後靠既有 SSE（task.updated）重抓
+  const activeKey = (overview?.projects ?? []).flatMap((p) => Object.keys(p.active).map((dir) => `${p.name}\0${dir}`)).join('\n')
+  useEffect(() => {
+    const s = useDashStore.getState()
+    for (const k of activeKey ? activeKey.split('\n') : []) {
+      const [project, dir] = k.split('\0')
+      if (!s.details[`${project}/${dir}`]) void s.fetchDetail(project, dir)
+    }
+  }, [activeKey])
+
+  const navigate = useNavigate()
+  const onOpenObject = useCallback((href: string) => navigate(href), [navigate])
+  const { events, announce } = useOfficeEvents()
+  const objects = useOfficeObjects({ enabled: view === '3d', tasks, sessions: all, details, now: minute })
+  const escalated = useMemo(() => escalatedLeaders(all, tasks, details, overview), [all, tasks, details, overview])
 
   // 選取＝網址 focus；找不到（篩掉或不存在）就當沒選
   const selected: OfficeSession | null = (params.focus && [...scene, ...offDuty].find((s) => s.id === params.focus)) || null
@@ -302,6 +369,9 @@ export default function OfficePage() {
             reducedMotion,
             onFallback,
             onUserMovedCamera: setMoved,
+            objects,
+            events,
+            onOpenObject,
           }}
           finder={(width) =>
             scene.length > 0 && (
@@ -313,6 +383,7 @@ export default function OfficePage() {
                 onFilters={setParams}
                 selectedId={selected?.id ?? null}
                 onFocus={focusOn}
+                escalated={escalated}
                 collapsed={!(finderStored ? finderOpen : width >= 1200)}
                 onCollapsed={(c) => setFinderOpen(!c)}
                 now={now}
@@ -340,12 +411,11 @@ export default function OfficePage() {
           </Card>
         )}
       </div>
-      {detailAs === 'sheet' && (
-        <div role="dialog" aria-label="詳情" className="fixed inset-x-0 bottom-0 z-30 flex h-[60svh] flex-col rounded-t-xl bg-card shadow-pop">
-          <span aria-hidden className="mx-auto mt-2 h-1 w-10 shrink-0 rounded-full bg-muted-foreground/40" />
-          {detail}
-        </div>
-      )}
+      {detailAs === 'sheet' && <DetailSheet>{detail}</DetailSheet>}
+      {/* §6.17：事件播報（3D 與清單都播） */}
+      <div data-testid="office-live-region" aria-live="polite" className="sr-only">
+        {announce}
+      </div>
     </div>
   )
 }

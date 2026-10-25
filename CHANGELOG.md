@@ -4,6 +4,20 @@
 
 ## [Unreleased]
 
+### 新增：辦公室大廳——頁面物件與角色互動事件（dkbo 任務 lobby）
+- `/office` 加六件頁面物件與數字標籤：任務白板（波數、E3 燈號，結案保留 10 分鐘）、監控牆（herdr pane／卡住數）、檔案室（已結案、今天 +N）、git 檔案櫃（衝突＞未推送＞未提交／detached，乾淨熄燈）、大廳公告板（進行中任務數）、茶水間電表（今日花費、最高額度、熔斷跳電）；點物件或標籤開對應頁。git 摘要每 30 秒、今日花費每分鐘，只在 3D 視圖開著且分頁可見時抓；值沒變不換參照，靜止時仍 0 幀。
+- 角色互動事件：reviewer 出動、審查通過／要修、ESCALATE 與解除、波關閉、結案；只播即時事件、不補播；事件寫進 `/office` 的 live region（`data-testid="office-live-region"`）。找人清單中有未解 ESCALATE 的 leader 列掛「!」（`finder-escalate`）。進 `/office` 時對每個進行中任務抓一次詳情。
+- 大廳場景：房間擴到 24.4 × 14，六件物件放在右側大廳（電表箱、檔案櫃、螢幕、書櫃用 Kenney Factory／Furniture Kit 模型，白板與公告板用盒子拼；`public/office/` 總量仍 < 1.5 MB）。物件可 Tab 聚焦、Enter 開頁，hover／聚焦描邊並把該物件標籤轉完整密度，標籤帶原生 `title` 提示（不是 Tooltip 元件），不受「只看需要你」變淡影響。標籤三種密度（預設視角精簡、拉近 ≥ 0.8 完整、縮遠 < 0.6 只留異常），與角色標記碰撞時讓位，相機停下後才算一次。
+- 桌群每排最多 6 桌（預設 4），一個任務最多 12 座位，第 13 位起進散座區，區牌顯示「+K 在散座」。
+- 事件動畫：reviewer 走到目標（單一 dev 走到該位 dev 旁、多位走到白板）拿板子站著直到結果、座位螢幕變暗；通過比讚、要修垂頭冒汗、reviewer 回座；波關閉 leader 點頭＋白板進度格填滿迸星點；結案跳兩下＋彩帶。等你／錯誤的角色只出泡泡、不起身；`prefers-reduced-motion` 不走路不跳。播放期間才持 animation ticket，播完回到靜止 0 幀。
+- 效能與分包：物件、標籤與事件動畫放第二個延遲 chunk，場景第一次 render 後才載入，清單模式不載；載入失敗「再試 3D」可恢復。
+- 修正：pane 已關的「錯誤」session 不再一直算需要你（分頁標題 N、桌面通知、找人清單、只看需要你），10 分鐘轉閒置、2 小時下班。
+- 修正：SSE 斷線前 sessions 已抓失敗時，重連後要等 sessions 重抓（或錯誤換了）才定通知基準，不再拿斷線前的舊資料當基準而多發一則通知。
+- 修正：「即時事件」判斷（場景角色動作與事件引擎）看 sessions 內容而不是陣列參照；父層重算出內容相同的新陣列不再被誤當成重連後補抓到的資料。
+- 修正：模型 id 的 Bedrock／Vertex 區域與供應商前綴（`us.anthropic.`、`anthropic/`）與舊命名也能認出職等；選取列補 `text-accent-foreground`。
+- 修正（server）：session 工具參數摘要不再包含子 agent 的 `prompt`（隱私）；paneSession 對 session 檔建索引、不再每個 pane 掃全部檔；stop→start 後舊的輪詢迴圈不再續排；herdr 一開始就零 pane 時，空清單持續超過 3 秒後出現的 pane 視為新開，不會永遠等不到基準。
+- 修正：/office 768–1023 寬的詳情底部 Sheet 高度改用 `--sheet-h` token，開啟時焦點移入並以 Tab／Shift+Tab 圈在 Sheet 內（`aria-modal`）。
+
 ### 新增：辦公室視圖與 session 細狀態（dkbo 任務 office）
 - `/office`：3D 辦公室（three.js／react-three-fiber，只在進頁且是 3D 視圖時延遲載入）把 Claude Code、Codex 的 session 畫成 Kenney 小人；有任務的專案一區、任務桌群依 brief 成員順序固定座位、leader 大桌加皇冠、完成的去休息區；頭頂標記、地面圈與 hover 卡顯示細狀態與職等。找人清單（需要你／工作中／其他）、詳情（終端尾、resume 指令）、清單模式（桌機三欄、手機三張收合卡）；無 WebGL、素材載入失敗或 context lost 時自動退到清單。選取與篩選存在網址（`focus`、`kind`、`project`、`needs`、`view`、`f_*`）。純唯讀。
 - 細狀態：server 唯讀讀 Claude／Codex 的 session JSONL，與 herdr 狀態合算出思考中、執行、回覆中、等你、完成、中斷、錯誤、閒置；新增 `GET /api/sessions`、SSE `sessions.updated`，`PaneLive` 加選填的 `session`（總覽、任務詳情、herdr 的 pane 都帶）。transcript 只讀新增位元組，推送每 500 ms 合併去重。提示詞與回覆全文不出 server。

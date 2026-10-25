@@ -32,7 +32,7 @@ const ts = (v: unknown): number | null => {
   return Number.isFinite(n) ? n : null;
 };
 
-const SUMMARY_KEYS = ['command', 'cmd', 'file_path', 'path', 'notebook_path', 'pattern', 'url', 'query', 'description', 'prompt', 'skill'];
+const SUMMARY_KEYS = ['command', 'cmd', 'file_path', 'path', 'notebook_path', 'pattern', 'url', 'query', 'description', 'skill'];
 
 /** 工具參數 → 一行摘要（只取白名單鍵的第一行）；取不到就 null */
 export function toolSummary(name: string, input: unknown): string | null {

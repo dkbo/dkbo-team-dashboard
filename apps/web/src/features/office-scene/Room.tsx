@@ -65,12 +65,15 @@ export function Furniture({
   mats,
   manifest,
   substates,
+  screenOff,
 }: {
   layout: OfficeLayout
   mats: SceneMaterials
   manifest: OfficeManifest
   /** session id → 有效細狀態（決定螢幕亮暗） */
   substates: Record<string, Substate>
+  /** 事件覆寫要暗的座位螢幕（reviewer 離座，§6.17） */
+  screenOff?: ReadonlySet<string>
 }) {
   const f = manifest.furniture
   const deskUrl = assetUrl(f.desk)
@@ -89,7 +92,7 @@ export function Furniture({
       const dir = dk.rotY === 0 ? 1 : -1
       const seatOff = dk.d / 2 + 0.35
       chairs.push({ x: dk.x, z: dk.z - dir * seatOff, rotY: dk.rotY + Math.PI })
-      const lit = dk.occupant != null && SCREEN_ON.has(substates[dk.occupant])
+      const lit = dk.occupant != null && SCREEN_ON.has(substates[dk.occupant]) && !screenOff?.has(dk.occupant)
       const screens = dk.kind === 'leader' ? [-0.42, 0.42] : [0]
       for (const sx of screens) (lit ? on : off).push({ x: dk.x + sx, z: dk.z + dir * 0.18, y: deskTop, rotY: dk.rotY + Math.PI })
     }
@@ -111,7 +114,7 @@ export function Furniture({
       table: [{ x: lounge.x + 6.35, z: lounge.z + 2.0, rotY: 0 }],
       coffee: [{ x: lounge.x + 2.05, z: lounge.z + 0.45, rotY: 0 }],
     }
-  }, [layout, substates, deskTop])
+  }, [layout, substates, screenOff, deskTop])
 
   const mat = (model: string) => (name: string) => furnitureMaterial(mats, model, name)
   const url = (k: string) => assetUrl(f[k])

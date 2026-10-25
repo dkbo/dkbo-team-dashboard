@@ -98,3 +98,36 @@ describe('starsOf：effort → 星數（E10；§1.7）', () => {
     expect(starsOf(null, 'high')).toBe(0)
   })
 })
+
+// lobby AC12：BACKLOG rank.ts:8 —— 認得 Bedrock 區域前綴／舊命名（claude-3-5-sonnet）
+describe('rankOf：claude 的 Bedrock 與舊命名 model id', () => {
+  it.each([
+    ['anthropic.claude-sonnet-4-5-20250929-v1:0', 'mid'],
+    ['us.anthropic.claude-opus-4-1-20250805-v1:0', 'senior'],
+    ['eu.anthropic.claude-haiku-4-5-20251001-v1:0', 'junior'],
+    ['global.anthropic.claude-sonnet-4-20250514-v1:0', 'mid'],
+    ['apac.anthropic.claude-opus-4-20250514-v1:0', 'senior'],
+    ['claude-3-5-sonnet-20241022', 'mid'],
+    ['claude-3-7-sonnet-20250219', 'mid'],
+    ['claude-3-opus-20240229', 'senior'],
+    ['claude-3-haiku-20240307', 'junior'],
+    ['anthropic.claude-3-5-sonnet-20241022-v2:0', 'mid'],
+    ['us.anthropic.claude-3-5-haiku-20241022-v1:0', 'junior'],
+    ['claude-sonnet-4@20250514', 'mid'],
+    ['CLAUDE-3-OPUS-20240229', 'senior'],
+  ] as const)('claude %s → %s', (model, rank) => {
+    expect(rankOf('claude', model)).toBe(rank)
+  })
+
+  it.each(['claude-instant-1.2', 'anthropic.claude-v2:1', 'anthropic.titan-text-express-v1', 'claude-3-mystery', 'us.anthropic.'])(
+    '不認得的 claude 家族／殘缺 id（%s）→ visitor',
+    (model) => {
+      expect(rankOf('claude', model)).toBe('visitor')
+    },
+  )
+
+  it('既有寫法不受影響（opus[1m]、anthropic/claude-opus-4）', () => {
+    expect(rankOf('claude', 'opus[1m]')).toBe('senior')
+    expect(rankOf('claude', 'anthropic/claude-opus-4')).toBe('senior')
+  })
+})

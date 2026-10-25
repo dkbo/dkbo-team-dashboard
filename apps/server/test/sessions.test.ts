@@ -207,6 +207,20 @@ describe('AC2 pane ↔ session', () => {
     expect(e.tracker.paneSession('p1')?.sessionId).toBe('old');
   });
 
+  it('herdr 一開始就是零 pane（真的沒開）：之後出現的 pane 以出現時間為首次出現，配到新開的 session 而非舊的', async () => {
+    const e = setup();
+    // 舊 session 的檔 mtime 比新的還晚：首次出現時間若被當成「未知」，會因「最近更新」誤配到它
+    writeJsonl(codexFile(e.codexDir, e.now - 3 * DAY, 'old'), [cx.meta('old', e.proj, e.now - 3 * DAY), cx.started(e.now - 9000)], e.now + 12_000);
+    e.tracker.refreshPanes();
+    e.now += 10_000;
+    e.panes = [pane('p1', { agent: 'codex', cwd: e.proj })];
+    e.tracker.refreshPanes();
+    writeJsonl(codexFile(e.codexDir, e.now + 1000, 'fresh'), [cx.meta('fresh', e.proj, e.now + 1000)], e.now + 1000);
+    e.now += 5000;
+    await e.tracker.scan();
+    expect(e.tracker.paneSession('p1')?.sessionId).toBe('fresh');
+  });
+
   it('herdr blocked → waiting（since＝觀察時間、問句讀一次畫面）；JSONL error 優先', async () => {
     const screen = vi.fn(async () => '│ Do you want to proceed? │\n│ ❯ 1. Yes │');
     const e = setup({ screen });
@@ -291,5 +305,63 @@ describe('AC4 只讀新增的位元組', () => {
     await off.scan();
     expect(off.sessions()).toEqual([]);
     expect(off.paneSession('p1')).toBeNull();
+  });
+});
+
+describe('paneSession 索引', () => {
+  it('同一份檔案狀態下，對 N 個 pane 各問一次只建一次 sessionId 索引', async () => {
+    const e = setup();
+    const n = 12;
+    for (let i = 0; i < n; i++) {
+      writeJsonl(claudeFile(e.claudeDir, e.proj, `c${i}`), [cl.prompt(`c${i}`, e.proj, e.now - 9_000), cl.text(`c${i}`, e.now - 8_000)], e.now - 8_000);
+      e.ids.set(`p${i}`, `c${i}`);
+    }
+    e.panes = Array.from({ length: n }, (_, i) => pane(`p${i}`, { cwd: e.proj }));
+    e.tracker.refreshPanes();
+    await e.tracker.scan();
+    const build = vi.spyOn(e.tracker as unknown as { bySession: () => unknown }, 'bySession');
+    for (let i = 0; i < n; i++) expect(e.tracker.paneSession(`p${i}`)?.sessionId).toBe(`c${i}`);
+    expect(build.mock.calls.length).toBeLessThanOrEqual(1);
+  });
+
+  it('檔案 mtime 變了索引要跟著換：同 sessionId 兩個檔取較新的那個', async () => {
+    const e = setup();
+    const wt = join(e.proj, '.worktrees/w');
+    const a = claudeFile(e.claudeDir, e.proj, 'dup');
+    const b = claudeFile(e.claudeDir, wt, 'dup');
+    writeJsonl(a, [cl.prompt('dup', e.proj, e.now - 9_000), cl.tool('dup', e.now - 8_000, 't1', 'Bash', { command: 'from-a' })], e.now - 8_000);
+    writeJsonl(b, [cl.prompt('dup', wt, e.now - 9_000), cl.tool('dup', e.now - 7_000, 't1', 'Bash', { command: 'from-b' })], e.now - 7_000);
+    e.panes = [pane('p1', { cwd: e.proj })];
+    e.ids.set('p1', 'dup');
+    e.tracker.refreshPanes();
+    await e.tracker.scan();
+    expect(e.tracker.paneSession('p1')?.tool?.summary).toBe('from-b');
+    appendJsonl(a, [cl.tool('dup', e.now - 1_000, 't2', 'Bash', { command: 'a-newer' })], e.now - 1_000);
+    await e.tracker.poll();
+    expect(e.tracker.paneSession('p1')?.tool?.summary).toBe('a-newer');
+  });
+});
+
+describe('start／stop', () => {
+  it('stop 後馬上 start：在途的舊迴圈不續排，掃描與輪詢各只剩一條', async () => {
+    vi.useFakeTimers();
+    try {
+      const e = setup();
+      const t = new SessionTracker({ claudeDir: e.claudeDir, codexDir: e.codexDir, off: false, now: () => e.now, scanMs: 5000, pollMs: 1000 }, { projects: [{ name: 'proj', path: e.proj }], panes: () => [], sessionIds: () => new Map(), herdrUp: () => true });
+      trackers.push(t);
+      const gates: Array<() => void> = [];
+      const scan = vi.spyOn(t, 'scan').mockImplementation(() => (gates.length < 2 ? new Promise<void>((r) => gates.push(r)) : Promise.resolve()));
+      const poll = vi.spyOn(t, 'poll').mockResolvedValue(undefined);
+      t.start();
+      t.stop();
+      t.start();
+      expect(scan).toHaveBeenCalledTimes(2);
+      for (const g of gates) g();
+      await vi.advanceTimersByTimeAsync(10_000);
+      expect(scan).toHaveBeenCalledTimes(4);
+      expect(poll).toHaveBeenCalledTimes(10);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

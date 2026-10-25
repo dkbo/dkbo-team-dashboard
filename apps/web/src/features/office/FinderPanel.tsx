@@ -2,14 +2,15 @@ import { forwardRef, useState, type KeyboardEvent, type ReactNode } from 'react'
 import { ChevronDown, ChevronRight, ChevronUp, Crosshair, Moon, Users, X } from 'lucide-react'
 import type { OfficeSession } from '@dash/shared'
 import { EffortStars } from '@/components/app/EffortStars'
+import { EventBadge } from '@/components/app/office'
 import { sessionName } from '@/components/app/SessionRow'
 import { StatusDot } from '@/components/app/StatusDot'
 import { Tag, type TagVariant } from '@/components/app/Tag'
 import { rankOf, starsOf } from '@/lib/rank'
-import { effectiveSubstate, SUBSTATE_META, timerText } from '@/lib/substate'
+import { timerText } from '@/lib/substate'
 import { cn } from '@/lib/utils'
 import { rowAriaLabel, substateText, taskLabel, taskOptionLabel } from './format'
-import { finderOptions, groupSessions, narrowFinder, type OfficeParams, type SceneTask } from './model'
+import { finderOptions, groupSessions, narrowFinder, needsOf, paneOpts, subOf, toneOf, type OfficeParams, type SceneTask } from './model'
 import { PickMenu } from './PickMenu'
 
 export const RANK_DOT = {
@@ -31,6 +32,8 @@ export interface FinderPanelProps {
   onFilters(patch: Partial<Filters>): void
   selectedId: string | null
   onFocus(id: string): void
+  /** 有未解 ESCALATE 的 leader（列上掛 EventBadge，§6.6） */
+  escalated?: ReadonlySet<string>
   collapsed: boolean
   onCollapsed(collapsed: boolean): void
   now: number
@@ -89,15 +92,15 @@ export interface FinderRowProps {
   selected: boolean
   onClick(): void
   now: number
+  escalated?: boolean
 }
 
 /** §6.6 FinderRow：頭像＋職等點／細狀態點＋名字＋星／「專案 · 任務 · 細狀態／計時」｜Crosshair */
-export const FinderRow = forwardRef<HTMLButtonElement, FinderRowProps>(function FinderRow({ session: s, tasks, selected, onClick, now }, ref) {
-  const sub = effectiveSubstate(s, now)
-  const meta = SUBSTATE_META[sub]
-  const danger = meta.tone === 'danger'
+export const FinderRow = forwardRef<HTMLButtonElement, FinderRowProps>(function FinderRow({ session: s, tasks, selected, onClick, now, escalated = false }, ref) {
+  const sub = subOf(s, now)
+  const danger = needsOf(s, now)
   const name = sessionName(s)
-  const timer = timerText(s, now)
+  const timer = timerText(s, now, paneOpts(s))
   // 等你只寫「已等 mm:ss」（計時本身就說了是等你），其他「細狀態 計時」
   const state = sub === 'waiting' && timer ? timer : [substateText(s, now), timer].filter(Boolean).join(' ')
   const second = [s.project, taskLabel(s, tasks), state].filter(Boolean).join(' · ')
@@ -122,12 +125,17 @@ export const FinderRow = forwardRef<HTMLButtonElement, FinderRowProps>(function 
       </span>
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="flex min-w-0 items-center gap-1.5">
-          <StatusDot tone={meta.tone} size="sm" />
+          <StatusDot tone={toneOf(s, now)} size="sm" />
           <span className="min-w-0 truncate text-sm font-bold">
             {name}
             {s.leader && <span aria-hidden> 👑</span>}
           </span>
           <EffortStars level={starsOf(s.kind, s.effort)} size="sm" />
+          {escalated && (
+            <span data-testid="finder-escalate" className="inline-flex shrink-0">
+              <EventBadge kind="escalate" size="sm" />
+            </span>
+          )}
         </span>
         <span className={cn('truncate text-2xs', danger ? 'text-status-danger-fg' : 'text-muted-foreground')}>{second}</span>
       </span>
@@ -151,6 +159,7 @@ export function FinderPanel({
   onFilters,
   selectedId,
   onFocus,
+  escalated,
   collapsed,
   onCollapsed,
   now,
@@ -261,7 +270,7 @@ export function FinderPanel({
                 <Tag variant={g.tone}>{list.length}</Tag>
               </button>
               {open &&
-                list.map((s) => <FinderRow key={s.id} session={s} tasks={tasks} selected={s.id === selectedId} onClick={() => onFocus(s.id)} now={now} />)}
+                list.map((s) => <FinderRow key={s.id} session={s} tasks={tasks} selected={s.id === selectedId} onClick={() => onFocus(s.id)} now={now} escalated={escalated?.has(s.id)} />)}
             </section>
           )
         })}

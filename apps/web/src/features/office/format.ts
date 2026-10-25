@@ -1,8 +1,8 @@
 import type { OfficeSession } from '@dash/shared'
 import { sessionName } from '@/components/app/SessionRow'
 import { RANK_LABEL, rankOf, starsOf } from '@/lib/rank'
-import { effectiveSubstate, substateLabel, timerText } from '@/lib/substate'
-import { NO_TASK, taskKey, type SceneTask } from './model'
+import { substateLabel, timerText } from '@/lib/substate'
+import { NO_TASK, paneOpts, subOf, taskKey, type SceneTask } from './model'
 
 /** 2026-10-24-office → office */
 export const shortTask = (dir: string) => dir.replace(/^\d{4}-\d{2}-\d{2}-/, '')
@@ -19,7 +19,7 @@ export const taskHref = (project: string, dir: string) => `/p/${encodeURICompone
 
 /** 細狀態文字（等你接審批／提問） */
 export function substateText(s: OfficeSession, now: number): string {
-  const sub = effectiveSubstate(s, now)
+  const sub = subOf(s, now)
   return `${substateLabel(sub, s.tool?.name)}${sub === 'waiting' ? waitingNote(s) : ''}`
 }
 
@@ -33,7 +33,7 @@ export function rowAriaLabel(s: OfficeSession, tasks: Record<string, SceneTask>,
   return [
     sessionName(s),
     where,
-    [substateText(s, now), timerText(s, now, { long: true })].filter(Boolean).join(' '),
+    [substateText(s, now), timerText(s, now, { long: true, ...paneOpts(s) })].filter(Boolean).join(' '),
     RANK_LABEL[rankOf(s.kind, s.model)],
     stars > 0 ? `effort ${stars}` : null,
   ]

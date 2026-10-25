@@ -7,10 +7,9 @@ import { Tag, type TagVariant } from '@/components/app/Tag'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { herdrHref } from '@/lib/herdr'
-import { effectiveSubstate } from '@/lib/substate'
 import { cn } from '@/lib/utils'
 import { taskHref, taskLabel } from './format'
-import { groupSessions, type SceneTask } from './model'
+import { groupSessions, subOf, type SceneTask } from './model'
 
 /** 手機「工作中」最多先列幾位 */
 const MOBILE_WORKING_MAX = 3
@@ -58,7 +57,7 @@ export function OfficeList({ sessions, offDuty, tasks, panes, selectedId, onSele
       </div>
     )
     return (
-      <div key={s.id} data-testid="finder-row" data-session={s.id} data-substate={effectiveSubstate(s, now)}>
+      <div key={s.id} data-testid="finder-row" data-session={s.id} data-substate={subOf(s, now)}>
         <SessionRow
           session={s}
           selected={selected}

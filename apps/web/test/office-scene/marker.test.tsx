@@ -146,6 +146,13 @@ describe('AgentHoverCard', () => {
 })
 
 describe('ZoneSign', () => {
+  it('AC9：overflow > 0 時加「+K 在散座」', () => {
+    const { rerender, queryByText } = render(<ZoneSign kind="project" title="atlas" subtitle={null} count={12} needs={false} overflow={0} />)
+    expect(queryByText(/在散座/)).toBeNull()
+    rerender(<ZoneSign kind="project" title="atlas" subtitle={null} count={13} needs={false} overflow={2} />)
+    expect(queryByText('+2 在散座')).not.toBeNull()
+  })
+
   it('有等你時尾端多一個 danger 點', () => {
     const { rerender } = render(<ZoneSign kind="project" title="atlas" subtitle="結帳 · 波 3" count={4} needs={false} />)
     expect(screen.queryByLabelText('有人等你')).toBeNull()
@@ -174,6 +181,9 @@ describe('OfficeScene 退路', () => {
         reducedMotion={false}
         onFallback={onFallback}
         onUserMovedCamera={vi.fn()}
+        objects={null}
+        events={[]}
+        onOpenObject={vi.fn()}
       />,
     )
     expect(onFallback).toHaveBeenCalledWith('webgl')

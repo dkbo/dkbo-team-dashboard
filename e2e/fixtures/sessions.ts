@@ -1,6 +1,7 @@
-import { mkdirSync } from 'node:fs'
+import { mkdirSync, readdirSync, unlinkSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { cl, claudeFile, codexFile, cx, writeJsonl } from '../../apps/server/test/session-fixtures.ts'
+import type { SessionsDoc } from '../../packages/shared/src/index.ts'
 import { claudeDir, codexDir, projectsDir } from './paths'
 
 // 辦公室（office）用的去識別化 session JSONL：Claude Code 與 Codex 各一批，內容全是假字串、路徑全在執行期目錄底下。
@@ -69,3 +70,33 @@ export function setupSessions(now: number = Date.now()) {
 
 /** crowd-i 的 transcript 路徑（測試往裡追加行，驗檔案追加到畫面的時間） */
 export const crowdFile = (i: number) => claudeFile(claudeDir, wt(`crowd-${String(i).padStart(2, '0')}`), crowdSid(i))
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
+/**
+ * 全套 e2e 跑超過 10 分鐘後，config 載入時一次生成的 fixture 會過期（subagent 10 分不算執行中、人群 10 分轉閒置而沒有標記），
+ * 依賴新鮮度的 spec（office.spec.ts 排在長的 lobby.spec.ts 之後）開跑前重生成一次。
+ * server 的 tail 以「檔案大小＝已讀位移」增量讀，所以先把 transcript 清空、等它重置，再用 setupSessions 以現在為基準寫回，最後等 API 反映出來。
+ * Claude 的路徑只含 cwd 與 sid，原路徑清空即可；Codex 的檔名含啟動時間（隨 now 變），清空會留下同 sid 的空檔、新舊兩份並存，所以直接刪除。
+ * 最後要求 session 數恰好是 7 ＋ CROWD：有重複就明確報錯，不悄悄污染後面的測試。
+ */
+export async function refreshSessions(apiBase = 'http://127.0.0.1:4417') {
+  for (const e of readdirSync(claudeDir, { withFileTypes: true, recursive: true })) if (e.isFile() && e.name.endsWith('.jsonl')) writeFileSync(path.join(e.parentPath, e.name), '')
+  for (const e of readdirSync(codexDir, { withFileTypes: true, recursive: true })) if (e.isFile() && e.name.endsWith('.jsonl')) unlinkSync(path.join(e.parentPath, e.name))
+  await sleep(2_500)
+  setupSessions(Date.now())
+  const deadline = Date.now() + 45_000
+  let last = ''
+  for (;;) {
+    try {
+      const ss = ((await (await fetch(`${apiBase}/api/sessions`)).json()) as SessionsDoc).sessions
+      const stale = ss.filter((x) => x.lastEventAt != null && Date.now() - x.lastEventAt > 3 * 60_000).length
+      last = `sessions=${ss.length} p3.subagents=${ss.find((x) => x.id === 'wE:p3')?.subagents} 過期=${stale}`
+      if (ss.length === 7 + CROWD && ss.find((x) => x.id === 'wE:p3')?.subagents === 2 && stale === 0) return
+    } catch (e) {
+      last = String(e)
+    }
+    if (Date.now() > deadline) throw new Error(`refreshSessions：45 秒內 server 沒反映出新 fixture（${last}）`)
+    await sleep(500)
+  }
+}

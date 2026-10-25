@@ -3,7 +3,7 @@ import { Terminal } from 'lucide-react'
 import type { OfficeSession } from '@dash/shared'
 import { useNow } from '@/hooks/useNow'
 import { RANK_LABEL, rankOf, starsOf } from '@/lib/rank'
-import { effectiveSubstate, timerText } from '@/lib/substate'
+import { effectiveSubstate, needsYou, timerText } from '@/lib/substate'
 import { cn } from '@/lib/utils'
 import { CopyCommand } from './CopyCommand'
 import { EffortStars } from './EffortStars'
@@ -44,12 +44,14 @@ export const resumeCommand = (s: Pick<OfficeSession, 'kind' | 'sessionId'>) =>
 export function SessionRow({ session, selected = false, expanded = false, onSelect, taskLabel, actions, now: nowProp, className }: SessionRowProps) {
   const tick = useNow(10_000)
   const now = nowProp ?? tick
-  const sub = effectiveSubstate(session, now)
-  const danger = sub === 'waiting' || sub === 'error'
+  // 沒有存活 pane 的錯誤沒人能處理：10 分後轉閒置，期間也不算需要你（lobby AC2）
+  const pane = { hasPane: session.paneId != null }
+  const sub = effectiveSubstate(session, now, pane)
+  const danger = needsYou(session, now, pane)
   const name = sessionName(session)
   const rank = rankOf(session.kind, session.model)
   const stars = starsOf(session.kind, session.effort)
-  const timer = timerText(session, now)
+  const timer = timerText(session, now, pane)
   const where = [session.project, taskLabel ?? (session.taskDir ? shortTask(session.taskDir) : null), session.role].filter(Boolean).join(' · ')
   const toolLine = session.tool ? (session.tool.summary ?? session.tool.name) : null
 
@@ -61,7 +63,7 @@ export function SessionRow({ session, selected = false, expanded = false, onSele
       data-selected={selected}
       className={cn(
         'rounded-lg transition-colors duration-150 motion-reduce:transition-none',
-        danger ? 'bg-status-danger-soft hover:shadow-soft' : selected ? 'bg-accent' : 'bg-transparent',
+        danger ? 'bg-status-danger-soft hover:shadow-soft' : selected ? 'bg-accent text-accent-foreground' : 'bg-transparent',
         danger && selected && 'ring-2 ring-ring',
         className,
       )}

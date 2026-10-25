@@ -59,4 +59,10 @@ describe('AC10 收尾', () => {
     const hits = grep(/#[0-9a-fA-F]{3,8}\b|-\[[0-9.]+px\]|text-\[|rounded-\[/, new RegExp(`(${OFFICE.map((f) => f.replace('.', '\\.')).join('|')})$`))
     expect(hits).toEqual([])
   })
+
+  // lobby AC3：物件與事件元件（components/app/office/**）同樣不得有 hex、任意值 class
+  it('components/app/office 沒有 hex、任意值 class', () => {
+    const hits = grep(/#[0-9a-fA-F]{3,8}\b|-\[[0-9.]+px\]|text-\[|rounded-\[|h-\[|w-\[/, /components\/app\/office\//)
+    expect(hits).toEqual([])
+  })
 })

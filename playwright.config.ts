@@ -51,7 +51,8 @@ export default defineConfig({
   // 截圖與失敗 trace 的落點；DASH_E2E_OUT 可指到 repo 外（qa 驗收時放 scratchpad），預設照舊 test-results/
   outputDir: process.env.DASH_E2E_OUT || 'test-results',
   globalTeardown: './e2e/global-teardown.ts',
-  timeout: 30_000,
+  // 3D 場景用軟體渲染（SwiftShader），機器忙時（load 8–18／6 核實測）單步慢數倍；30 秒會讓 3D 測試假紅
+  timeout: 60_000,
   expect: { timeout: 10_000 },
   fullyParallel: false,
   workers: 1,
