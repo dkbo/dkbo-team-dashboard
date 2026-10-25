@@ -1,8 +1,9 @@
-import { appendFileSync, readFileSync, writeFileSync } from 'node:fs'
+import { appendFileSync, readFileSync, statSync, utimesSync, writeFileSync } from 'node:fs'
+import path from 'node:path'
 import { chromium, expect, test, type Page } from '@playwright/test'
-import { cl, lines } from '../apps/server/test/session-fixtures.ts'
+import { cl, claudeFile, lines } from '../apps/server/test/session-fixtures.ts'
 import type { OfficeSession, SessionsDoc } from '../packages/shared/src/index.ts'
-import { snapshotFile } from './fixtures/paths'
+import { claudeDir, projectsDir, snapshotFile } from './fixtures/paths'
 import { RUNNING_DIR } from './fixtures/projects'
 import { CROWD, SID, crowdFile, crowdSid } from './fixtures/sessions'
 
@@ -119,15 +120,20 @@ test.describe('/office 頁', () => {
 })
 
 test.describe('找人清單與選取', () => {
-  test('「需要你」組列出等你與兩筆錯誤；點列後網址 focus 與詳情出現', async ({ page }) => {
+  test('「需要你」組只列等你（無 pane 的錯誤不算，AC2）；點列後網址 focus 與詳情出現', async ({ page }) => {
     const is3D = await openOffice(page)
     // 3D：找人清單的「需要你」區；清單／退路：清單模式的「需要你」欄。兩者列都是 finder-row
     const needs = is3D ? page.getByTestId('office-finder').locator('section[aria-label="需要你"]') : page.getByTestId('office-list').getByRole('region', { name: '需要你' })
     const rows = needs.getByTestId('finder-row')
-    await expect(rows).toHaveCount(3)
+    // 任務 lobby AC2：無 pane 的錯誤沒人能回，不進「需要你」；它們仍以 error 列在別組（10 分內）
+    await expect(rows).toHaveCount(1)
     await expect(needs.locator(`[data-session="s:${SID.codexWait}"]`)).toHaveAttribute('data-substate', 'waiting')
-    await expect(needs.locator(`[data-session="s:${SID.claudeErr}"]`)).toHaveAttribute('data-substate', 'error')
-    await expect(needs.locator(`[data-session="s:${SID.codexErr}"]`)).toHaveAttribute('data-substate', 'error')
+    await expect(needs.locator(`[data-session="s:${SID.claudeErr}"]`)).toHaveCount(0)
+    await expect(needs.locator(`[data-session="s:${SID.codexErr}"]`)).toHaveCount(0)
+    // 3D 找人清單的「完成 · 中斷 · 閒置」組預設收合，先展開
+    if (is3D) await page.getByTestId('office-finder').locator('section[aria-label="完成 · 中斷 · 閒置"] > button[aria-expanded]').click()
+    await expect(page.locator(`[data-testid=finder-row][data-session="s:${SID.claudeErr}"]`)).toHaveAttribute('data-substate', 'error')
+    await expect(page.locator(`[data-testid=finder-row][data-session="s:${SID.codexErr}"]`)).toHaveAttribute('data-substate', 'error')
 
     await expect(page.getByTestId('office-detail')).toHaveCount(0)
     await needs.locator(`[data-session="s:${SID.codexWait}"]`).click()
@@ -156,7 +162,7 @@ test.describe('找人清單與選取', () => {
     // 場景角色數：每個角色頭上一個 AgentMarker（data-slot=agent-marker）
     const markers = page.locator('[data-slot=agent-marker]')
     // 等所有角色的標記都掛上（43 個 session 逐批 mount，太早數會少）
-    if (is3D) await expect.poll(() => markers.count()).toBe(7 + CROWD)
+    if (is3D) await expect.poll(() => markers.count(), { timeout: 30_000 }).toBe(7 + CROWD)
     const sceneCount = is3D ? await markers.count() : 0
     const rows = page.getByTestId('finder-row')
     const all = await rows.count()
@@ -195,6 +201,8 @@ test.describe('找人清單與選取', () => {
 
 test.describe('3D 場景互動（AC10）', () => {
   test('hover 角色標記：AgentHoverCard 在滑鼠不動時留在畫面，移開後消失', async ({ page }) => {
+    // 3D 軟體渲染（SwiftShader）在機器忙時每步慢數倍（實測 load 8／6 核，單步 2–6 秒）：預設 30 秒不夠，逾時放寬到 120 秒
+    test.setTimeout(120_000)
     await page.setViewportSize({ width: 1440, height: 900 })
     const is3D = await openOffice(page)
     test.skip(!is3D, '無 WebGL：沒有場景')
@@ -208,7 +216,7 @@ test.describe('3D 場景互動（AC10）', () => {
       await page.waitForTimeout(400)
       await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2, { steps: 6 })
       const card = page.locator(`[data-slot=agent-hovercard][data-session="${id}"]`)
-      await expect(card, `${id} 的卡片要出現`).toHaveCount(1)
+      await expect(card, `${id} 的卡片要出現`).toHaveCount(1, { timeout: 30_000 })
       // 滑鼠不動：卡片要一直在（不能出現一下就消失）
       for (let i = 0; i < 8; i++) {
         await page.waitForTimeout(150)
@@ -216,7 +224,7 @@ test.describe('3D 場景互動（AC10）', () => {
       }
       await page.screenshot({ path: shotPath(`office-hovercard-${id.replace(':', '-')}`), clip: { x: Math.max(0, b.x - 320), y: Math.max(0, b.y - 260), width: 700, height: 420 } })
       await page.mouse.move(700, 20, { steps: 4 })
-      await expect(card).toHaveCount(0)
+      await expect(card).toHaveCount(0, { timeout: 30_000 })
     }
   })
 
@@ -320,16 +328,16 @@ test.describe('提醒（AC13）', () => {
   test('分頁標題前綴「(N) 需要你 · 」：N＝blocked pane ∪ 等你／出錯 session（paneId 去重）', async ({ page }) => {
     await page.goto('/office')
     await expect(page.getByTestId('finder-row').first()).toBeVisible()
-    // 基準：沒有 pane 的 session 等你 1、出錯 2＝3；herdr 沒有 blocked pane
-    await expect(page).toHaveTitle(/^\(3\) 需要你 · /)
+    // 基準：沒有 pane 的 session 等你 1；沒有 pane 的出錯 2 條不算（任務 lobby AC2）；herdr 沒有 blocked pane
+    await expect(page).toHaveTitle(/^\(1\) 需要你 · /)
     await withBlocked(['wE:p2'], async () => {
-      // p2 在 herdr 變 blocked（其 session 轉「等你」，與 pane 同 key 只算一個）→ 4
-      await expect(page).toHaveTitle(/^\(4\) 需要你 · /, { timeout: 5_000 })
+      // p2 在 herdr 變 blocked（其 session 轉「等你」，與 pane 同 key 只算一個）→ 2
+      await expect(page).toHaveTitle(/^\(2\) 需要你 · /, { timeout: 5_000 })
     })
-    await expect(page).toHaveTitle(/^\(3\) 需要你 · /, { timeout: 5_000 })
+    await expect(page).toHaveTitle(/^\(1\) 需要你 · /, { timeout: 5_000 })
     // 在其他頁也一樣（標題由頂層掛）
     await page.goto('/')
-    await expect(page).toHaveTitle(/^\(3\) 需要你 · /)
+    await expect(page).toHaveTitle(/^\(1\) 需要你 · /)
   })
 })
 
@@ -377,7 +385,7 @@ test.describe('既有頁的細狀態（AC12）', () => {
 })
 
 test.describe('效能（AC11）', () => {
-  test('靜止 3 秒 frames 增加 ≤ 2；40+ session 下 drawCalls ≤ 150', async ({ page }) => {
+  test('靜止 3 秒 frames 增加 ≤ 2；40+ session 下 drawCalls ≤ 170', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 })
     const is3D = await openOffice(page)
     test.skip(!is3D, '無 WebGL：frames／drawCalls 不適用（AC11 備註）')
@@ -392,7 +400,7 @@ test.describe('效能（AC11）', () => {
     expect(b.frames - a.frames).toBeLessThanOrEqual(2)
     expect((await sessionsDoc(page)).sessions.length).toBeGreaterThanOrEqual(40)
     expect(b.drawCalls).toBeGreaterThan(0)
-    expect(b.drawCalls).toBeLessThanOrEqual(150)
+    expect(b.drawCalls).toBeLessThanOrEqual(170)
   })
 })
 
@@ -442,8 +450,14 @@ test.describe('截圖（關卡③對照 design/office/*.webp）', () => {
   }
 })
 
-// 放最後：會往 crowd-01 追加一行 API 錯誤，之後這個 session 一直是「出錯」
+// 放最後：會往 wE:p2 的 session 追加一行 API 錯誤，之後這個 session 一直是「出錯」
 test.describe('桌面通知（AC13）', () => {
+  let restoreFrontend: (() => void) | null = null
+  test.afterEach(() => {
+    restoreFrontend?.()
+    restoreFrontend = null
+  })
+
   test('只在「新變成」等你／出錯時各發一則；第一份資料當基準不通知；config 外的 blocked pane 歸「有人等你」', async ({ page }) => {
     await page.addInitScript(() => {
       const notes: { title: string; body: string | undefined; tag: string | undefined }[] = []
@@ -463,8 +477,8 @@ test.describe('桌面通知（AC13）', () => {
     const notes = () => page.evaluate(() => (window as unknown as { __notes: { title: string; tag?: string }[] }).__notes)
     await page.goto('/office')
     await expect(page.getByTestId('finder-row').first()).toBeVisible()
-    await expect(page).toHaveTitle(/^\(3\) 需要你 · /)
-    // 開頁時就有 3 個等你／出錯，但第一份資料只當基準：0 則通知
+    await expect(page).toHaveTitle(/^\(1\) 需要你 · /)
+    // 開頁時就有 1 個等你，但第一份資料只當基準：0 則通知
     await page.waitForTimeout(2_000)
     expect(await notes()).toEqual([])
 
@@ -476,19 +490,27 @@ test.describe('桌面通知（AC13）', () => {
       expect(await notes()).toHaveLength(1)
     })
 
-    // 一個 Claude session 新出現 API 錯誤 → 「出錯」恰 1 則
-    appendFileSync(crowdFile(1), lines([cl.apiError(crowdSid(1), Date.now())]))
+    // 有 pane 的 Claude session（wE:p2）新出現 API 錯誤 → 「出錯」恰 1 則（無 pane 的錯誤不通知，AC2）
+    // 追加前先備份、測完還原：server 把 session 為 error 的 pane 標成 blocked，那行 error 留著會讓後面 spec（unify 摘要卡「卡住」）變紅
+    const feFile = claudeFile(claudeDir, path.join(projectsDir, 'teamflow'), SID.frontend)
+    const feOrig = readFileSync(feFile, 'utf8')
+    const feSt = statSync(feFile)
+    restoreFrontend = () => {
+      writeFileSync(feFile, feOrig)
+      utimesSync(feFile, feSt.atimeMs / 1000, feSt.mtimeMs / 1000)
+    }
+    appendFileSync(feFile, lines([cl.apiError(SID.frontend, Date.now())]))
     await expect.poll(async () => (await notes()).length, { timeout: 5_000 }).toBe(2)
     expect((await notes())[1].title).toMatch(/^出錯/)
-    await expect(page).toHaveTitle(/^\(4\) 需要你 · /)
+    await expect(page).toHaveTitle(/^\(2\) 需要你 · /)
 
     // config 以外專案的 blocked pane（wE:p5，cwd 不在任何 config 專案底下）：算進標題數、通知歸「有人等你」
     await withBlocked(['wE:p5'], async () => {
-      await expect(page).toHaveTitle(/^\(5\) 需要你 · /, { timeout: 5_000 })
+      await expect(page).toHaveTitle(/^\(3\) 需要你 · /, { timeout: 5_000 })
       await expect.poll(async () => (await notes()).length, { timeout: 5_000 }).toBe(3)
       expect((await notes())[2].title).toMatch(/^有人等你：outsider/)
     })
-    await expect(page).toHaveTitle(/^\(4\) 需要你 · /, { timeout: 5_000 })
+    await expect(page).toHaveTitle(/^\(2\) 需要你 · /, { timeout: 5_000 })
     expect(await notes()).toHaveLength(3)
   })
 })

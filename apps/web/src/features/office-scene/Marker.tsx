@@ -1,5 +1,5 @@
 // 場景內的 DOM 疊層（drei <Html> 裡畫）：AgentMarker（§6.3、§6.15）、AgentHoverCard（§6.8、§6.18）、ZoneSign（§6.5）。
-import type { CSSProperties } from 'react'
+import { useLayoutEffect, type CSSProperties } from 'react'
 import { Coffee, Crown, FolderKanban, Hand, Laptop, Terminal } from 'lucide-react'
 import type { OfficeSession, Substate } from '@dash/shared'
 import { EffortStars } from '@/components/app/EffortStars'
@@ -245,6 +245,9 @@ export function ZoneSign({
   count,
   needs,
   overflow = 0,
+  zoneKey,
+  shift,
+  onLayout,
 }: {
   kind: 'project' | 'hot' | 'lounge'
   title: string
@@ -253,12 +256,21 @@ export function ZoneSign({
   needs: boolean
   /** AC9：桌群坐不下、坐到散座區的人數 */
   overflow?: number
+  /** `${kind}:${key}`；場景量區牌尺寸時對回區用 */
+  zoneKey?: string
+  /** 被疊層壓住時往右讓的 px（鏡頭停下後算，AC8） */
+  shift?: number
+  /** 掛上或內容（尺寸）變了：場景據此重算讓位（drei <Html> 的內容晚一拍才掛上） */
+  onLayout?(): void
 }) {
   const Icon = ZONE_ICON[kind]
+  useLayoutEffect(() => onLayout?.(), [onLayout, title, subtitle, count, overflow, needs])
   return (
     <div
       data-slot="zone-sign"
       data-kind={kind}
+      data-zone={zoneKey}
+      style={shift ? { position: 'relative', left: shift } : undefined}
       className="pointer-events-none flex h-7 -translate-y-full items-center gap-1.5 rounded-full bg-popover px-3 whitespace-nowrap shadow-soft"
     >
       <Icon aria-hidden className="size-3.5 text-brand-violet" />

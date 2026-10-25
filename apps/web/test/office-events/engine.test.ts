@@ -259,3 +259,56 @@ describe('佇列（§6.17）', () => {
     expect(applyQueue(list, NOW).map((e) => e.id)).toEqual(['d'])
   })
 })
+
+// qa 疑慮 1：高負載下偶爾 review-fix 之後一直沒有氣泡、live region 停在「審查開始」。
+// 負載會造成：資料延遲到、中間夾多份無關 overview、多次變動被合併成一份、list 先到而 detail 後到。
+describe('審查結果在延遲與合併下不漏播（qa 疑慮 1）', () => {
+  const fixed = (k = 2) => wave(2, { review_spawned_at: ts(NOW), review_verdict_at: ts(NOW), review_verdict: `a: important ${k}` })
+  const spawnedOnly = () => wave(2, { review_spawned_at: ts(NOW) })
+
+  it('review-fix 前夾了多份無關 overview（generatedAt 前進、pane 疊加的新物件）仍播出', () => {
+    const eng = createEventEngine()
+    const d = detail({ waves: [wave(1), spawnedOnly()] })
+    eng.observe(doc(d), ctx())
+    expect(eng.observe(doc(d), ctx())).toEqual([])
+    expect(eng.observe(doc(detail({ ...d, updated_at: ts(NOW + 1) } as Partial<TaskDetail>)), ctx())).toEqual([])
+    expect(eng.observe(structuredClone(doc(d)), ctx())).toEqual([])
+    expect(eng.observe(doc(detail({ waves: [wave(1), fixed()] })), ctx())).toMatchObject([{ kind: 'review-fix', wave: 2, count: 2 }])
+  })
+
+  it('審查開始與 verdict 被合併成同一份：兩個事件都播', () => {
+    const a = doc(detail({ waves: [wave(1), wave(2)] }))
+    const b = doc(detail({ waves: [wave(1), fixed()] }))
+    expect(step(a, b).map((e) => e.kind).sort()).toEqual(['review-fix', 'review-spawned'])
+  })
+
+  it('list 先更新、detail 還是舊的（detail 抓取失敗保留上一次）：detail 補上後才播，且只播一次', () => {
+    const eng = createEventEngine()
+    const old = detail({ waves: [wave(1), spawnedOnly()] })
+    eng.observe(doc(old), ctx())
+    // list 的摘要已變（波數不變但 updated_at 變），active 仍是舊 detail
+    expect(eng.observe(doc(old, { updated_at: ts(NOW + MIN) }), ctx())).toEqual([])
+    const fresh = detail({ waves: [wave(1), fixed()] })
+    expect(eng.observe(doc(fresh), ctx())).toMatchObject([{ kind: 'review-fix' }])
+    expect(eng.observe(doc(fresh), ctx())).toEqual([])
+  })
+
+  it('verdict 延遲很久才到：分鐘戳在 2 分鐘保險內（含分鐘截斷的最壞情況）仍播', () => {
+    const a = doc(detail({ waves: [wave(1), spawnedOnly()] }))
+    const b = doc(detail({ waves: [wave(1), fixed()] }))
+    // 實際寫入於 NOW 分鐘的第 59 秒 → 戳＝NOW；偵測時 NOW + 59 秒 + 延遲 60 秒
+    expect(step(a, b, { now: NOW + 119_000 })).toMatchObject([{ kind: 'review-fix' }])
+  })
+
+  it('SSE 閃斷（open→connecting→open）夾在 spawned 與 verdict 之間：重連後的下一份 push 仍播（僅 refetch 的那一份是基準）', () => {
+    const eng = createEventEngine()
+    const spawnedDoc = doc(detail({ waves: [wave(1), spawnedOnly()] }))
+    eng.observe(spawnedDoc, ctx())
+    eng.observe(spawnedDoc, ctx({ sse: 'connecting' }))
+    eng.observe(spawnedDoc, ctx())
+    // handleStreamOpen 的 fetchOverview 回來：基準
+    expect(eng.observe(doc(detail({ waves: [wave(1), spawnedOnly()] })), ctx())).toEqual([])
+    // 之後 push 來的 verdict：照常播
+    expect(eng.observe(doc(detail({ waves: [wave(1), fixed()] })), ctx())).toMatchObject([{ kind: 'review-fix' }])
+  })
+})

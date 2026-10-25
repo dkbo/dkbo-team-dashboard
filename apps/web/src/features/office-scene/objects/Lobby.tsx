@@ -14,6 +14,7 @@ import { furnitureMaterial, type SceneMaterials } from '../materials'
 import { assetUrl, type OfficeManifest } from '../model-map'
 import type { ScenePalette, Token } from '../palette'
 import { labelBox, labelDensity, LAMP_H, OBJECT_LIFT, objectPlacements, resolveLabelYield, boardYield, textW, type Box, type FixedKind, type ObjectPlace, type Vec3 } from './placement'
+import { LabelShield } from './LabelShield'
 
 /** 物件標籤在區牌之上、一般標記之下（E16 三層） */
 const Z_OBJECT: [number, number] = [199, 100]
@@ -310,9 +311,9 @@ const LabelSlot = forwardRef<HTMLDivElement, { at: Vec3; object: string; task?: 
   return (
     // 外層不吃指標：標籤只是視覺位移，版面框還留在錨點上，會蓋住底下的 3D 物件（只有標籤本身 pointer-events-auto）
     <Html position={at} zIndexRange={Z_OBJECT} style={NO_POINTER}>
-      <div ref={ref} data-testid="object-label" data-object={object} data-task={task} data-density={density} data-tone={tone ?? undefined}>
+      <LabelShield ref={ref} data-testid="object-label" data-object={object} data-task={task} data-density={density} data-tone={tone ?? undefined}>
         {children}
-      </div>
+      </LabelShield>
     </Html>
   )
 })

@@ -29,6 +29,7 @@ import { THEME_LERP_MS } from './motion'
 import { ScenePalette, type Theme } from './palette'
 import { Furniture, RoomShell } from './Room'
 import { clearCharacterOverrides, publishSceneAnchors, useScreenOffIds } from './anchors'
+import { OVERLAY_SELECTOR, sameShift, signShifts } from './signs'
 import { createTickets, TicketsContext } from './tickets'
 import { useVisibilityFrameloop } from './visibility'
 
@@ -305,12 +306,13 @@ export function SceneRoot(props: SceneRootProps) {
   )
 
   // 鏡頭停下後：標記縮放、互撞縮點、畫面外的 alert
-  const [view, setView] = useState<{ distance: number; fitDistance: number; dots: Set<string>; settled: SettledView | null; boxes: Box[] }>({
+  const [view, setView] = useState<{ distance: number; fitDistance: number; dots: Set<string>; settled: SettledView | null; boxes: Box[]; signShift: Record<string, number> }>({
     distance: 1,
     fitDistance: 1,
     dots: new Set(),
     settled: null,
     boxes: [],
+    signShift: {},
   })
   const viewRef = useRef<CameraView | null>(null)
   const markerShown = useCallback(
@@ -343,18 +345,52 @@ export function SceneRoot(props: SceneRootProps) {
       const dots = resolveCollisions(boxes)
       // 物件標籤讓位看的是縮點之後還保留的角色標記（alert 永遠保留）
       const kept: { x: number; y: number; w: number; h: number }[] = boxes.filter((b) => !dots.has(b.id))
-      setView({ distance: v.distance, fitDistance: v.fitDistance, dots, settled: { distance: v.distance, fitDistance: v.fitDistance, camera: v.camera, size: v.size }, boxes: kept })
+      // 區牌被疊層（找人清單等）壓住就往右讓：疊層與區牌的實際尺寸量 DOM，位置用錨點投影
+      const origin = gl.domElement.getBoundingClientRect()
+      const overlays = [...(gl.domElement.closest('[data-testid="office-canvas"]') ?? document).querySelectorAll(OVERLAY_SELECTOR)]
+        .map((e) => e.getBoundingClientRect())
+        .filter((r) => r.width > 0 && r.height > 0)
+        .map((r) => ({ x: r.x - origin.x, y: r.y - origin.y, w: r.width, h: r.height }))
+      const signBoxes = [...gl.domElement.closest('[data-slot="office-scene"]')!.querySelectorAll<HTMLElement>('[data-slot="zone-sign"]')].flatMap((e) => {
+        const z = layout.zones.find((z) => `${z.kind}:${z.key}` === e.dataset.zone)
+        if (!z) return []
+        p.set(...z.sign).project(v.camera)
+        // drei <Html> 不置中：區牌左緣就在錨點上
+        const w = e.offsetWidth
+        const h = e.offsetHeight
+        return [{ key: e.dataset.zone!, x: ((p.x + 1) / 2) * v.size.width, y: ((1 - p.y) / 2) * v.size.height - h, w, h }]
+      })
+      const signShift = signShifts(signBoxes, overlays, { w: v.size.width, h: v.size.height })
+      setView((prev) => ({
+        distance: v.distance,
+        fitDistance: v.fitDistance,
+        dots,
+        settled: { distance: v.distance, fitDistance: v.fitDistance, camera: v.camera, size: v.size },
+        boxes: kept,
+        signShift: sameShift(prev.signShift, signShift) ? prev.signShift : signShift,
+      }))
       // 同一邊的 chip 往下錯開，不疊在一起
       off.sort((a, b) => a.y - b.y)
       for (let i = 1; i < off.length; i++) if (Math.abs(off[i].x - off[i - 1].x) < 120 && off[i].y < off[i - 1].y + 34) off[i].y = off[i - 1].y + 34
       props.onOffscreen(off)
     },
-    [sessions, layout, subs, markerShown, selectedId, hoveredId, props],
+    [sessions, layout, subs, markerShown, selectedId, hoveredId, props, gl],
   )
   // 資料或選取變了也重算一次（不每幀算）
   useEffect(() => {
     if (viewRef.current) recompute({ ...viewRef.current, size })
   }, [layout, selectedId, hoveredId, size])
+  // 疊層（找人清單收合、增減人）尺寸變了，區牌讓位也要重算；不每幀、只在尺寸真的變時
+  const recomputeRef = useRef(recompute)
+  recomputeRef.current = recompute
+  const onSignLayout = useCallback(() => viewRef.current && recomputeRef.current(viewRef.current), [])
+  useEffect(() => {
+    const card = gl.domElement.closest('[data-testid="office-canvas"]')
+    if (!card || typeof ResizeObserver === 'undefined') return
+    const ro = new ResizeObserver(() => viewRef.current && recomputeRef.current({ ...viewRef.current, size: { ...size } }))
+    card.querySelectorAll(OVERLAY_SELECTOR).forEach((e) => ro.observe(e))
+    return () => ro.disconnect()
+  }, [gl, size, layout])
 
   // focusRequest → 角色座標
   const focus = useMemo(() => {
@@ -447,7 +483,7 @@ export function SceneRoot(props: SceneRootProps) {
       <Decor layout={layout} subs={subs} mats={mats} dark={theme === 'dark'} />
       {layout.zones.map((z) => (
         <Html key={`${z.kind}:${z.key}`} position={z.sign} zIndexRange={Z_SIGN}>
-          <ZoneSign kind={z.kind} title={z.title} subtitle={z.subtitle} count={z.count} needs={z.needs} overflow={z.overflow} />
+          <ZoneSign onLayout={onSignLayout} zoneKey={`${z.kind}:${z.key}`} shift={view.signShift[`${z.kind}:${z.key}`]} kind={z.kind} title={z.title} subtitle={z.subtitle} count={z.count} needs={z.needs} overflow={z.overflow} />
         </Html>
       ))}
       {ordered.map((s) => {

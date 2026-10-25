@@ -100,3 +100,20 @@ describe('useOfficeEvents', () => {
     vis.mockRestore()
   })
 })
+
+describe('useOfficeEvents：審查開始後 20–45 秒才來 verdict（qa 疑慮 1）', () => {
+  it.each([20, 29, 31, 45])('審查開始後 %i 秒 verdict 到：氣泡事件與 announce 照常更新', (sec) => {
+    const w2 = (over = {}) => wave(1, { review_spawned_at: ts(NOW), ...over })
+    useDashStore.setState({ overview: doc(detail({ waves: [wave(1)] })) })
+    const { result } = renderHook(() => useOfficeEvents())
+    act(() => useDashStore.setState({ overview: doc(detail({ waves: [w2()] })) }))
+    expect(result.current.announce).toBe('teamflow 示範任務：波 1 審查開始')
+    act(() => {
+      vi.advanceTimersByTime(sec * 1000)
+    })
+    act(() => useDashStore.setState({ overview: doc(detail({ waves: [w2({ review_verdict_at: ts(NOW), review_verdict: 'a: important 2' })] })) }))
+    // 30 秒內 spawned 還在清單上，之後已移出；review-fix 一定在最後
+    expect(result.current.events.map((e) => e.kind)).toEqual(sec < 30 ? ['review-spawned', 'review-fix'] : ['review-fix'])
+    expect(result.current.announce).toBe('teamflow 示範任務：波 1 審查要修 2 條')
+  })
+})

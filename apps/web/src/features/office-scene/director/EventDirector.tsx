@@ -1,6 +1,7 @@
 // 角色互動事件（§6.17、E6–E8；AC10）：第二包的 default export，SceneRoot 在第一次 render 後掛上。
 // 收即時事件 → runtime 寫角色覆寫（走路、比讚、垂頭、點頭、跳）、持動畫票；頭頂掛 EventBubble／EventBadge、白板星點與彩帶。
 import { useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react'
+import * as THREE from 'three'
 import { createPortal, useThree } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import type { OfficeSession, TaskDetail } from '@dash/shared'
@@ -22,6 +23,8 @@ import {
 } from '../anchors'
 import { publishBoardFlashes } from './boardFx'
 import { Confetti, BoardSpark } from './Effects'
+import { createBubbleRegistry, type BubbleRegistry, type Rect } from './bubbleLayout'
+import { PlacedBubble } from './PlacedBubble'
 import { badgeLeaders, waveHasVerdict, type MotionMs } from './plan'
 import { createRuntime, type BubbleState } from './runtime'
 
@@ -159,11 +162,15 @@ export default function EventDirector({ events, tickets }: EventDirectorProps) {
     if (added) invalidate()
   }, [snap.bubbles, snap.boards, badges, invalidate])
 
+  const canvas = useThree((s) => s.gl.domElement)
+  const registry = useMemo(() => createBubbleRegistry(), [])
+  const tick = useBubbleRelayout(canvas, snap.bubbles.size > 0)
+
   const heads = new Set([...snap.bubbles.keys(), ...badges])
   return (
     <>
       {[...heads].map((id) => (
-        <HeadStack key={id} id={id} bubble={snap.bubbles.get(id) ?? null} badge={badges.has(id)} />
+        <HeadStack key={id} id={id} bubble={snap.bubbles.get(id) ?? null} badge={badges.has(id)} registry={registry} tick={tick} />
       ))}
       {[...snap.boards.values()].map((fx) => {
         const at = boardAnchor(fx.taskDir)
@@ -183,16 +190,27 @@ export default function EventDirector({ events, tickets }: EventDirectorProps) {
  * 頭頂堆疊（§6.15）：EventBubble 在頭部右側、標記下面那一列（與標記不同列）；碰 canvas 右緣翻左。
  * EventBadge 在標記膠囊左上外側（量 AgentMarker 的 DOM，與膠囊不相交）；角色沒有標記時改掛頭頂正上方。
  */
-function HeadStack({ id, bubble, badge }: { id: string; bubble: BubbleState | null; badge: boolean }) {
+function HeadStack({ id, bubble, badge, registry, tick }: { id: string; bubble: BubbleState | null; badge: boolean; registry: BubbleRegistry; tick: number }) {
   const head = useCharacterHead(id)
-  // <Html> 的內容在另一個 React DOM root，拿不到 r3f context：canvas 從這裡傳進去
+  const camera = useThree((s) => s.camera)
   const canvas = useThree((s) => s.gl.domElement)
   if (!head) return null
   return createPortal(
     <Html zIndexRange={Z_EVENT}>
       <div data-slot="event-stack" data-session={id} className="pointer-events-none relative size-0">
         {badge && <PlacedBadge id={id} />}
-        {bubble && <PlacedBubble key={bubble.key} bubble={bubble} canvas={canvas} />}
+        {bubble && (
+          <PlacedBubble
+            key={bubble.key}
+            id={id}
+            bubble={bubble}
+            anchor={() => headScreen(head, camera, canvas)}
+            bounds={() => rectOf(canvas)}
+            obstacles={() => obstaclesOf(canvas)}
+            registry={registry}
+            tick={tick}
+          />
+        )}
       </div>
     </Html>,
     head,
@@ -235,17 +253,55 @@ function PlacedBadge({ id }: { id: string }) {
   )
 }
 
-function PlacedBubble({ bubble, canvas }: { bubble: BubbleState; canvas: HTMLCanvasElement }) {
-  const ref = useRef<HTMLSpanElement>(null)
-  const [flip, setFlip] = useState(false)
-  useLayoutEffect(() => {
-    const el = ref.current
-    if (!el) return
-    if (el.getBoundingClientRect().right > canvas.getBoundingClientRect().right) setFlip(true)
-  }, [canvas])
-  return (
-    <span ref={ref} data-testid="event-bubble" data-kind={bubble.kind} className={flip ? 'absolute top-1 right-6' : 'absolute top-1 left-6'}>
-      <EventBubble emoji={bubble.spec.emoji} label={bubble.spec.label} tone={bubble.spec.tone} until={bubble.until} />
-    </span>
-  )
+const RELAYOUT_DEBOUNCE_MS = 200
+
+const rectOf = (e: Element): Rect => {
+  const r = e.getBoundingClientRect()
+  return { x: r.left, y: r.top, w: r.width, h: r.height }
+}
+
+const _p = new THREE.Vector3()
+/** 頭頂 group 在視窗的位置：drei <Html> 的原點就是它的投影點（不讀 DOM，<Html> 剛掛上時還沒定位） */
+function headScreen(head: THREE.Object3D, camera: THREE.Camera, canvas: HTMLCanvasElement): { x: number; y: number } | null {
+  head.updateWorldMatrix(true, false)
+  _p.setFromMatrixPosition(head.matrixWorld).project(camera)
+  if (_p.z > 1) return null
+  const r = canvas.getBoundingClientRect()
+  return { x: r.left + ((_p.x + 1) / 2) * r.width, y: r.top + ((1 - _p.y) / 2) * r.height }
+}
+
+/** 氣泡要避開的東西：角色標記與 EventBadge 目前的視窗位置 */
+function obstaclesOf(canvas: HTMLCanvasElement): Rect[] {
+  const root = canvas.closest('[data-slot="office-scene"]') ?? canvas.parentElement
+  if (!root) return []
+  return [...root.querySelectorAll('[data-slot="agent-marker"], [data-testid="event-badge"]')].map(rectOf).filter((r) => r.w > 2 && r.h > 2)
+}
+
+/**
+ * 相機停下（滾輪、拖曳放開）或標記縮放／換型（class、data-substate）後 +1，讓存在中的氣泡重排一次。
+ * 不看 style／childList（<Html> 每幀改 style，會讓去抖永遠等不到）；沒有氣泡時不監聽；只動 DOM，不 invalidate。
+ * 氣泡「掛上」當下的排版不靠這裡，見 PlacedBubble 的 useLayoutEffect。
+ */
+function useBubbleRelayout(canvas: HTMLCanvasElement, active: boolean): number {
+  const [tick, setTick] = useState(0)
+  useEffect(() => {
+    if (!active) return
+    const root = canvas.closest('[data-slot="office-scene"]') ?? canvas.parentElement
+    let timer = 0
+    const schedule = () => {
+      window.clearTimeout(timer)
+      timer = window.setTimeout(() => setTick((n) => n + 1), RELAYOUT_DEBOUNCE_MS)
+    }
+    canvas.addEventListener('wheel', schedule, { passive: true })
+    canvas.addEventListener('pointerup', schedule)
+    const mo = new MutationObserver(schedule)
+    if (root) mo.observe(root, { subtree: true, attributes: true, attributeFilter: ['class', 'data-substate'] })
+    return () => {
+      window.clearTimeout(timer)
+      canvas.removeEventListener('wheel', schedule)
+      canvas.removeEventListener('pointerup', schedule)
+      mo.disconnect()
+    }
+  }, [canvas, active])
+  return tick
 }
